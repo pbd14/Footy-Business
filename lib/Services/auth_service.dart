@@ -5,12 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:footy_business/Screens/HomeScreen/home_screen.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen.dart';
+import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/sww_screen.dart';
 import 'package:footy_business/Services/push_notification_service.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 
 class AuthService {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  DocumentSnapshot dc;
+
+  // getData() async {
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     dc = await FirebaseFirestore.instance
+  //         .collection('companies')
+  //         .doc(FirebaseAuth.instance.currentUser.uid)
+  //         .get();
+  //   }
+  //   print("INSIDE FUNCTION");
+  //   print(dc);
+  // }
 
   handleAuth() {
     return StreamBuilder(
@@ -20,6 +33,11 @@ class AuthService {
             final pushNotificationService =
                 PushNotificationService(_firebaseMessaging);
             pushNotificationService.init();
+            // if (dc != null) {
+            //   return dc.exists ? HomeScreen() : LoginScreen1();
+            // } else {
+            //   return LoginScreen1();
+            // }
             return HomeScreen();
           } else {
             return LoginScreen();
@@ -51,19 +69,11 @@ class AuthService {
               error: "Something went wrong: ${error.message}",
             )));
       });
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser.uid)
-          .set({'status': 'default'});
       final pushNotificationService =
           PushNotificationService(_firebaseMessaging);
       pushNotificationService.init();
       return res;
     } catch (e) {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser.uid)
-          .set({'status': 'not logged in'});
       return null;
     }
   }

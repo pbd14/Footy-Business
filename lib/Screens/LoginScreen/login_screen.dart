@@ -48,26 +48,36 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'FOOTY BUSINESS',
-                        style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                            color: whiteColor,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Text(
+                            'FOOTY BUSINESS',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: whiteColor,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(
                         height: 20,
                       ),
-                      Text(
-                        'Get Started',
-                        style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                            color: whiteColor,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Text(
+                            'Get Started',
+                            style: GoogleFonts.montserrat(
+                              textStyle: TextStyle(
+                                color: whiteColor,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
