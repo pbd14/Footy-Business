@@ -88,40 +88,42 @@ class _LoginScreen1State extends State<LoginScreen1> {
                         ph: 55,
                         text: 'CONTINUE',
                         press: () async {
-                          setState(() {
-                            loading = true;
-                          });
-                          FirebaseFirestore.instance
-                              .collection('companies')
-                              .doc(FirebaseAuth.instance.currentUser.uid)
-                              .set({
-                            'name': this.name,
-                            'owner': this.owner,
-                            'phones': FieldValue.arrayUnion([
-                              FirebaseAuth.instance.currentUser.phoneNumber
-                            ]),
-                          }).catchError((error) {
-                            PushNotificationMessage notification =
-                                PushNotificationMessage(
-                              title: 'Fail',
-                              body: 'Failed to login',
-                            );
-                            showSimpleNotification(
-                              Container(child: Text(notification.body)),
-                              position: NotificationPosition.top,
-                              background: Colors.red,
-                            );
-                          });
-                          Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                page: AddPlaceScreen(),
-                              ));
-                          setState(() {
-                            loading = false;
-                            this.name = '';
-                            this.owner = '';
-                          });
+                          if (_formKey.currentState.validate()) {
+                            setState(() {
+                              loading = true;
+                            });
+                            FirebaseFirestore.instance
+                                .collection('companies')
+                                .doc(FirebaseAuth.instance.currentUser.uid)
+                                .set({
+                              'name': this.name,
+                              'owner': this.owner,
+                              'phones': FieldValue.arrayUnion([
+                                FirebaseAuth.instance.currentUser.phoneNumber
+                              ]),
+                            }).catchError((error) {
+                              PushNotificationMessage notification =
+                                  PushNotificationMessage(
+                                title: 'Fail',
+                                body: 'Failed to login',
+                              );
+                              showSimpleNotification(
+                                Container(child: Text(notification.body)),
+                                position: NotificationPosition.top,
+                                background: Colors.red,
+                              );
+                            });
+                            Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                  page: AddPlaceScreen(),
+                                ));
+                            setState(() {
+                              loading = false;
+                              this.name = '';
+                              this.owner = '';
+                            });
+                          }
                         },
                         color: darkPrimaryColor,
                         textColor: whiteColor,

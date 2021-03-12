@@ -36,6 +36,7 @@ dependencies:
   syncfusion_flutter_calendar: ^18.4.32
   date_format: ^1.0.9
   overlay_support: ^1.0.5
+  image_picker: ^0.6.7+22
 
 
   # The following adds the Cupertino Icons font to your application.

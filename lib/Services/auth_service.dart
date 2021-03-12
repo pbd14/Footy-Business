@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:footy_business/Screens/HomeScreen/home_screen.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen.dart';
-import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/sww_screen.dart';
 import 'package:footy_business/Services/push_notification_service.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';

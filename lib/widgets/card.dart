@@ -17,7 +17,7 @@ class CardW extends StatelessWidget {
       child: Card(
         color: bgColor,
         shadowColor: darkPrimaryColor,
-        elevation: 7,
+        elevation: 10,
         child: child,
       ),
     );
