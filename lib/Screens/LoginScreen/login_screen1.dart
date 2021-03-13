@@ -116,7 +116,9 @@ class _LoginScreen1State extends State<LoginScreen1> {
                             Navigator.push(
                                 context,
                                 SlideRightRoute(
-                                  page: AddPlaceScreen(),
+                                  page: AddPlaceScreen(
+                                    username: this.owner,
+                                  ),
                                 ));
                             setState(() {
                               loading = false;
