@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-
 class LabelButton extends StatefulWidget {
   const LabelButton({
     Key key,
@@ -84,26 +82,29 @@ class _LabelButtonState extends State<LabelButton> {
     } else {
       labelColor = widget.color2;
     }
-    return FlatButton(
-      highlightColor: darkPrimaryColor,
-      height: widget.ph,
-      minWidth: widget.pw,
-      onPressed: () {
-        setState(() {
-          isColored = !isColored;
-          if (isColored) {
-            labelColor = widget.color1;
-          } else {
-            labelColor = widget.color2;
-          }
-        });
-        isOne ? widget.onTap() : widget.onTap2();
-        isOne = !isOne;
-      },
-      child: Icon(
-        Icons.label,
-        color: labelColor == null ? widget.color2 : labelColor,
-        size: widget.size,
+    return Container(
+      child: TextButton(
+        // highlightColor: darkPrimaryColor,
+        // height: widget.ph,
+        // minWidth: widget.pw,
+        style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+        onPressed: () {
+          setState(() {
+            isColored = !isColored;
+            if (isColored) {
+              labelColor = widget.color1;
+            } else {
+              labelColor = widget.color2;
+            }
+          });
+          isOne ? widget.onTap() : widget.onTap2();
+          isOne = !isOne;
+        },
+        child: Icon(
+          Icons.bookmark,
+          color: labelColor == null ? widget.color2 : labelColor,
+          size: widget.size,
+        ),
       ),
     );
   }

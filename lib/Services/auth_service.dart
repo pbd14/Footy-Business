@@ -10,7 +10,7 @@ import 'package:footy_business/Services/push_notification_service.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 
 class AuthService {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   DocumentSnapshot dc;
 
   // getData() async {

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:footy_business/Services/auth_service.dart';
-import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants.dart';

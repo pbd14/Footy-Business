@@ -7,6 +7,7 @@ import 'package:footy_business/Screens/HomeScreen/home_screen.dart';
 import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overlay_support/overlay_support.dart';
 import '../../constants.dart';
@@ -40,6 +41,12 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
 
   void _updatePosition(CameraPosition _position) {
     Position newMarkerPosition = Position(
+        heading: 0,
+        altitude: 0,
+        timestamp: DateTime.now(),
+        speedAccuracy: 0,
+        speed: 0,
+        accuracy: 0,
         latitude: _position.target.latitude,
         longitude: _position.target.longitude);
     Marker marker = _markers.first;
@@ -83,6 +90,16 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
         : Scaffold(
             appBar: AppBar(
               backgroundColor: primaryColor,
+              centerTitle: true,
+              title: Text(
+                'Location',
+                style: GoogleFonts.montserrat(
+                  textStyle: TextStyle(
+                    color: whiteColor,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
             ),
             body: Stack(
               children: <Widget>[

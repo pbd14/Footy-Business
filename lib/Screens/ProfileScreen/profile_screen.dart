@@ -79,7 +79,7 @@ class _PlaceScreenState extends State<ProfileScreen> {
                       username: name,
                     ),
                   ));
-              ;
+              
             },
             color: darkPrimaryColor,
             textColor: whiteColor,

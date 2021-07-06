@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,14 +8,8 @@ import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ManagementScreen/management_screen.dart';
 import 'package:footy_business/Screens/ProfileScreen/profile_screen.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
-import 'package:footy_business/Services/auth_service.dart';
-import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
-import 'package:geolocator/geolocator.dart' as geolocator;
-import 'package:google_fonts/google_fonts.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../constants.dart';
 

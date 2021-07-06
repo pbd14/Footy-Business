@@ -44,7 +44,8 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
   }
 
   Future _getImage(int i) async {
-    var picker = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var picker =
+        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     setState(() {
       if (picker != null) {
@@ -321,25 +322,44 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                           setState(() {
                             loading = true;
                           });
-                          var user = FirebaseAuth.instance.currentUser.uid;
-                          TaskSnapshot a1 = await FirebaseStorage.instance
-                              .ref('uploads/$i1/')
-                              .putFile(i1);
-                          TaskSnapshot a2 = await FirebaseStorage.instance
-                              .ref('uploads/$i2/')
-                              .putFile(i2);
-                          TaskSnapshot a3 = await FirebaseStorage.instance
-                              .ref('uploads/$i3/')
-                              .putFile(i3);
-                          TaskSnapshot a4 = await FirebaseStorage.instance
-                              .ref('uploads/$i4/')
-                              .putFile(i4);
-                          TaskSnapshot a5 = await FirebaseStorage.instance
-                              .ref('uploads/$i5/')
-                              .putFile(i5);
-                          TaskSnapshot a6 = await FirebaseStorage.instance
-                              .ref('uploads/$i5/')
-                              .putFile(i6);
+                          TaskSnapshot a1;
+                          TaskSnapshot a2;
+                          TaskSnapshot a3;
+                          TaskSnapshot a4;
+                          TaskSnapshot a5;
+                          TaskSnapshot a6;
+                          String id = FirebaseAuth.instance.currentUser.uid;
+
+                          if (i1 != null) {
+                            a1 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i1/')
+                                .putFile(i1);
+                          }
+                          if (i2 != null) {
+                            a2 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i2/')
+                                .putFile(i2);
+                          }
+                          if (i3 != null) {
+                            a3 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i3/')
+                                .putFile(i3);
+                          }
+                          if (i4 != null) {
+                            a4 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i4/')
+                                .putFile(i4);
+                          }
+                          if (i5 != null) {
+                            a5 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i5/')
+                                .putFile(i5);
+                          }
+                          if (i6 != null) {
+                            a6 = await FirebaseStorage.instance
+                                .ref('uploads/$id/$i5/')
+                                .putFile(i6);
+                          }
 
                           Navigator.push(
                               context,
@@ -353,12 +373,12 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                         ? 'nonver'
                                         : 'verification_needed',
                                     'images': [
-                                      await a1.ref.getDownloadURL(),
-                                      await a2.ref.getDownloadURL(),
-                                      await a3.ref.getDownloadURL(),
-                                      await a4.ref.getDownloadURL(),
-                                      await a5.ref.getDownloadURL(),
-                                      await a6.ref.getDownloadURL(),
+                                      if(a1 != null) await a1.ref.getDownloadURL(),
+                                      if(a2 != null) await a2.ref.getDownloadURL(),
+                                      if(a3 != null) await a3.ref.getDownloadURL(),
+                                      if(a4 != null) await a4.ref.getDownloadURL(),
+                                      if(a5 != null) await a5.ref.getDownloadURL(),
+                                      if(a6 != null) await a6.ref.getDownloadURL(),
                                     ],
                                     'by': widget.username,
                                   },
