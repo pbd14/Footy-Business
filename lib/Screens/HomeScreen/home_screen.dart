@@ -47,8 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .collection('companies')
           .where('owner', isEqualTo: FirebaseAuth.instance.currentUser.uid)
           .get();
-      if (dc.docs 
-      == null || dc.docs.length == 0) {
+      if (dc.docs == null || dc.docs.length == 0) {
         if (this.mounted) {
           setState(() {
             can = false;
@@ -134,11 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home),
-                      label: 'Dashboard',
+                      label: '',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.apartment_rounded),
-                      label: 'Management',
+                      label: '',
                     ),
                     BottomNavigationBarItem(
                       icon: isNotif
@@ -170,21 +169,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             )
                           : Icon(Icons.access_alarm),
-                      label: 'History',
+                      label: '',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.person),
-                      label: 'Profile',
+                      label: '',
                     ),
                   ],
                   currentIndex: _selectedIndex,
                   selectedItemColor: darkPrimaryColor,
-                  unselectedItemColor: primaryColor,
+                  unselectedItemColor: whiteColor,
                   onTap: _onItemTapped,
-                  backgroundColor: whiteColor,
+                  backgroundColor: darkPrimaryColor,
                   elevation: 50,
-                  iconSize: 33.0,
-                  selectedFontSize: 17.0,
+                  iconSize: 30.0,
+                  selectedIconTheme: IconThemeData(size: 40, color: whiteColor),
+                  selectedFontSize: 0.0,
+                  unselectedFontSize: 0,
                   type: BottomNavigationBarType.fixed,
                 ),
               );
