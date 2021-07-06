@@ -8,7 +8,6 @@ import 'package:footy_business/widgets/rounded_text_input.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
-
 import '../../constants.dart';
 import '../loading_screen.dart';
 import 'components/background.dart';
