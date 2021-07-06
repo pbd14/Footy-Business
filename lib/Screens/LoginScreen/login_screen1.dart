@@ -91,12 +91,16 @@ class _LoginScreen1State extends State<LoginScreen1> {
                             setState(() {
                               loading = true;
                             });
+                            FirebaseAuth.instance.currentUser.updateDisplayName(this.owner.trim());
+                            String id =
+                          DateTime.now().millisecondsSinceEpoch.toString();
                             FirebaseFirestore.instance
                                 .collection('companies')
-                                .doc(FirebaseAuth.instance.currentUser.uid)
+                                .doc(id)
                                 .set({
-                              'name': this.name,
-                              'owner': this.owner,
+                              'name': this.name.trim(),
+                              'owner': FirebaseAuth.instance.currentUser.uid,
+                              'owner_name': this.owner.trim(),
                               'phones': FieldValue.arrayUnion([
                                 FirebaseAuth.instance.currentUser.phoneNumber
                               ]),
