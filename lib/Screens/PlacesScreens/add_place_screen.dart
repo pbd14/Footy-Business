@@ -23,7 +23,8 @@ class AddPlaceScreen extends StatefulWidget {
 class _AddPlaceScreenState extends State<AddPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
-  String name, description, category;
+  String name, description;
+  String category = 'other';
   String type = 'No verification';
   String error = '';
   List categs;
@@ -71,6 +72,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
           default:
             i1 = File(picker.path);
         }
+        error = '';
       } else {
         print('No image selected.');
       }
@@ -319,49 +321,55 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                       text: 'CONTINUE',
                       press: () async {
                         if (_formKey.currentState.validate()) {
-                          setState(() {
-                            loading = true;
-                          });
-                          TaskSnapshot a1;
-                          TaskSnapshot a2;
-                          TaskSnapshot a3;
-                          TaskSnapshot a4;
-                          TaskSnapshot a5;
-                          TaskSnapshot a6;
-                          String id = FirebaseAuth.instance.currentUser.uid;
+                          if (i1 != null ||
+                              i2 != null ||
+                              i3 != null ||
+                              i4 != null ||
+                              i5 != null ||
+                              i6 != null) {
+                            setState(() {
+                              loading = true;
+                            });
+                            TaskSnapshot a1;
+                            TaskSnapshot a2;
+                            TaskSnapshot a3;
+                            TaskSnapshot a4;
+                            TaskSnapshot a5;
+                            TaskSnapshot a6;
+                            String id = FirebaseAuth.instance.currentUser.uid;
 
-                          if (i1 != null) {
-                            a1 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i1/')
-                                .putFile(i1);
-                          }
-                          if (i2 != null) {
-                            a2 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i2/')
-                                .putFile(i2);
-                          }
-                          if (i3 != null) {
-                            a3 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i3/')
-                                .putFile(i3);
-                          }
-                          if (i4 != null) {
-                            a4 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i4/')
-                                .putFile(i4);
-                          }
-                          if (i5 != null) {
-                            a5 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i5/')
-                                .putFile(i5);
-                          }
-                          if (i6 != null) {
-                            a6 = await FirebaseStorage.instance
-                                .ref('uploads/$id/$i5/')
-                                .putFile(i6);
-                          }
+                            if (i1 != null) {
+                              a1 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i1/')
+                                  .putFile(i1);
+                            }
+                            if (i2 != null) {
+                              a2 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i2/')
+                                  .putFile(i2);
+                            }
+                            if (i3 != null) {
+                              a3 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i3/')
+                                  .putFile(i3);
+                            }
+                            if (i4 != null) {
+                              a4 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i4/')
+                                  .putFile(i4);
+                            }
+                            if (i5 != null) {
+                              a5 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i5/')
+                                  .putFile(i5);
+                            }
+                            if (i6 != null) {
+                              a6 = await FirebaseStorage.instance
+                                  .ref('uploads/$id/$i5/')
+                                  .putFile(i6);
+                            }
 
-                          Navigator.push(
+                            Navigator.push(
                               context,
                               SlideRightRoute(
                                 page: AddPlaceScreen2(
@@ -373,24 +381,36 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                         ? 'nonver'
                                         : 'verification_needed',
                                     'images': [
-                                      if(a1 != null) await a1.ref.getDownloadURL(),
-                                      if(a2 != null) await a2.ref.getDownloadURL(),
-                                      if(a3 != null) await a3.ref.getDownloadURL(),
-                                      if(a4 != null) await a4.ref.getDownloadURL(),
-                                      if(a5 != null) await a5.ref.getDownloadURL(),
-                                      if(a6 != null) await a6.ref.getDownloadURL(),
+                                      if (a1 != null)
+                                        await a1.ref.getDownloadURL(),
+                                      if (a2 != null)
+                                        await a2.ref.getDownloadURL(),
+                                      if (a3 != null)
+                                        await a3.ref.getDownloadURL(),
+                                      if (a4 != null)
+                                        await a4.ref.getDownloadURL(),
+                                      if (a5 != null)
+                                        await a5.ref.getDownloadURL(),
+                                      if (a6 != null)
+                                        await a6.ref.getDownloadURL(),
                                     ],
                                     'by': widget.username,
                                   },
                                 ),
-                              ));
-                          setState(() {
-                            loading = false;
-                            this.name = '';
-                            this.description = '';
-                            this.type = '';
-                            this.category = '';
-                          });
+                              ),
+                            );
+                            setState(() {
+                              loading = false;
+                              this.name = '';
+                              this.description = '';
+                              this.type = '';
+                              this.category = '';
+                            });
+                          } else {
+                            setState(() {
+                              error = 'Choose at least 1 photo';
+                            });
+                          }
                         }
                       },
                       color: darkPrimaryColor,

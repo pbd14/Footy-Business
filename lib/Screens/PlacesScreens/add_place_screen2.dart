@@ -128,10 +128,13 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                       setState(() {
                         loading = true;
                       });
+                      String id =
+                          DateTime.now().millisecondsSinceEpoch.toString();
                       FirebaseFirestore.instance
                           .collection('locations')
-                          .doc()
+                          .doc(id)
                           .set({
+                        'id': id,
                         'name': widget.data['name'],
                         'description': widget.data['description'],
                         'category': widget.data['category'],
