@@ -38,6 +38,8 @@ dependencies:
   overlay_support: ^1.2.0
   image_picker: ^0.7.4
   cached_network_image: ^3.0.0
+  shared_preferences: ^2.0.5
+  flutter_screen_lock: ^4.0.3
   
 
 

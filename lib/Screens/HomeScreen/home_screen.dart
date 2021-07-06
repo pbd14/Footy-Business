@@ -43,11 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> prepare() async {
     if (FirebaseAuth.instance.currentUser != null) {
-      DocumentSnapshot dc = await FirebaseFirestore.instance
+      QuerySnapshot dc = await FirebaseFirestore.instance
           .collection('companies')
-          .doc(FirebaseAuth.instance.currentUser.uid)
+          .where('owner', isEqualTo: FirebaseAuth.instance.currentUser.uid)
           .get();
-      if (!dc.exists) {
+      if (dc.docs 
+      == null || dc.docs.length == 0) {
         if (this.mounted) {
           setState(() {
             can = false;
@@ -123,67 +124,69 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return loading
         ? LoadingScreen()
-        : !can ? LoginScreen1() : Scaffold(
-            body: Center(
-              child: _widgetOptions.elementAt(_selectedIndex),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Dashboard',
+        : !can
+            ? LoginScreen1()
+            : Scaffold(
+                body: Center(
+                  child: _widgetOptions.elementAt(_selectedIndex),
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.apartment_rounded),
-                  label: 'Management',
-                ),
-                BottomNavigationBarItem(
-                  icon: isNotif
-                      ? new Stack(
-                          children: <Widget>[
-                            new Icon(Icons.access_alarm),
-                            new Positioned(
-                              right: 0,
-                              child: new Container(
-                                padding: EdgeInsets.all(1),
-                                decoration: new BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 15,
-                                  minHeight: 15,
-                                ),
-                                child: new Text(
-                                  notifCounter.toString(),
-                                  style: new TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 8,
+                bottomNavigationBar: BottomNavigationBar(
+                  items: <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Dashboard',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.apartment_rounded),
+                      label: 'Management',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: isNotif
+                          ? new Stack(
+                              children: <Widget>[
+                                new Icon(Icons.access_alarm),
+                                new Positioned(
+                                  right: 0,
+                                  child: new Container(
+                                    padding: EdgeInsets.all(1),
+                                    decoration: new BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      minWidth: 15,
+                                      minHeight: 15,
+                                    ),
+                                    child: new Text(
+                                      notifCounter.toString(),
+                                      style: new TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 8,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
+                                )
+                              ],
                             )
-                          ],
-                        )
-                      : Icon(Icons.access_alarm),
-                  label: 'History',
+                          : Icon(Icons.access_alarm),
+                      label: 'History',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  selectedItemColor: darkPrimaryColor,
+                  unselectedItemColor: primaryColor,
+                  onTap: _onItemTapped,
+                  backgroundColor: whiteColor,
+                  elevation: 50,
+                  iconSize: 33.0,
+                  selectedFontSize: 17.0,
+                  type: BottomNavigationBarType.fixed,
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: darkPrimaryColor,
-              unselectedItemColor: primaryColor,
-              onTap: _onItemTapped,
-              backgroundColor: whiteColor,
-              elevation: 50,
-              iconSize: 33.0,
-              selectedFontSize: 17.0,
-              type: BottomNavigationBarType.fixed,
-            ),
-          );
+              );
   }
 }

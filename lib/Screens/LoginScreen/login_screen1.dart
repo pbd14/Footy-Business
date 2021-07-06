@@ -91,7 +91,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
                             setState(() {
                               loading = true;
                             });
-                            FirebaseAuth.instance.currentUser.updateDisplayName(this.owner.trim());
+                            // FirebaseAuth.instance.currentUser.updateDisplayName(this.owner.trim());
                             String id =
                           DateTime.now().millisecondsSinceEpoch.toString();
                             FirebaseFirestore.instance
