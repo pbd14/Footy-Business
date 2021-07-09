@@ -30,6 +30,7 @@ class RoundedPhoneInputField extends StatelessWidget {
               icon,
               color: whiteColor,
             ),
+            hintStyle: TextStyle(color: whiteColor.withOpacity(0.7)),
             hintText: hintText,
             border: InputBorder.none,
           ),

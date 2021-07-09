@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ProfileScreen/components/settings.dart';
 import 'package:footy_business/Services/auth_service.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
@@ -137,91 +138,145 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                 ]),
             body: RefreshIndicator(
               onRefresh: _refresh,
-              child: CustomScrollView(scrollDirection: Axis.vertical, slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      SizedBox(height: 20),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Text(
-                                FirebaseAuth.instance.currentUser.phoneNumber
-                                    .toString(),
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                    color: darkColor,
-                                    fontSize: 25,
+              child: CustomScrollView(
+                scrollDirection: Axis.vertical,
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        SizedBox(height: 20),
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Text(
+                                  FirebaseAuth.instance.currentUser.phoneNumber
+                                      .toString(),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    textStyle: TextStyle(
+                                      color: darkColor,
+                                      fontSize: 25,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 50),
-                    ],
+                        SizedBox(height: 50),
+                      ],
+                    ),
                   ),
-                ),
-                companies != null
-                    ? SliverList(
-                        delegate: SliverChildListDelegate([
-                          Center(
-                            child: Text(
-                              'Companies',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: darkColor,
-                                  fontSize: 25,
+                  companies != null
+                      ? SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              Center(
+                                child: Text(
+                                  'Companies',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    textStyle: TextStyle(
+                                      color: darkColor,
+                                      fontSize: 25,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          for (QueryDocumentSnapshot company in companies)
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
-                              // padding: EdgeInsets.all(10),
-                              child: Card(
-                                margin: EdgeInsets.all(5),
-                                elevation: 10,
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Container(
-                                      width: size.width * 0.45,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            company.data()['name'],
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                color: darkPrimaryColor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
+                              SizedBox(height: 20),
+                              for (QueryDocumentSnapshot company in companies)
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  // padding: EdgeInsets.all(10),
+                                  child: Card(
+                                    margin: EdgeInsets.all(5),
+                                    elevation: 10,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Container(
+                                          width: size.width * 0.45,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                company.data()['name'],
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                    color: darkPrimaryColor,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                company.data()['owner_name'],
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                      color: darkPrimaryColor,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(
-                                            height: 10,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              Center(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        SlideRightRoute(
+                                          page: LoginScreen1(),
+                                        ));
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: size.width * 0.8,
+                                    padding: EdgeInsets.all(15),
+                                    child: Card(
+                                      elevation: 0,
+                                      margin: EdgeInsets.all(15),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons
+                                                .plus_square_on_square,
+                                            color: darkPrimaryColor,
+                                            size: 25,
                                           ),
+                                          SizedBox(height: 5),
                                           Text(
-                                            company.data()['owner_name'],
-                                            maxLines: 2,
+                                            'Create company',
+                                            textScaleFactor: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.montserrat(
                                               textStyle: TextStyle(
                                                   color: darkPrimaryColor,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w400),
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -230,22 +285,77 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                   ),
                                 ),
                               ),
-                            ),
-                        ]),
-                      )
-                    : Center(
-                        child: Text(
-                          'No companies',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
-                            textStyle: TextStyle(
-                              color: darkPrimaryColor,
-                              fontSize: 25,
-                            ),
+                            ],
+                          ),
+                        )
+                      : SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              Center(
+                                child: Text(
+                                  'No companies',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    textStyle: TextStyle(
+                                      color: darkPrimaryColor,
+                                      fontSize: 25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Center(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        SlideRightRoute(
+                                          page: LoginScreen1(),
+                                        ));
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: size.width * 0.8,
+                                    padding: EdgeInsets.all(15),
+                                    child: Card(
+                                      elevation: 0,
+                                      margin: EdgeInsets.all(15),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons
+                                                .plus_square_on_square,
+                                            color: darkPrimaryColor,
+                                            size: 25,
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            'Create company',
+                                            textScaleFactor: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                  color: darkPrimaryColor,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-              ]),
+                ],
+              ),
             ),
           );
 

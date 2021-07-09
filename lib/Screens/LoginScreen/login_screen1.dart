@@ -30,6 +30,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     if (widget.errors != null) {
       setState(() {
         error = widget.errors;
@@ -50,7 +51,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
                           child: Text(
-                            'Create Your Company',
+                            'Create Company',
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
                                 color: whiteColor,
@@ -62,88 +63,108 @@ class _LoginScreen1State extends State<LoginScreen1> {
                         ),
                       ),
                       SizedBox(height: 30),
-                      RoundedTextInput(
-                        validator: (val) =>
-                            val.length >= 2 ? null : 'Minimum 2 characters',
-                        hintText: "Name",
-                        type: TextInputType.text,
-                        onChanged: (value) {
-                          this.name = value;
-                        },
-                      ),
-                      SizedBox(height: 30),
-                      RoundedTextInput(
-                        validator: (val) =>
-                            val.length >= 2 ? null : 'Minimum 2 characters',
-                        hintText: "Owner's name",
-                        type: TextInputType.text,
-                        onChanged: (value) {
-                          this.owner = value;
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      RoundedButton(
-                        width: 0.7,
-                        ph: 55,
-                        text: 'CONTINUE',
-                        press: () async {
-                          if (_formKey.currentState.validate()) {
-                            setState(() {
-                              loading = true;
-                            });
-                            // FirebaseAuth.instance.currentUser.updateDisplayName(this.owner.trim());
-                            String id =
-                          DateTime.now().millisecondsSinceEpoch.toString();
-                            FirebaseFirestore.instance
-                                .collection('companies')
-                                .doc(id)
-                                .set({
-                              'name': this.name.trim(),
-                              'owner': FirebaseAuth.instance.currentUser.uid,
-                              'owner_name': this.owner.trim(),
-                              'phones': FieldValue.arrayUnion([
-                                FirebaseAuth.instance.currentUser.phoneNumber
-                              ]),
-                            }).catchError((error) {
-                              PushNotificationMessage notification =
-                                  PushNotificationMessage(
-                                title: 'Fail',
-                                body: 'Failed to login',
-                              );
-                              showSimpleNotification(
-                                Container(child: Text(notification.body)),
-                                position: NotificationPosition.top,
-                                background: Colors.red,
-                              );
-                            });
-                            Navigator.push(
-                                context,
-                                SlideRightRoute(
-                                  page: AddPlaceScreen(
-                                    username: this.owner,
+                      Container(
+                        width: size.width * 0.85,
+                        child: Card(
+                          elevation: 10,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RoundedTextInput(
+                                  validator: (val) => val.length >= 2
+                                      ? null
+                                      : 'Minimum 2 characters',
+                                  hintText: "Name",
+                                  type: TextInputType.text,
+                                  onChanged: (value) {
+                                    this.name = value;
+                                  },
+                                ),
+                                SizedBox(height: 30),
+                                RoundedTextInput(
+                                  validator: (val) => val.length >= 2
+                                      ? null
+                                      : 'Minimum 2 characters',
+                                  hintText: "Owner's name",
+                                  type: TextInputType.text,
+                                  onChanged: (value) {
+                                    this.owner = value;
+                                  },
+                                ),
+                                SizedBox(height: 20),
+                                RoundedButton(
+                                  width: 0.7,
+                                  ph: 55,
+                                  text: 'CONTINUE',
+                                  press: () async {
+                                    if (_formKey.currentState.validate()) {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      // FirebaseAuth.instance.currentUser.updateDisplayName(this.owner.trim());
+                                      String id = DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString();
+                                      FirebaseFirestore.instance
+                                          .collection('companies')
+                                          .doc(id)
+                                          .set({
+                                        'name': this.name.trim(),
+                                        'owner':
+                                            FirebaseAuth.instance.currentUser.uid,
+                                        'owner_name': this.owner.trim(),
+                                        'phones': FieldValue.arrayUnion([
+                                          FirebaseAuth
+                                              .instance.currentUser.phoneNumber
+                                        ]),
+                                      }).catchError((error) {
+                                        PushNotificationMessage notification =
+                                            PushNotificationMessage(
+                                          title: 'Fail',
+                                          body: 'Failed to login',
+                                        );
+                                        showSimpleNotification(
+                                          Container(
+                                              child: Text(notification.body)),
+                                          position: NotificationPosition.top,
+                                          background: Colors.red,
+                                        );
+                                      });
+                                      Navigator.push(
+                                          context,
+                                          SlideRightRoute(
+                                            page: AddPlaceScreen(
+                                              username: this.owner,
+                                            ),
+                                          ));
+                                      setState(() {
+                                        loading = false;
+                                        this.name = '';
+                                        this.owner = '';
+                                      });
+                                    }
+                                  },
+                                  color: darkPrimaryColor,
+                                  textColor: whiteColor,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    error,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                      ),
+                                    ),
                                   ),
-                                ));
-                            setState(() {
-                              loading = false;
-                              this.name = '';
-                              this.owner = '';
-                            });
-                          }
-                        },
-                        color: darkPrimaryColor,
-                        textColor: whiteColor,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          error,
-                          style: GoogleFonts.montserrat(
-                            textStyle: TextStyle(
-                              color: Colors.red,
-                              fontSize: 14,
+                                ),
+                              ],
                             ),
                           ),
                         ),

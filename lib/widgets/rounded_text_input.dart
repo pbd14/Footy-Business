@@ -22,7 +22,7 @@ class RoundedTextInput extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.length: null,
-    this.height: 90,
+    this.height: 70,
     this.formatters: null,
     this.initialValue: null,
   }) : super(key: key);
@@ -43,6 +43,7 @@ class RoundedTextInput extends StatelessWidget {
           onChanged: onChanged,
           inputFormatters: formatters != null ? formatters : [],
           decoration: InputDecoration(
+            hintStyle: TextStyle(color: whiteColor.withOpacity(0.7)),
             hintText: hintText,
             border: InputBorder.none,
           ),
