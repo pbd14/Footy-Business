@@ -15,7 +15,12 @@ import 'add_place_screen2.dart';
 
 class AddPlaceScreen extends StatefulWidget {
   String username;
-  AddPlaceScreen({Key key, this.username}) : super(key: key);
+  String companyId;
+  AddPlaceScreen({
+    Key key,
+    @required this.username,
+    @required this.companyId,
+  }) : super(key: key);
   @override
   _AddPlaceScreenState createState() => _AddPlaceScreenState();
 }
@@ -368,7 +373,6 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                   .ref('uploads/$id/$i5/')
                                   .putFile(i6);
                             }
-
                             Navigator.push(
                               context,
                               SlideRightRoute(
@@ -394,6 +398,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                       if (a6 != null)
                                         await a6.ref.getDownloadURL(),
                                     ],
+                                    'owner': widget.companyId,
                                     'by': widget.username,
                                   },
                                 ),

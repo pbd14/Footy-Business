@@ -112,13 +112,14 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                           .doc(id)
                                           .set({
                                         'name': this.name.trim(),
-                                        'owner':
-                                            FirebaseAuth.instance.currentUser.uid,
+                                        'owner': FirebaseAuth
+                                            .instance.currentUser.uid,
                                         'owner_name': this.owner.trim(),
                                         'phones': FieldValue.arrayUnion([
                                           FirebaseAuth
                                               .instance.currentUser.phoneNumber
                                         ]),
+                                        'id': id,
                                       }).catchError((error) {
                                         PushNotificationMessage notification =
                                             PushNotificationMessage(
@@ -137,6 +138,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                           SlideRightRoute(
                                             page: AddPlaceScreen(
                                               username: this.owner,
+                                              companyId: id,
                                             ),
                                           ));
                                       setState(() {

@@ -143,7 +143,8 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                         'lon': lon,
                         'images': widget.data['images'],
                         'by': widget.data['by'],
-                        'owner': FirebaseAuth.instance.currentUser.uid,
+                        'services': [],
+                        'owner': widget.data['owner'],
                       }).catchError((error) {
                         print('MISTAKE HERE');
                         print(error);
@@ -166,7 +167,7 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                       showSimpleNotification(
                         Container(child: Text(notification.body)),
                         position: NotificationPosition.top,
-                        background: Colors.green[900],
+                        background: darkPrimaryColor,
                       );
                       Navigator.push(
                           context,
