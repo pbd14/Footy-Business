@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Screens/ManagementScreen/components/edit_place.dart';
 import 'package:footy_business/Screens/ManagementScreen/components/edit_service.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
@@ -99,6 +100,24 @@ class _PlaceScreenState extends State<PlaceScreen> {
                       fontWeight: FontWeight.w300),
                 ),
               ),
+              actions: [
+                IconButton(
+                  color: whiteColor,
+                  icon: Icon(
+                    CupertinoIcons.pencil,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                        page: EditPlaceScreen(
+                          place: place,
+                        ),
+                      ),
+                    );
+                  },
+                )
+              ],
             ),
             body: RefreshIndicator(
               color: primaryColor,
@@ -288,7 +307,8 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   page: EditServiceScreen(
                                     placeId: place.id,
                                     service: service,
-                                    otherServices: place.data()['services'],
+                                    otherServices:
+                                        place.data()['services'].toList(),
                                   ),
                                 ),
                               );
@@ -316,7 +336,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   ),
                                 ),
                                 trailing: Icon(
-                                  Icons.arrow_forward,
+                                  CupertinoIcons.pen,
                                   color: whiteColor,
                                 ),
                                 isThreeLine: true,
