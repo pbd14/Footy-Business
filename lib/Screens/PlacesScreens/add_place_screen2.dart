@@ -144,6 +144,7 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                         'images': widget.data['images'],
                         'by': widget.data['by'],
                         'services': [],
+                        'rates':{},
                         'owner': widget.data['owner'],
                       }).catchError((error) {
                         print('MISTAKE HERE');

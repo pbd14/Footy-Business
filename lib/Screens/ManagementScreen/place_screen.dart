@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Screens/ManagementScreen/components/edit_service.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -86,6 +87,18 @@ class _PlaceScreenState extends State<PlaceScreen> {
             appBar: AppBar(
               backgroundColor: darkPrimaryColor,
               iconTheme: IconThemeData(color: whiteColor),
+              centerTitle: true,
+              title: Text(
+                'Place',
+                textScaleFactor: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserrat(
+                  textStyle: TextStyle(
+                      color: whiteColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300),
+                ),
+              ),
             ),
             body: RefreshIndicator(
               color: primaryColor,
@@ -263,23 +276,22 @@ class _PlaceScreenState extends State<PlaceScreen> {
                         height: 20,
                       ),
                       if (place.data()['services'] != null)
-                        for (var service in place.data()['services'])
+                        for (Map service in place.data()['services'])
                           TextButton(
                             onPressed: () {
                               setState(() {
                                 loading = true;
                               });
-                              // Navigator.push(
-                              //   context,
-                              //   SlideRightRoute(
-                              //     page: ServiceScreen(
-                              //       data: service,
-                              //       serviceId:
-                              //           widget.data['services'].indexOf(service),
-                              //       placeId: widget.data['id'],
-                              //     ),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                  page: EditServiceScreen(
+                                    placeId: place.id,
+                                    service: service,
+                                    otherServices: place.data()['services'],
+                                  ),
+                                ),
+                              );
                               setState(() {
                                 loading = false;
                               });
