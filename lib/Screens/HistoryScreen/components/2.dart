@@ -27,6 +27,11 @@ class _History2State extends State<History2>
   List places_id = [];
   StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
 
+  @override
+  void dispose(){
+    ordinaryBookSubscr.cancel();
+  }
+
   Future<void> loadData() async {
     setState(() {
       loading = true;
@@ -89,6 +94,8 @@ class _History2State extends State<History2>
     });
     _bookings = [];
     _places = {};
+    companies_id = [];
+    places_id = [];
     loadData();
     Completer<Null> completer = new Completer<Null>();
     completer.complete();

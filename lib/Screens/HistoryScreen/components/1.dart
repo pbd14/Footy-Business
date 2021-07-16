@@ -1,12 +1,17 @@
+// Here _bookings is for unfinished ones, while _bookings2 for ver_needed. In some places these two things are combined with conditionals. Delete them.
+
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class History1 extends StatefulWidget {
@@ -21,6 +26,7 @@ class _History1State extends State<History1>
   bool loading = true;
   bool error = true;
   List<QueryDocumentSnapshot> _bookings = [];
+  List<QueryDocumentSnapshot> _bookings2 = [];
   Map<String, QueryDocumentSnapshot> _places = {};
   Map<QueryDocumentSnapshot, QueryDocumentSnapshot> placesSlivers = {};
   Map<QueryDocumentSnapshot, QueryDocumentSnapshot> unrplacesSlivers = {};
@@ -30,6 +36,9 @@ class _History1State extends State<History1>
   List companies_id = [];
   List places_id = [];
 
+  QuerySnapshot places;
+  QuerySnapshot companies;
+
   StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
   StreamSubscription<QuerySnapshot> nonverBookSubscr;
   StreamSubscription<QuerySnapshot> inprocessBookSubscr;
@@ -37,19 +46,78 @@ class _History1State extends State<History1>
   @override
   void dispose() {
     ordinaryBookSubscr.cancel();
+    nonverBookSubscr.cancel();
     inprocessBookSubscr.cancel();
     super.dispose();
   }
 
+  // Future<void> ordinaryBookPrep(List<QueryDocumentSnapshot> _bookings) async {
+  //   for (QueryDocumentSnapshot book in _bookings) {
+  //     for (QueryDocumentSnapshot place in places.docs) {
+  //       if (book.data()['placeId'] == place.id) {
+  //         setState(() {
+  //           _places.addAll({
+  //             book.id: place,
+  //           });
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
+
+  // Future<void> nonverBookPrep(List<QueryDocumentSnapshot> _bookings) async {
+  //   for (QueryDocumentSnapshot book in _bookings) {
+  //     // if (DateTime.now().isAfter(book.data()['deadline'])) {
+  //     //   bookings.docs.remove(book);
+  //     //   _bookings.remove(book);
+  //     //   FirebaseFirestore.instance
+  //     //       .collection('bookings')
+  //     //       .doc(book.id)
+  //     //       .delete();
+  //     // }
+
+  //     for (QueryDocumentSnapshot place in places.docs) {
+  //       if (book.data()['placeId'] == place.id) {
+  //         setState(() {
+  //           _places.addAll({
+  //             book.id: place,
+  //           });
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
+
+  // Future<void> inprocessBookPrep(List<QueryDocumentSnapshot> _bookings) async {
+  //   if (_bookings1.length != 0) {
+  //     for (QueryDocumentSnapshot book in _bookings1) {
+  //       for (QueryDocumentSnapshot place in places.docs) {
+  //         if (book.data()['placeId'] == place.id) {
+  //           setState(() {
+  //             slivers.add(book);
+  //             placesSlivers.addAll({book: place});
+  //           });
+  //         }
+  //       }
+  //       if (book.data()['seen_status'] == 'unseen') {
+  //         FirebaseFirestore.instance
+  //             .collection('bookings')
+  //             .doc(book.id)
+  //             .update({'seen_status': 'seen1'});
+  //       }
+  //     }
+  //   }
+  // }
+
   Future<void> loadData() async {
-    QuerySnapshot companies = await FirebaseFirestore.instance
+    companies = await FirebaseFirestore.instance
         .collection('companies')
         .where('owner', isEqualTo: FirebaseAuth.instance.currentUser.uid)
         .get();
     for (QueryDocumentSnapshot company in companies.docs) {
       companies_id.add(company.id);
     }
-    QuerySnapshot places = await FirebaseFirestore.instance
+    places = await FirebaseFirestore.instance
         .collection('locations')
         .where('owner', whereIn: companies_id)
         .get();
@@ -73,18 +141,19 @@ class _History1State extends State<History1>
         .snapshots()
         .listen((bookings) {
       setState(() {
-        if (bookings != null) {
-          _bookings = bookings.docs;
-          for (QueryDocumentSnapshot book in _bookings) {
-            if (book.data()['seen_status'] == 'seen1') {
-              FirebaseFirestore.instance
-                  .collection('bookings')
-                  .doc(book.id)
-                  .update({'seen_status': 'seen2'});
-            }
+        _bookings = bookings.docs;
+      });
+      for (QueryDocumentSnapshot book in bookings.docs) {
+        for (QueryDocumentSnapshot place in places.docs) {
+          if (book.data()['placeId'] == place.id) {
+            setState(() {
+              _places.addAll({
+                book.id: place,
+              });
+            });
           }
         }
-      });
+      }
     });
 
     nonverBookSubscr = FirebaseFirestore.instance
@@ -104,14 +173,27 @@ class _History1State extends State<History1>
         .snapshots()
         .listen((bookings) {
       if (bookings != null) {
-        _bookings.addAll(bookings.docs);
-      }
-      for (QueryDocumentSnapshot book in _bookings) {
-        for (QueryDocumentSnapshot place in places.docs) {
-          if (book.data()['placeId'] == place.id) {
-            _places.addAll({
-              book.id: place,
-            });
+        setState(() {
+          _bookings2 = bookings.docs;
+        });
+        for (QueryDocumentSnapshot book in _bookings) {
+          // if (DateTime.now().isAfter(book.data()['deadline'])) {
+          //   bookings.docs.remove(book);
+          //   _bookings.remove(book);
+          //   FirebaseFirestore.instance
+          //       .collection('bookings')
+          //       .doc(book.id)
+          //       .delete();
+          // }
+
+          for (QueryDocumentSnapshot place in places.docs) {
+            if (book.data()['placeId'] == place.id) {
+              setState(() {
+                _places.addAll({
+                  book.id: place,
+                });
+              });
+            }
           }
         }
       }
@@ -142,22 +224,18 @@ class _History1State extends State<History1>
         )
         .snapshots()
         .listen((bookings) {
-      if (bookings != null) {
+      setState(() {
         _bookings1 = bookings.docs;
-      }
+      });
       if (_bookings1.length != 0) {
         for (QueryDocumentSnapshot book in _bookings1) {
           for (QueryDocumentSnapshot place in places.docs) {
             if (book.data()['placeId'] == place.id) {
-              slivers.add(book);
-              placesSlivers.addAll({book: place});
+              setState(() {
+                slivers.add(book);
+                placesSlivers.addAll({book: place});
+              });
             }
-          }
-          if (book.data()['seen_status'] == 'unseen') {
-            FirebaseFirestore.instance
-                .collection('bookings')
-                .doc(book.id)
-                .update({'seen_status': 'seen1'});
           }
         }
       }
@@ -171,10 +249,38 @@ class _History1State extends State<History1>
     }
   }
 
-  // ignore: unused_element
   List<Meeting> _getDataSource() {
     var meetings = <Meeting>[];
     if (_bookings != null) {
+      for (var book in _bookings2) {
+        final DateTime today = book.data()['timestamp_date'].toDate();
+        final DateTime startTime = DateTime(
+          today.year,
+          today.month,
+          today.day,
+          DateFormat.Hm().parse(book.data()['from']).hour,
+          DateFormat.Hm().parse(book.data()['from']).minute,
+        );
+        final DateTime endTime = DateTime(
+          today.year,
+          today.month,
+          today.day,
+          DateFormat.Hm().parse(book.data()['to']).hour,
+          DateFormat.Hm().parse(book.data()['to']).minute,
+        );
+        meetings.add(Meeting(
+            _places[book.id] != null
+                ? _places[book.id].data()['name'] != null
+                    ? _places[book.id].data()['name']
+                    : 'Place'
+                : 'Place',
+            startTime,
+            endTime,
+            book.data()['status'] == 'unfinished'
+                ? darkPrimaryColor
+                : Colors.red,
+            false));
+      }
       for (var book in _bookings) {
         final DateTime today = book.data()['timestamp_date'].toDate();
         final DateTime startTime = DateTime(
@@ -192,7 +298,7 @@ class _History1State extends State<History1>
           DateFormat.Hm().parse(book.data()['to']).minute,
         );
         meetings.add(Meeting(
-            _places != null
+            _places[book.id] != null
                 ? _places[book.id].data()['name'] != null
                     ? _places[book.id].data()['name']
                     : 'Place'
@@ -219,6 +325,11 @@ class _History1State extends State<History1>
     _bookings1 = [];
     slivers = [];
     sliversList = [];
+    companies_id = [];
+    places_id = [];
+    ordinaryBookSubscr.cancel();
+    inprocessBookSubscr.cancel();
+    nonverBookSubscr.cancel();
     loadData();
     Completer<Null> completer = new Completer<Null>();
     completer.complete();
@@ -516,7 +627,7 @@ class _History1State extends State<History1>
                         SizedBox(
                           height: 15,
                         ),
-                        for (var book in _bookings)
+                        for (QueryDocumentSnapshot book in _bookings)
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 10.0),
                             // padding: EdgeInsets.all(10),
@@ -569,7 +680,7 @@ class _History1State extends State<History1>
                                               height: 10,
                                             ),
                                             Text(
-                                              _places != null
+                                              _places[book.id] != null
                                                   ? _places[book.id]
                                                               .data()['name'] !=
                                                           null
@@ -604,6 +715,847 @@ class _History1State extends State<History1>
                                                 ),
                                               ),
                                             ),
+                                            SizedBox(
+                                                height: book.data()['status'] ==
+                                                        'verification_needed'
+                                                    ? 15
+                                                    : 0),
+                                            book.data()['status'] ==
+                                                    'verification_needed'
+                                                ? Center(
+                                                    child: Text(
+                                                      'Accept an offer?',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color:
+                                                              darkPrimaryColor,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            book.data()['status'] ==
+                                                    'verification_needed'
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
+                                                          if (DateTime.now().isAfter(
+                                                              DateTime.parse(book
+                                                                  .data()[
+                                                                      'deadline']
+                                                                  .toString()))) {
+                                                            _bookings
+                                                                .remove(book);
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookings')
+                                                                .doc(book.id)
+                                                                .delete();
+                                                            PushNotificationMessage
+                                                                notification =
+                                                                PushNotificationMessage(
+                                                              title:
+                                                                  'Deadline passed',
+                                                              body:
+                                                                  'Booking was canceled',
+                                                            );
+                                                            showSimpleNotification(
+                                                              Container(
+                                                                  child: Text(
+                                                                      notification
+                                                                          .body)),
+                                                              position:
+                                                                  NotificationPosition
+                                                                      .top,
+                                                              background:
+                                                                  Colors.red,
+                                                            );
+                                                          } else {
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookigs')
+                                                                .doc(book.id)
+                                                                .update({
+                                                              'status':
+                                                                  'unfinished',
+                                                            });
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'Yes',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  primaryColor),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
+
+                                                          if (DateTime.now().isAfter(
+                                                              DateTime.parse(book
+                                                                  .data()[
+                                                                      'deadline']
+                                                                  .toString()))) {
+                                                            _bookings
+                                                                .remove(book);
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookings')
+                                                                .doc(book.id)
+                                                                .delete();
+                                                            PushNotificationMessage
+                                                                notification =
+                                                                PushNotificationMessage(
+                                                              title:
+                                                                  'Deadline passed',
+                                                              body:
+                                                                  'Booking was canceled',
+                                                            );
+                                                            showSimpleNotification(
+                                                              Container(
+                                                                  child: Text(
+                                                                      notification
+                                                                          .body)),
+                                                              position:
+                                                                  NotificationPosition
+                                                                      .top,
+                                                              background:
+                                                                  Colors.red,
+                                                            );
+                                                          } else {
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      'Reject?'),
+                                                                  content:
+                                                                      const Text(
+                                                                          'Do you want to reject booking?'),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              true;
+                                                                        });
+                                                                        FirebaseFirestore
+                                                                            .instance
+                                                                            .collection('locations')
+                                                                            .doc(book.id)
+                                                                            .delete()
+                                                                            .catchError((error) {
+                                                                          print(
+                                                                              'MISTAKE HERE');
+                                                                          print(
+                                                                              error);
+                                                                          Navigator.of(context)
+                                                                              .pop(false);
+                                                                          PushNotificationMessage
+                                                                              notification =
+                                                                              PushNotificationMessage(
+                                                                            title:
+                                                                                'Fail',
+                                                                            body:
+                                                                                'Failed to reject',
+                                                                          );
+                                                                          showSimpleNotification(
+                                                                            Container(child: Text(notification.body)),
+                                                                            position:
+                                                                                NotificationPosition.top,
+                                                                            background:
+                                                                                Colors.red,
+                                                                          );
+                                                                        });
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              false;
+                                                                        });
+                                                                        Navigator.of(context)
+                                                                            .pop(true);
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Yes',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                primaryColor),
+                                                                      ),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.of(context).pop(false),
+                                                                      child:
+                                                                          const Text(
+                                                                        'No',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'No',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Container()
+                                          ],
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Container(
+                                          width: size.width * 0.3,
+                                          child: Column(
+                                            children: [
+                                              // _places != null
+                                              //     ? LabelButton(
+                                              //         isC: false,
+                                              //         reverse: FirebaseFirestore
+                                              //             .instance
+                                              //             .collection(
+                                              //                 'users')
+                                              //             .doc(FirebaseAuth
+                                              //                 .instance
+                                              //                 .currentUser
+                                              //                 .uid),
+                                              //         containsValue:
+                                              //             _places[book.id]
+                                              //                 .id,
+                                              //         color1: Colors.red,
+                                              //         color2:
+                                              //             lightPrimaryColor,
+                                              //         size: 30,
+                                              //         onTap: () {
+                                              //           setState(() {
+                                              //             FirebaseFirestore
+                                              //                 .instance
+                                              //                 .collection(
+                                              //                     'users')
+                                              //                 .doc(FirebaseAuth
+                                              //                     .instance
+                                              //                     .currentUser
+                                              //                     .uid)
+                                              //                 .update({
+                                              //               'favourites':
+                                              //                   FieldValue
+                                              //                       .arrayUnion([
+                                              //                 _places[book
+                                              //                         .id]
+                                              //                     .id
+                                              //               ])
+                                              //             }).catchError(
+                                              //                     (error) {
+                                              //               PushNotificationMessage
+                                              //                   notification =
+                                              //                   PushNotificationMessage(
+                                              //                 title: 'Fail',
+                                              //                 body:
+                                              //                     'Failed to update favourites',
+                                              //               );
+                                              //               showSimpleNotification(
+                                              //                 Container(
+                                              //                     child: Text(
+                                              //                         notification
+                                              //                             .body)),
+                                              //                 position:
+                                              //                     NotificationPosition
+                                              //                         .top,
+                                              //                 background:
+                                              //                     Colors
+                                              //                         .red,
+                                              //               );
+                                              //               if (this
+                                              //                   .mounted) {
+                                              //                 setState(() {
+                                              //                   loading =
+                                              //                       false;
+                                              //                 });
+                                              //               } else {
+                                              //                 loading =
+                                              //                     false;
+                                              //               }
+                                              //             });
+                                              //           });
+                                              //           ScaffoldMessenger
+                                              //                   .of(context)
+                                              //               .showSnackBar(
+                                              //             SnackBar(
+                                              //               duration:
+                                              //                   Duration(
+                                              //                       seconds:
+                                              //                           2),
+                                              //               backgroundColor:
+                                              //                   darkPrimaryColor,
+                                              //               content: Text(
+                                              //                 'Saved to favourites',
+                                              //                 style: GoogleFonts
+                                              //                     .montserrat(
+                                              //                   textStyle:
+                                              //                       TextStyle(
+                                              //                     color:
+                                              //                         whiteColor,
+                                              //                     fontSize:
+                                              //                         15,
+                                              //                   ),
+                                              //                 ),
+                                              //               ),
+                                              //             ),
+                                              //           );
+                                              //         },
+                                              //         onTap2: () {
+                                              //           setState(() {
+                                              //             FirebaseFirestore
+                                              //                 .instance
+                                              //                 .collection(
+                                              //                     'users')
+                                              //                 .doc(FirebaseAuth
+                                              //                     .instance
+                                              //                     .currentUser
+                                              //                     .uid)
+                                              //                 .update({
+                                              //               'favourites':
+                                              //                   FieldValue
+                                              //                       .arrayRemove([
+                                              //                 _places[book
+                                              //                         .id]
+                                              //                     .id
+                                              //               ])
+                                              //             }).catchError(
+                                              //                     (error) {
+                                              //               PushNotificationMessage
+                                              //                   notification =
+                                              //                   PushNotificationMessage(
+                                              //                 title: 'Fail',
+                                              //                 body:
+                                              //                     'Failed to update favourites',
+                                              //               );
+                                              //               showSimpleNotification(
+                                              //                 Container(
+                                              //                     child: Text(
+                                              //                         notification
+                                              //                             .body)),
+                                              //                 position:
+                                              //                     NotificationPosition
+                                              //                         .top,
+                                              //                 background:
+                                              //                     Colors
+                                              //                         .red,
+                                              //               );
+                                              //               if (this
+                                              //                   .mounted) {
+                                              //                 setState(() {
+                                              //                   loading =
+                                              //                       false;
+                                              //                 });
+                                              //               } else {
+                                              //                 loading =
+                                              //                     false;
+                                              //               }
+                                              //             });
+                                              //           });
+                                              //           ScaffoldMessenger
+                                              //                   .of(context)
+                                              //               .showSnackBar(
+                                              //             SnackBar(
+                                              //               duration:
+                                              //                   Duration(
+                                              //                       seconds:
+                                              //                           2),
+                                              //               backgroundColor:
+                                              //                   Colors.red,
+                                              //               content: Text(
+                                              //                 'Removed from favourites',
+                                              //                 style: GoogleFonts
+                                              //                     .montserrat(
+                                              //                   textStyle:
+                                              //                       TextStyle(
+                                              //                     color:
+                                              //                         whiteColor,
+                                              //                     fontSize:
+                                              //                         15,
+                                              //                   ),
+                                              //                 ),
+                                              //               ),
+                                              //             ),
+                                              //           );
+                                              //         },
+                                              //       )
+                                              //     : Container(),
+                                              SizedBox(height: 10),
+                                              IconButton(
+                                                iconSize: 30,
+                                                icon: Icon(
+                                                  CupertinoIcons
+                                                      .map_pin_ellipse,
+                                                  color: darkPrimaryColor,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    loading = true;
+                                                  });
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   SlideRightRoute(
+                                                  //     page: MapPage(
+                                                  //       isAppBar: true,
+                                                  //       isLoading: true,
+                                                  //       data: {
+                                                  //         'lat': _places[
+                                                  //                 Booking.fromSnapshot(
+                                                  //                         book)
+                                                  //                     .id]
+                                                  //             .lat,
+                                                  //         'lon': _places[
+                                                  //                 Booking.fromSnapshot(
+                                                  //                         book)
+                                                  //                     .id]
+                                                  //             .lon
+                                                  //       },
+                                                  //     ),
+                                                  //   ),
+                                                  // );
+                                                  setState(() {
+                                                    loading = false;
+                                                  });
+                                                },
+                                              ),
+                                              // IconButton(
+                                              //   icon: Icon(
+                                              //     CupertinoIcons.book,
+                                              //     color: darkPrimaryColor,
+                                              //   ),
+                                              //   onPressed: ()  {
+                                              //     setState(() {
+                                              //       loading = true;
+                                              //     });
+                                              //     Navigator.push(
+                                              //       context,
+                                              //       SlideRightRoute(
+                                              //         page: PlaceScreen(
+                                              //           data: {
+                                              //             'name':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .name, //0
+                                              //             'description': Place
+                                              //                     .fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                 .description, //1
+                                              //             'by':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .by, //2
+                                              //             'lat':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .lat, //3
+                                              //             'lon':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .lon, //4
+                                              //             'images':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .images, //5
+                                              //             'services':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .services,
+                                              //             'rates':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .rates,
+                                              //             'id':
+                                              //                 Place.fromSnapshot(
+                                              //                         _results[
+                                              //                             index])
+                                              //                     .id, //7
+                                              //           },
+                                              //         ),
+                                              //       ),
+                                              //     );
+                                              //     setState(() {
+                                              //       loading = false;
+                                              //     });
+                                              //   },
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Verification needed
+                          for (QueryDocumentSnapshot book in _bookings2)
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            // padding: EdgeInsets.all(10),
+                            child: Card(
+                              margin: EdgeInsets.all(5),
+                              elevation: 10,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        width: size.width * 0.5,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              DateFormat.yMMMd()
+                                                  .format(book
+                                                      .data()['timestamp_date']
+                                                      .toDate())
+                                                  .toString(),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkPrimaryColor,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              book.data()['from'] +
+                                                  ' - ' +
+                                                  book.data()['to'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkPrimaryColor,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              _places[book.id] != null
+                                                  ? _places[book.id]
+                                                              .data()['name'] !=
+                                                          null
+                                                      ? _places[book.id]
+                                                          .data()['name']
+                                                      : 'Place'
+                                                  : 'Place',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                    color: darkPrimaryColor,
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              book.data()['status'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color:Colors.red,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                height: book.data()['status'] ==
+                                                        'verification_needed'
+                                                    ? 15
+                                                    : 0),
+                                            book.data()['status'] ==
+                                                    'verification_needed'
+                                                ? Center(
+                                                    child: Text(
+                                                      'Accept an offer?',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color:
+                                                              darkPrimaryColor,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            book.data()['status'] ==
+                                                    'verification_needed'
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
+                                                          if (DateTime.now().isAfter(
+                                                              DateTime.parse(book
+                                                                  .data()[
+                                                                      'deadline']
+                                                                  .toString()))) {
+                                                            _bookings
+                                                                .remove(book);
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookings')
+                                                                .doc(book.id)
+                                                                .delete();
+                                                            PushNotificationMessage
+                                                                notification =
+                                                                PushNotificationMessage(
+                                                              title:
+                                                                  'Deadline passed',
+                                                              body:
+                                                                  'Booking was canceled',
+                                                            );
+                                                            showSimpleNotification(
+                                                              Container(
+                                                                  child: Text(
+                                                                      notification
+                                                                          .body)),
+                                                              position:
+                                                                  NotificationPosition
+                                                                      .top,
+                                                              background:
+                                                                  Colors.red,
+                                                            );
+                                                          } else {
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookigs')
+                                                                .doc(book.id)
+                                                                .update({
+                                                              'status':
+                                                                  'unfinished',
+                                                            });
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'Yes',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  primaryColor),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
+
+                                                          if (DateTime.now().isAfter(
+                                                              DateTime.parse(book
+                                                                  .data()[
+                                                                      'deadline']
+                                                                  .toString()))) {
+                                                            _bookings
+                                                                .remove(book);
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'bookings')
+                                                                .doc(book.id)
+                                                                .delete();
+                                                            PushNotificationMessage
+                                                                notification =
+                                                                PushNotificationMessage(
+                                                              title:
+                                                                  'Deadline passed',
+                                                              body:
+                                                                  'Booking was canceled',
+                                                            );
+                                                            showSimpleNotification(
+                                                              Container(
+                                                                  child: Text(
+                                                                      notification
+                                                                          .body)),
+                                                              position:
+                                                                  NotificationPosition
+                                                                      .top,
+                                                              background:
+                                                                  Colors.red,
+                                                            );
+                                                          } else {
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      'Reject?'),
+                                                                  content:
+                                                                      const Text(
+                                                                          'Do you want to reject booking?'),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              true;
+                                                                        });
+                                                                        FirebaseFirestore
+                                                                            .instance
+                                                                            .collection('locations')
+                                                                            .doc(book.id)
+                                                                            .delete()
+                                                                            .catchError((error) {
+                                                                          print(
+                                                                              'MISTAKE HERE');
+                                                                          print(
+                                                                              error);
+                                                                          Navigator.of(context)
+                                                                              .pop(false);
+                                                                          PushNotificationMessage
+                                                                              notification =
+                                                                              PushNotificationMessage(
+                                                                            title:
+                                                                                'Fail',
+                                                                            body:
+                                                                                'Failed to reject',
+                                                                          );
+                                                                          showSimpleNotification(
+                                                                            Container(child: Text(notification.body)),
+                                                                            position:
+                                                                                NotificationPosition.top,
+                                                                            background:
+                                                                                Colors.red,
+                                                                          );
+                                                                        });
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              false;
+                                                                        });
+                                                                        Navigator.of(context)
+                                                                            .pop(true);
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Yes',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                primaryColor),
+                                                                      ),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.of(context).pop(false),
+                                                                      child:
+                                                                          const Text(
+                                                                        'No',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                            setState(() {
+                                                              loading = false;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'No',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Container()
                                           ],
                                         ),
                                       ),
@@ -906,6 +1858,7 @@ class _History1State extends State<History1>
                             ),
                           ),
                       ],
+                      
                     ),
                   ),
                 ]),
