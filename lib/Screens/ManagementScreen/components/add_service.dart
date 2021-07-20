@@ -1169,6 +1169,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                             setState(() {
                               loading = true;
                             });
+                            String serviceId = DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString();
                             FirebaseFirestore.instance
                                 .collection('locations')
                                 .doc(widget.placeId)
@@ -1177,6 +1180,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                 'services': FieldValue.arrayUnion(
                                   [
                                     {
+                                      'id': serviceId,
                                       'name': this.name,
                                       'spm': this.spm,
                                       'days': {
