@@ -8,10 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/constants.dart';
+import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import 'on_event_screen.dart';
 
 class History1 extends StatefulWidget {
   @override
@@ -29,9 +32,12 @@ class _History1State extends State<History1>
   Map<String, QueryDocumentSnapshot> _places = {};
   Map<QueryDocumentSnapshot, QueryDocumentSnapshot> placesSlivers = {};
   Map<QueryDocumentSnapshot, QueryDocumentSnapshot> unrplacesSlivers = {};
+  Map<QueryDocumentSnapshot, DocumentSnapshot> unpaidPlacesSlivers = {};
   List _bookings1 = [];
   List slivers = [];
   List<Widget> sliversList = [];
+  List unpaidBookings = [];
+  List unpaidBookingsSlivers = [];
   List companies_id = [];
   List places_id = [];
 
@@ -41,12 +47,14 @@ class _History1State extends State<History1>
   StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
   StreamSubscription<QuerySnapshot> nonverBookSubscr;
   StreamSubscription<QuerySnapshot> inprocessBookSubscr;
+  StreamSubscription<QuerySnapshot> unpaidBookSubscr;
 
   @override
   void dispose() {
     ordinaryBookSubscr.cancel();
     nonverBookSubscr.cancel();
     inprocessBookSubscr.cancel();
+    unpaidBookSubscr.cancel();
     super.dispose();
   }
 
@@ -241,6 +249,39 @@ class _History1State extends State<History1>
       }
     });
 
+    unpaidBookSubscr = FirebaseFirestore.instance
+        .collection('bookings')
+        .orderBy(
+          'timestamp_date',
+          descending: true,
+        )
+        .where(
+          'status',
+          isEqualTo: 'unpaid',
+        )
+        .where(
+          'placeId',
+          whereIn: places_id,
+        )
+        .snapshots()
+        .listen((bookings) {
+      setState(() {
+        unpaidBookings = bookings.docs;
+      });
+      for (QueryDocumentSnapshot book in unpaidBookings) {
+        for (QueryDocumentSnapshot place in places.docs) {
+          if (book.data()['placeId'] == place.id) {
+            setState(() {
+              unpaidBookingsSlivers.add(book);
+              unpaidPlacesSlivers.addAll({
+                book: place,
+              });
+            });
+          }
+        }
+      }
+    });
+
     if (this.mounted) {
       setState(() {
         error = false;
@@ -327,9 +368,13 @@ class _History1State extends State<History1>
     sliversList = [];
     companies_id = [];
     places_id = [];
+    unpaidPlacesSlivers = {};
+    unpaidBookings = [];
+    unpaidBookingsSlivers = [];
     ordinaryBookSubscr.cancel();
     inprocessBookSubscr.cancel();
     nonverBookSubscr.cancel();
+    unpaidBookSubscr.cancel();
     loadData();
     Completer<Null> completer = new Completer<Null>();
     completer.complete();
@@ -410,7 +455,8 @@ class _History1State extends State<History1>
                       ],
                     ),
                   ),
-                  slivers.length != 0
+                  // Unpaid
+                  unpaidBookingsSlivers.length != 0
                       ? SliverList(
                           delegate: SliverChildListDelegate([
                             SizedBox(
@@ -418,11 +464,11 @@ class _History1State extends State<History1>
                             ),
                             Center(
                               child: Text(
-                                'Ongoing',
+                                'Unpaid',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
-                                    color: darkPrimaryColor,
+                                    color: Colors.red,
                                     fontSize: 25,
                                   ),
                                 ),
@@ -431,35 +477,37 @@ class _History1State extends State<History1>
                             SizedBox(
                               height: 15,
                             ),
-                            for (var book in slivers)
-                              TextButton(
+                            for (QueryDocumentSnapshot book
+                                in unpaidBookingsSlivers)
+                              CupertinoButton(
+                                padding: EdgeInsets.zero,
                                 onPressed: () {
                                   setState(() {
                                     loading = true;
                                   });
-                                  // Navigator.push(
-                                  //     context,
-                                  //     SlideRightRoute(
-                                  //       page: OnEventScreen(
-                                  //         booking: book,
-                                  //       ),
-                                  //     ),
-                                  //     );
+                                  Navigator.push(
+                                      context,
+                                      SlideRightRoute(
+                                        page: OnEventScreen(
+                                          bookingId: book.id,
+                                        ),
+                                      ));
                                   setState(() {
                                     loading = false;
                                   });
                                 },
                                 child: Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 5.0),
                                   child: Card(
-                                    color: darkPrimaryColor,
-                                    margin: EdgeInsets.all(5),
+                                    color: Colors.red,
                                     elevation: 10,
                                     child: Center(
                                       child: Padding(
-                                        padding: EdgeInsets.all(10.0),
+                                        padding: EdgeInsets.all(5.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                              MainAxisAlignment.center,
                                           children: [
                                             Container(
                                               width: size.width * 0.5,
@@ -518,8 +566,9 @@ class _History1State extends State<History1>
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      _places[book.id] != null
-                                                          ? _places[book.id]
+                                                      unpaidPlacesSlivers[book] !=
+                                                              null
+                                                          ? unpaidPlacesSlivers[book]
                                                               .data()[
                                                                   'services']
                                                               .where((service) {
@@ -539,8 +588,203 @@ class _History1State extends State<History1>
                                                       style: GoogleFonts
                                                           .montserrat(
                                                         textStyle: TextStyle(
-                                                            color:
-                                                                darkPrimaryColor,
+                                                            color: whiteColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      unpaidPlacesSlivers[book] !=
+                                                              null
+                                                          ? unpaidPlacesSlivers[book]
+                                                              .data()['name']
+                                                          : 'Place',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color: whiteColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      book.data()['status'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color: book.data()[
+                                                                      'status'] ==
+                                                                  'unfinished'
+                                                              ? whiteColor
+                                                              : Colors.red,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ]),
+                        )
+                      : SliverList(
+                          delegate: SliverChildListDelegate([
+                            Container(),
+                          ]),
+                        ),
+
+                  slivers.length != 0
+                      ? SliverList(
+                          delegate: SliverChildListDelegate([
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Text(
+                                'Ongoing',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 25,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            for (var book in slivers)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                  Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                      page: OnEventScreen(
+                                        bookingId: book.id,
+                                      ),
+                                    ),
+                                  );
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                },
+                                child: Container(
+                                  child: Card(
+                                    color: darkPrimaryColor,
+                                    elevation: 10,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: size.width * 0.5,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    DateFormat.yMMMd()
+                                                        .format(book
+                                                            .data()[
+                                                                'timestamp_date']
+                                                            .toDate())
+                                                        .toString(),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: whiteColor,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    book.data()['from'] +
+                                                        ' - ' +
+                                                        book.data()['to'],
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: whiteColor,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Container(
+                                                width: size.width * 0.4,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      placesSlivers[book] !=
+                                                              null
+                                                          ? placesSlivers[book]
+                                                              .data()[
+                                                                  'services']
+                                                              .where((service) {
+                                                              if (service[
+                                                                      'id'] ==
+                                                                  book.data()[
+                                                                      'serviceId']) {
+                                                                return true;
+                                                              } else {
+                                                                return false;
+                                                              }
+                                                            }).first['name']
+                                                          : 'Service',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color: whiteColor,
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -630,129 +874,153 @@ class _History1State extends State<History1>
                         for (QueryDocumentSnapshot book in _bookings)
                           Container(
                             // padding: EdgeInsets.all(10),
-                            child: Card(
-                              margin: EdgeInsets.all(5),
-                              elevation: 10,
-                              child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: size.width * 0.4,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              DateFormat.yMMMd()
-                                                  .format(book
-                                                      .data()['timestamp_date']
-                                                      .toDate())
-                                                  .toString(),
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                textStyle: TextStyle(
-                                                  color: darkPrimaryColor,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              book.data()['from'] +
-                                                  ' - ' +
-                                                  book.data()['to'],
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                textStyle: TextStyle(
-                                                  color: darkPrimaryColor,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Container(
-                                          width: size.width * 0.5,
+                            child: CupertinoButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                setState(() {
+                                  loading = true;
+                                });
+                                Navigator.push(
+                                  context,
+                                  SlideRightRoute(
+                                    page: OnEventScreen(
+                                      bookingId: book.id,
+                                    ),
+                                  ),
+                                );
+                                setState(() {
+                                  loading = false;
+                                });
+                              },
+                              child: Card(
+                                margin: EdgeInsets.all(5),
+                                elevation: 10,
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: size.width * 0.4,
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                _places[book.id] != null
-                                                    ? _places[book.id]
-                                                        .data()['services']
-                                                        .where((service) {
-                                                        if (service['id'] ==
-                                                            book.data()[
-                                                                'serviceId']) {
-                                                          return true;
-                                                        } else {
-                                                          return false;
-                                                        }
-                                                      }).first['name']
-                                                    : 'Service',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                _places[book.id] != null
-                                                    ? _places[book.id].data()[
-                                                                'name'] !=
-                                                            null
-                                                        ? _places[book.id]
-                                                            .data()['name']
-                                                        : 'Place'
-                                                    : 'Place',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                book.data()['status'],
+                                                DateFormat.yMMMd()
+                                                    .format(book
+                                                        .data()[
+                                                            'timestamp_date']
+                                                        .toDate())
+                                                    .toString(),
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GoogleFonts.montserrat(
                                                   textStyle: TextStyle(
                                                     color: darkPrimaryColor,
-                                                    fontSize: 15,
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                book.data()['from'] +
+                                                    ' - ' +
+                                                    book.data()['to'],
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                    color: darkPrimaryColor,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
                                               ),
                                             ],
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Container(
+                                            width: size.width * 0.5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _places[book.id] != null
+                                                      ? _places[book.id]
+                                                          .data()['services']
+                                                          .where((service) {
+                                                          if (service['id'] ==
+                                                              book.data()[
+                                                                  'serviceId']) {
+                                                            return true;
+                                                          } else {
+                                                            return false;
+                                                          }
+                                                        }).first['name']
+                                                      : 'Service',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  _places[book.id] != null
+                                                      ? _places[book.id].data()[
+                                                                  'name'] !=
+                                                              null
+                                                          ? _places[book.id]
+                                                              .data()['name']
+                                                          : 'Place'
+                                                      : 'Place',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  book.data()['status'],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                      color: darkPrimaryColor,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -763,411 +1031,464 @@ class _History1State extends State<History1>
                         for (QueryDocumentSnapshot book in _bookings2)
                           Container(
                             // padding: EdgeInsets.all(10),
-                            child: Card(
-                              margin: EdgeInsets.all(10),
-                              elevation: 10,
-                              child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(5.0),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            width: size.width * 0.4,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  DateFormat.yMMMd()
-                                                      .format(book
-                                                          .data()[
-                                                              'timestamp_date']
-                                                          .toDate())
-                                                      .toString(),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
-                                                    textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  book.data()['from'] +
-                                                      ' - ' +
-                                                      book.data()['to'],
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
-                                                    textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Container(
-                                              width: size.width * 0.5,
+                            child: CupertinoButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                setState(() {
+                                  loading = true;
+                                });
+                                Navigator.push(
+                                  context,
+                                  SlideRightRoute(
+                                    page: OnEventScreen(
+                                      bookingId: book.id,
+                                    ),
+                                  ),
+                                );
+                                setState(() {
+                                  loading = false;
+                                });
+                              },
+                              child: Card(
+                                margin: EdgeInsets.all(10),
+                                elevation: 10,
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: size.width * 0.4,
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    _places[book.id] != null
-                                                        ? _places[book.id]
-                                                            .data()['services']
-                                                            .where((service) {
-                                                            if (service['id'] ==
-                                                                book.data()[
-                                                                    'serviceId']) {
-                                                              return true;
-                                                            } else {
-                                                              return false;
-                                                            }
-                                                          }).first['name']
-                                                        : 'Service',
-                                                    maxLines: 2,
+                                                    DateFormat.yMMMd()
+                                                        .format(book
+                                                            .data()[
+                                                                'timestamp_date']
+                                                            .toDate())
+                                                        .toString(),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style:
                                                         GoogleFonts.montserrat(
                                                       textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    _places[book.id] != null
-                                                        ? _places[book.id]
-                                                                        .data()[
-                                                                    'name'] !=
-                                                                null
-                                                            ? _places[book.id]
-                                                                .data()['name']
-                                                            : 'Place'
-                                                        : 'Place',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    book.data()['status'],
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      textStyle: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 15,
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                      height: book.data()[
-                                                                  'status'] ==
-                                                              'verification_needed'
-                                                          ? 15
-                                                          : 0),
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    book.data()['from'] +
+                                                        ' - ' +
+                                                        book.data()['to'],
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                 ],
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      book.data()['status'] ==
-                                              'verification_needed'
-                                          ? Center(
-                                              child: Text(
-                                                'Accept an offer?',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                    color: darkPrimaryColor,
-                                                    fontSize: 15,
-                                                  ),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Container(
+                                                width: size.width * 0.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      _places[book.id] != null
+                                                          ? _places[book.id]
+                                                              .data()[
+                                                                  'services']
+                                                              .where((service) {
+                                                              if (service[
+                                                                      'id'] ==
+                                                                  book.data()[
+                                                                      'serviceId']) {
+                                                                return true;
+                                                              } else {
+                                                                return false;
+                                                              }
+                                                            }).first['name']
+                                                          : 'Service',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color:
+                                                                darkPrimaryColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      _places[book.id] != null
+                                                          ? _places[book.id]
+                                                                          .data()[
+                                                                      'name'] !=
+                                                                  null
+                                                              ? _places[book.id]
+                                                                      .data()[
+                                                                  'name']
+                                                              : 'Place'
+                                                          : 'Place',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color:
+                                                                darkPrimaryColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      book.data()['status'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        height: book.data()[
+                                                                    'status'] ==
+                                                                'verification_needed'
+                                                            ? 15
+                                                            : 0),
+                                                  ],
                                                 ),
                                               ),
                                             )
-                                          : Container(),
-                                      book.data()['status'] ==
-                                              'verification_needed'
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      loading = true;
-                                                    });
-                                                    if (DateTime.now().isAfter(
-                                                      DateTime.fromMillisecondsSinceEpoch(
-                                                          book
-                                                                  .data()[
-                                                                      'deadline']
-                                                                  .seconds *
-                                                              1000),
-                                                    )) {
-                                                      _bookings.remove(book);
-                                                      FirebaseFirestore.instance
-                                                          .collection(
-                                                              'bookings')
-                                                          .doc(book.id)
-                                                          .delete();
-                                                      PushNotificationMessage
-                                                          notification =
-                                                          PushNotificationMessage(
-                                                        title:
-                                                            'Deadline passed',
-                                                        body:
-                                                            'Booking was canceled',
-                                                      );
-                                                      showSimpleNotification(
-                                                        Container(
-                                                            child: Text(
-                                                                notification
-                                                                    .body)),
-                                                        position:
-                                                            NotificationPosition
-                                                                .top,
-                                                        background: Colors.red,
-                                                      );
-                                                      setState(() {
-                                                        loading = false;
-                                                      });
-                                                    } else {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            true,
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title: const Text(
-                                                                'Accept?'),
-                                                            content: const Text(
-                                                                'Do you want to ACCEPT booking?'),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    loading =
-                                                                        true;
-                                                                  });
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          'bookings')
-                                                                      .doc(book
-                                                                          .id)
-                                                                      .update({
-                                                                    'status':
-                                                                        'unfinished',
-                                                                  }).catchError(
-                                                                          (error) {
-                                                                    print(
-                                                                        'MISTAKE HERE');
-                                                                    print(
-                                                                        error);
-                                                                    PushNotificationMessage
-                                                                        notification =
-                                                                        PushNotificationMessage(
-                                                                      title:
-                                                                          'Fail',
-                                                                      body:
-                                                                          'Failed to accept',
-                                                                    );
-                                                                    showSimpleNotification(
-                                                                      Container(
-                                                                          child:
-                                                                              Text(notification.body)),
-                                                                      position:
-                                                                          NotificationPosition
-                                                                              .top,
-                                                                      background:
-                                                                          Colors
-                                                                              .red,
-                                                                    );
-                                                                  });
-                                                                  PushNotificationMessage
-                                                                      notification =
-                                                                      PushNotificationMessage(
-                                                                    title:
-                                                                        'Accepted',
-                                                                    body:
-                                                                        'Booking was successful',
-                                                                  );
-                                                                  showSimpleNotification(
-                                                                    Container(
-                                                                        child: Text(
-                                                                            notification.body)),
-                                                                    position:
-                                                                        NotificationPosition
-                                                                            .top,
-                                                                    background:
-                                                                        primaryColor,
-                                                                  );
-                                                                  setState(() {
-                                                                    loading =
-                                                                        false;
-                                                                  });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop(
-                                                                          true);
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                  'Yes',
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          primaryColor),
-                                                                ),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(
-                                                                            false),
-                                                                child:
-                                                                    const Text(
-                                                                  'No',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .red),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'Yes',
-                                                    style: TextStyle(
-                                                        color: primaryColor),
+                                          ],
+                                        ),
+                                        book.data()['status'] ==
+                                                'verification_needed'
+                                            ? Center(
+                                                child: Text(
+                                                  'Accept an offer?',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                      color: darkPrimaryColor,
+                                                      fontSize: 15,
+                                                    ),
                                                   ),
                                                 ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      loading = true;
-                                                    });
-
-                                                    if (DateTime.now().isAfter(DateTime
-                                                        .fromMillisecondsSinceEpoch(
+                                              )
+                                            : Container(),
+                                        book.data()['status'] ==
+                                                'verification_needed'
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        loading = true;
+                                                      });
+                                                      if (DateTime.now()
+                                                          .isAfter(
+                                                        DateTime.fromMillisecondsSinceEpoch(
                                                             book
                                                                     .data()[
                                                                         'deadline']
                                                                     .seconds *
-                                                                1000))) {
-                                                      _bookings.remove(book);
-                                                      FirebaseFirestore.instance
-                                                          .collection(
-                                                              'bookings')
-                                                          .doc(book.id)
-                                                          .delete();
-                                                      PushNotificationMessage
-                                                          notification =
-                                                          PushNotificationMessage(
-                                                        title:
-                                                            'Deadline passed',
-                                                        body:
-                                                            'Booking was canceled',
-                                                      );
-                                                      showSimpleNotification(
-                                                        Container(
-                                                            child: Text(
-                                                                notification
-                                                                    .body)),
-                                                        position:
-                                                            NotificationPosition
-                                                                .top,
-                                                        background: Colors.red,
-                                                      );
-                                                      setState(() {
-                                                        loading = false;
-                                                      });
-                                                    } else {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            true,
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title: const Text(
-                                                                'Reject?'),
-                                                            content: const Text(
-                                                                'Do you want to REJECT booking?'),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    loading =
-                                                                        true;
-                                                                  });
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          'bookings')
-                                                                      .doc(book
-                                                                          .id)
-                                                                      .delete()
-                                                                      .catchError(
-                                                                          (error) {
-                                                                    print(
-                                                                        'MISTAKE HERE');
-                                                                    print(
-                                                                        error);
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(
-                                                                            false);
+                                                                1000),
+                                                      )) {
+                                                        _bookings.remove(book);
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'bookings')
+                                                            .doc(book.id)
+                                                            .delete();
+                                                        PushNotificationMessage
+                                                            notification =
+                                                            PushNotificationMessage(
+                                                          title:
+                                                              'Deadline passed',
+                                                          body:
+                                                              'Booking was canceled',
+                                                        );
+                                                        showSimpleNotification(
+                                                          Container(
+                                                              child: Text(
+                                                                  notification
+                                                                      .body)),
+                                                          position:
+                                                              NotificationPosition
+                                                                  .top,
+                                                          background:
+                                                              Colors.red,
+                                                        );
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                      } else {
+                                                        showDialog(
+                                                          barrierDismissible:
+                                                              true,
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                  'Accept?'),
+                                                              content: const Text(
+                                                                  'Do you want to ACCEPT booking?'),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    setState(
+                                                                        () {
+                                                                      loading =
+                                                                          true;
+                                                                    });
+                                                                    FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'bookings')
+                                                                        .doc(book
+                                                                            .id)
+                                                                        .update({
+                                                                      'status':
+                                                                          'unfinished',
+                                                                    }).catchError(
+                                                                            (error) {
+                                                                      print(
+                                                                          'MISTAKE HERE');
+                                                                      print(
+                                                                          error);
+                                                                      PushNotificationMessage
+                                                                          notification =
+                                                                          PushNotificationMessage(
+                                                                        title:
+                                                                            'Fail',
+                                                                        body:
+                                                                            'Failed to accept',
+                                                                      );
+                                                                      showSimpleNotification(
+                                                                        Container(
+                                                                            child:
+                                                                                Text(notification.body)),
+                                                                        position:
+                                                                            NotificationPosition.top,
+                                                                        background:
+                                                                            Colors.red,
+                                                                      );
+                                                                    });
                                                                     PushNotificationMessage
                                                                         notification =
                                                                         PushNotificationMessage(
                                                                       title:
-                                                                          'Fail',
+                                                                          'Accepted',
                                                                       body:
-                                                                          'Failed to reject',
+                                                                          'Booking was successful',
+                                                                    );
+                                                                    showSimpleNotification(
+                                                                      Container(
+                                                                          child:
+                                                                              Text(notification.body)),
+                                                                      position:
+                                                                          NotificationPosition
+                                                                              .top,
+                                                                      background:
+                                                                          primaryColor,
+                                                                    );
+                                                                    setState(
+                                                                        () {
+                                                                      loading =
+                                                                          false;
+                                                                    });
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(
+                                                                            true);
+                                                                  },
+                                                                  child:
+                                                                      const Text(
+                                                                    'Yes',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            primaryColor),
+                                                                  ),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              false),
+                                                                  child:
+                                                                      const Text(
+                                                                    'No',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .red),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                    child: const Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                          color: primaryColor),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        loading = true;
+                                                      });
+
+                                                      if (DateTime.now()
+                                                          .isAfter(DateTime
+                                                              .fromMillisecondsSinceEpoch(book
+                                                                      .data()[
+                                                                          'deadline']
+                                                                      .seconds *
+                                                                  1000))) {
+                                                        _bookings.remove(book);
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'bookings')
+                                                            .doc(book.id)
+                                                            .delete();
+                                                        PushNotificationMessage
+                                                            notification =
+                                                            PushNotificationMessage(
+                                                          title:
+                                                              'Deadline passed',
+                                                          body:
+                                                              'Booking was canceled',
+                                                        );
+                                                        showSimpleNotification(
+                                                          Container(
+                                                              child: Text(
+                                                                  notification
+                                                                      .body)),
+                                                          position:
+                                                              NotificationPosition
+                                                                  .top,
+                                                          background:
+                                                              Colors.red,
+                                                        );
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                      } else {
+                                                        showDialog(
+                                                          barrierDismissible:
+                                                              true,
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                  'Reject?'),
+                                                              content: const Text(
+                                                                  'Do you want to REJECT booking?'),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    setState(
+                                                                        () {
+                                                                      loading =
+                                                                          true;
+                                                                    });
+                                                                    FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'bookings')
+                                                                        .doc(book
+                                                                            .id)
+                                                                        .delete()
+                                                                        .catchError(
+                                                                            (error) {
+                                                                      print(
+                                                                          'MISTAKE HERE');
+                                                                      print(
+                                                                          error);
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              false);
+                                                                      PushNotificationMessage
+                                                                          notification =
+                                                                          PushNotificationMessage(
+                                                                        title:
+                                                                            'Fail',
+                                                                        body:
+                                                                            'Failed to reject',
+                                                                      );
+                                                                      showSimpleNotification(
+                                                                        Container(
+                                                                            child:
+                                                                                Text(notification.body)),
+                                                                        position:
+                                                                            NotificationPosition.top,
+                                                                        background:
+                                                                            Colors.red,
+                                                                      );
+                                                                    });
+
+                                                                    PushNotificationMessage
+                                                                        notification =
+                                                                        PushNotificationMessage(
+                                                                      title:
+                                                                          'Canceled',
+                                                                      body:
+                                                                          'Booking was rejected',
                                                                     );
                                                                     showSimpleNotification(
                                                                       Container(
@@ -1180,79 +1501,60 @@ class _History1State extends State<History1>
                                                                           Colors
                                                                               .red,
                                                                     );
-                                                                  });
 
-                                                                  PushNotificationMessage
-                                                                      notification =
-                                                                      PushNotificationMessage(
-                                                                    title:
-                                                                        'Canceled',
-                                                                    body:
-                                                                        'Booking was rejected',
-                                                                  );
-                                                                  showSimpleNotification(
-                                                                    Container(
-                                                                        child: Text(
-                                                                            notification.body)),
-                                                                    position:
-                                                                        NotificationPosition
-                                                                            .top,
-                                                                    background:
-                                                                        Colors
-                                                                            .red,
-                                                                  );
-
-                                                                  setState(() {
-                                                                    loading =
-                                                                        false;
-                                                                  });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop(
-                                                                          true);
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                  'Yes',
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          primaryColor),
-                                                                ),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () =>
+                                                                    setState(
+                                                                        () {
+                                                                      loading =
+                                                                          false;
+                                                                    });
                                                                     Navigator.of(
                                                                             context)
                                                                         .pop(
-                                                                            false),
-                                                                child:
-                                                                    const Text(
-                                                                  'No',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .red),
+                                                                            true);
+                                                                  },
+                                                                  child:
+                                                                      const Text(
+                                                                    'Yes',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            primaryColor),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              false),
+                                                                  child:
+                                                                      const Text(
+                                                                    'No',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .red),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
 
-                                                      setState(() {
-                                                        loading = false;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'No',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
+                                                        setState(() {
+                                                          loading = false;
+                                                        });
+                                                      }
+                                                    },
+                                                    child: const Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            )
-                                          : Container(),
-                                    ],
+                                                ],
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

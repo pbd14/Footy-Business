@@ -28,7 +28,7 @@ class _History2State extends State<History2>
   StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
 
   @override
-  void dispose(){
+  void dispose() {
     ordinaryBookSubscr.cancel();
   }
 
@@ -123,22 +123,22 @@ class _History2State extends State<History2>
                         delegate: SliverChildListDelegate([
                           for (QueryDocumentSnapshot book in _bookings)
                             Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
                               // padding: EdgeInsets.all(10),
                               child: Card(
                                 margin: EdgeInsets.all(5),
                                 elevation: 10,
                                 child: Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
+                                    padding: EdgeInsets.all(5.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                          width: size.width * 0.5,
+                                          width: size.width * 0.4,
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Text(
                                                 DateFormat.yMMMd()
@@ -174,159 +174,79 @@ class _History2State extends State<History2>
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              Text(
-                                                _places != null
-                                                    ? _places[book.id].data()[
-                                                                'name'] !=
-                                                            null
-                                                        ? _places[book.id]
-                                                            .data()['name']
-                                                        : 'Place'
-                                                    : 'Place',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                book.data()['status'],
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                    color:
-                                                        book.data()['status'] ==
-                                                                'unfinished'
-                                                            ? darkPrimaryColor
-                                                            : Colors.red,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         ),
                                         Align(
                                           alignment: Alignment.centerRight,
                                           child: Container(
-                                            width: size.width * 0.3,
+                                            width: size.width * 0.5,
                                             child: Column(
-                                              // crossAxisAlignment:
-                                              //     CrossAxisAlignment.end,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                SizedBox(height: 10),
-                                                IconButton(
-                                                  iconSize: 30,
-                                                  icon: Icon(
-                                                    CupertinoIcons
-                                                        .map_pin_ellipse,
-                                                    color: darkPrimaryColor,
+                                                Text(
+                                                  _places[book.id] != null
+                                                      ? _places[book.id]
+                                                          .data()['services']
+                                                          .where((service) {
+                                                          if (service['id'] ==
+                                                              book.data()[
+                                                                  'serviceId']) {
+                                                            return true;
+                                                          } else {
+                                                            return false;
+                                                          }
+                                                        }).first['name']
+                                                      : 'Service',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                                   ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      loading = true;
-                                                    });
-                                                    // Navigator.push(
-                                                    //   context,
-                                                    //   SlideRightRoute(
-                                                    //     page: MapPage(
-                                                    //       isAppBar: true,
-                                                    //       isLoading: true,
-                                                    //       data: {
-                                                    //         'lat': _places[Booking
-                                                    //                     .fromSnapshot(
-                                                    //                         book)
-                                                    //                 .id]
-                                                    //             .lat,
-                                                    //         'lon': _places[Booking
-                                                    //                     .fromSnapshot(
-                                                    //                         book)
-                                                    //                 .id]
-                                                    //             .lon
-                                                    //       },
-                                                    //     ),
-                                                    //   ),
-                                                    // );
-                                                    setState(() {
-                                                      loading = false;
-                                                    });
-                                                  },
                                                 ),
-                                                // IconButton(
-                                                //   icon: Icon(
-                                                //     CupertinoIcons.book,
-                                                //     color: darkPrimaryColor,
-                                                //   ),
-                                                //   onPressed: ()  {
-                                                //     setState(() {
-                                                //       loading = true;
-                                                //     });
-                                                //     Navigator.push(
-                                                //       context,
-                                                //       SlideRightRoute(
-                                                //         page: PlaceScreen(
-                                                //           data: {
-                                                //             'name':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .name, //0
-                                                //             'description': Place
-                                                //                     .fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                 .description, //1
-                                                //             'by':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .by, //2
-                                                //             'lat':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .lat, //3
-                                                //             'lon':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .lon, //4
-                                                //             'images':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .images, //5
-                                                //             'services':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .services,
-                                                //             'rates':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .rates,
-                                                //             'id':
-                                                //                 Place.fromSnapshot(
-                                                //                         _results[
-                                                //                             index])
-                                                //                     .id, //7
-                                                //           },
-                                                //         ),
-                                                //       ),
-                                                //     );
-                                                //     setState(() {
-                                                //       loading = false;
-                                                //     });
-                                                //   },
-                                                // ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  _places[book.id] != null
+                                                      ? _places[book.id].data()[
+                                                                  'name'] !=
+                                                              null
+                                                          ? _places[book.id]
+                                                              .data()['name']
+                                                          : 'Place'
+                                                      : 'Place',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  book.data()['status'],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                      color: darkPrimaryColor,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
