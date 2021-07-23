@@ -13,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
 import 'on_event_screen.dart';
 
 class History1 extends StatefulWidget {
@@ -38,8 +37,11 @@ class _History1State extends State<History1>
   List<Widget> sliversList = [];
   List unpaidBookings = [];
   List unpaidBookingsSlivers = [];
-  List companies_id = [];
-  List places_id = [];
+  String companyId = '';
+  String placeId = '';
+
+  QueryDocumentSnapshot chosenCompany;
+  QueryDocumentSnapshot chosenPlace;
 
   QuerySnapshot places;
   QuerySnapshot companies;
@@ -121,15 +123,29 @@ class _History1State extends State<History1>
         .collection('companies')
         .where('owner', isEqualTo: FirebaseAuth.instance.currentUser.uid)
         .get();
-    for (QueryDocumentSnapshot company in companies.docs) {
-      companies_id.add(company.id);
+
+    if (companyId.isNotEmpty) {
+      for (QueryDocumentSnapshot company in companies.docs) {
+        if (company.data()['id'] == companyId) {
+          chosenCompany = company;
+        }
+      }
+    } else {
+      chosenCompany = companies.docs.first;
     }
     places = await FirebaseFirestore.instance
         .collection('locations')
-        .where('owner', whereIn: companies_id)
+        .where('owner', isEqualTo: chosenCompany.id)
         .get();
-    for (QueryDocumentSnapshot place in places.docs) {
-      places_id.add(place.id);
+
+    if (placeId.isNotEmpty) {
+      for (QueryDocumentSnapshot place in places.docs) {
+        if (place.data()['id'] == placeId) {
+          chosenPlace = place;
+        }
+      }
+    } else {
+      chosenPlace = places.docs.first;
     }
     ordinaryBookSubscr = FirebaseFirestore.instance
         .collection('bookings')
@@ -143,7 +159,7 @@ class _History1State extends State<History1>
         )
         .where(
           'placeId',
-          whereIn: places_id,
+          isEqualTo: chosenPlace.id,
         )
         .snapshots()
         .listen((bookings) {
@@ -175,7 +191,7 @@ class _History1State extends State<History1>
         )
         .where(
           'placeId',
-          whereIn: places_id,
+          isEqualTo: chosenPlace.id,
         )
         .snapshots()
         .listen((bookings) {
@@ -219,7 +235,7 @@ class _History1State extends State<History1>
         )
         .where(
           'placeId',
-          whereIn: places_id,
+          isEqualTo: chosenPlace.id,
         )
         .where(
           'date',
@@ -261,7 +277,7 @@ class _History1State extends State<History1>
         )
         .where(
           'placeId',
-          whereIn: places_id,
+          isEqualTo: chosenPlace.id,
         )
         .snapshots()
         .listen((bookings) {
@@ -366,8 +382,8 @@ class _History1State extends State<History1>
     _bookings1 = [];
     slivers = [];
     sliversList = [];
-    companies_id = [];
-    places_id = [];
+    companyId = '';
+    placeId = '';
     unpaidPlacesSlivers = {};
     unpaidBookings = [];
     unpaidBookingsSlivers = [];
@@ -452,9 +468,104 @@ class _History1State extends State<History1>
                             ),
                           ),
                         ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(
+                              size.width * 0.2, 0, size.width * 0.2, 0),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            hint: Text(
+                              chosenCompany.data()['name'] != null
+                                  ? chosenCompany.data()['name']
+                                  : 'No name',
+                              textScaleFactor: 1,
+                              style: GoogleFonts.montserrat(
+                                textStyle: TextStyle(
+                                  color: darkPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            items: companies.docs != null
+                                ? companies.docs
+                                    .map((QueryDocumentSnapshot value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value.id,
+                                      child: new Text(
+                                        value.data()['name'],
+                                        textScaleFactor: 1,
+                                      ),
+                                    );
+                                  }).toList()
+                                : [
+                                    new DropdownMenuItem<String>(
+                                      value: '-',
+                                      child: new Text(
+                                        '-',
+                                        textScaleFactor: 1,
+                                      ),
+                                    )
+                                  ],
+                            onChanged: (value) {
+                              setState(() {
+                                loading = true;
+                              });
+                              companyId = value;
+                              loadData();
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(
+                              size.width * 0.2, 0, size.width * 0.2, 0),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            hint: Text(
+                              chosenPlace.data()['name'] != null
+                                  ? chosenPlace.data()['name']
+                                  : 'No name',
+                              textScaleFactor: 1,
+                              style: GoogleFonts.montserrat(
+                                textStyle: TextStyle(
+                                  color: darkPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            items: places.docs != null
+                                ? places.docs
+                                    .map((QueryDocumentSnapshot value) {
+                                    return new DropdownMenuItem<String>(
+                                      value: value.id,
+                                      child: new Text(
+                                        value.data()['name'],
+                                        textScaleFactor: 1,
+                                      ),
+                                    );
+                                  }).toList()
+                                : [
+                                    new DropdownMenuItem<String>(
+                                      value: '-',
+                                      child: new Text(
+                                        '-',
+                                        textScaleFactor: 1,
+                                      ),
+                                    )
+                                  ],
+                            onChanged: (value) {
+                              setState(() {
+                                loading = true;
+                              });
+                              placeId = value;
+                              loadData();
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 20),
                       ],
                     ),
                   ),
+
                   // Unpaid
                   unpaidBookingsSlivers.length != 0
                       ? SliverList(
@@ -497,8 +608,7 @@ class _History1State extends State<History1>
                                   });
                                 },
                                 child: Container(
-                                  margin:
-                                      EdgeInsets.symmetric(horizontal: 5.0),
+                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   child: Card(
                                     color: Colors.red,
                                     elevation: 10,
@@ -566,9 +676,11 @@ class _History1State extends State<History1>
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      unpaidPlacesSlivers[book] !=
+                                                      unpaidPlacesSlivers[
+                                                                  book] !=
                                                               null
-                                                          ? unpaidPlacesSlivers[book]
+                                                          ? unpaidPlacesSlivers[
+                                                                  book]
                                                               .data()[
                                                                   'services']
                                                               .where((service) {
@@ -599,9 +711,11 @@ class _History1State extends State<History1>
                                                       height: 10,
                                                     ),
                                                     Text(
-                                                      unpaidPlacesSlivers[book] !=
+                                                      unpaidPlacesSlivers[
+                                                                  book] !=
                                                               null
-                                                          ? unpaidPlacesSlivers[book]
+                                                          ? unpaidPlacesSlivers[
+                                                                  book]
                                                               .data()['name']
                                                           : 'Place',
                                                       maxLines: 2,

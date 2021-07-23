@@ -3,13 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/constants.dart';
-import 'package:footy_business/widgets/label_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:overlay_support/overlay_support.dart';
 
 class History2 extends StatefulWidget {
   @override
@@ -20,11 +17,17 @@ class _History2State extends State<History2>
     with AutomaticKeepAliveClientMixin<History2> {
   @override
   bool get wantKeepAlive => true;
-  bool loading = false;
+  bool loading = true;
   List<QueryDocumentSnapshot> _bookings = [];
   Map<String, QueryDocumentSnapshot> _places = {};
-  List companies_id = [];
-  List places_id = [];
+
+  String companyId = '';
+  String placeId = '';
+
+  QueryDocumentSnapshot chosenCompany;
+  QueryDocumentSnapshot chosenPlace;
+  QuerySnapshot places;
+  QuerySnapshot companies;
   StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
 
   @override
@@ -33,22 +36,33 @@ class _History2State extends State<History2>
   }
 
   Future<void> loadData() async {
-    setState(() {
-      loading = true;
-    });
-    QuerySnapshot companies = await FirebaseFirestore.instance
+    companies = await FirebaseFirestore.instance
         .collection('companies')
         .where('owner', isEqualTo: FirebaseAuth.instance.currentUser.uid)
         .get();
-    for (QueryDocumentSnapshot company in companies.docs) {
-      companies_id.add(company.id);
+
+    if (companyId.isNotEmpty) {
+      for (QueryDocumentSnapshot company in companies.docs) {
+        if (company.data()['id'] == companyId) {
+          chosenCompany = company;
+        }
+      }
+    } else {
+      chosenCompany = companies.docs.first;
     }
-    QuerySnapshot places = await FirebaseFirestore.instance
+    places = await FirebaseFirestore.instance
         .collection('locations')
-        .where('owner', whereIn: companies_id)
+        .where('owner', isEqualTo: chosenCompany.id)
         .get();
-    for (QueryDocumentSnapshot place in places.docs) {
-      places_id.add(place.id);
+
+    if (placeId.isNotEmpty) {
+      for (QueryDocumentSnapshot place in places.docs) {
+        if (place.data()['id'] == placeId) {
+          chosenPlace = place;
+        }
+      }
+    } else {
+      chosenPlace = places.docs.first;
     }
     ordinaryBookSubscr = FirebaseFirestore.instance
         .collection('bookings')
@@ -62,7 +76,7 @@ class _History2State extends State<History2>
         )
         .where(
           'placeId',
-          whereIn: places_id,
+          isEqualTo: chosenPlace.id,
         )
         .limit(20)
         .snapshots()
@@ -94,8 +108,8 @@ class _History2State extends State<History2>
     });
     _bookings = [];
     _places = {};
-    companies_id = [];
-    places_id = [];
+    companyId = '';
+    placeId = '';
     loadData();
     Completer<Null> completer = new Completer<Null>();
     completer.complete();
@@ -121,6 +135,100 @@ class _History2State extends State<History2>
                 _bookings != null
                     ? SliverList(
                         delegate: SliverChildListDelegate([
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                size.width * 0.2, 0, size.width * 0.2, 0),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                chosenCompany.data()['name'] != null
+                                    ? chosenCompany.data()['name']
+                                    : 'No name',
+                                textScaleFactor: 1,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              items: companies.docs != null
+                                  ? companies.docs
+                                      .map((QueryDocumentSnapshot value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value.id,
+                                        child: new Text(
+                                          value.data()['name'],
+                                          textScaleFactor: 1,
+                                        ),
+                                      );
+                                    }).toList()
+                                  : [
+                                      new DropdownMenuItem<String>(
+                                        value: '-',
+                                        child: new Text(
+                                          '-',
+                                          textScaleFactor: 1,
+                                        ),
+                                      )
+                                    ],
+                              onChanged: (value) {
+                                setState(() {
+                                  loading = true;
+                                });
+                                companyId = value;
+                                loadData();
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                size.width * 0.2, 0, size.width * 0.2, 0),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                chosenPlace.data()['name'] != null
+                                    ? chosenPlace.data()['name']
+                                    : 'No name',
+                                textScaleFactor: 1,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              items: places.docs != null
+                                  ? places.docs
+                                      .map((QueryDocumentSnapshot value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value.id,
+                                        child: new Text(
+                                          value.data()['name'],
+                                          textScaleFactor: 1,
+                                        ),
+                                      );
+                                    }).toList()
+                                  : [
+                                      new DropdownMenuItem<String>(
+                                        value: '-',
+                                        child: new Text(
+                                          '-',
+                                          textScaleFactor: 1,
+                                        ),
+                                      )
+                                    ],
+                              onChanged: (value) {
+                                setState(() {
+                                  loading = true;
+                                });
+                                placeId = value;
+                                loadData();
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 20),
                           for (QueryDocumentSnapshot book in _bookings)
                             Container(
                               // padding: EdgeInsets.all(10),
