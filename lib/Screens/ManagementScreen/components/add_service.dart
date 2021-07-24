@@ -34,6 +34,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   String error = '';
   String _hour, _minute, _time;
   String _hour2, _minute2, _time2;
+  List<String> payment_methods = [];
   Map mon = {};
   Map tue = {};
   Map wed = {};
@@ -484,6 +485,180 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Payment methods',
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (payment_methods.contains('cash')) {
+                                        setState(() {
+                                          payment_methods.remove('cash');
+                                        });
+                                      } else {
+                                        setState(() {
+                                          payment_methods.add('cash');
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: payment_methods.contains('cash')
+                                            ? lightPrimaryColor
+                                            : whiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: payment_methods
+                                                    .contains('cash')
+                                                ? primaryColor.withOpacity(0.5)
+                                                : darkColor.withOpacity(0.5),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      width: size.width * 0.3,
+                                      height: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.money_dollar,
+                                            size: 40,
+                                            color:
+                                                payment_methods.contains('cash')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            payment_methods.contains('cash')
+                                                ? 'Done'
+                                                : 'Cash',
+                                            maxLines: 3,
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                color: payment_methods
+                                                        .contains('cash')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (payment_methods.contains('octo')) {
+                                        setState(() {
+                                          payment_methods.remove('octo');
+                                        });
+                                      } else {
+                                        setState(() {
+                                          payment_methods.add('octo');
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: payment_methods.contains('octo')
+                                            ? lightPrimaryColor
+                                            : whiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: payment_methods
+                                                    .contains('octo')
+                                                ? primaryColor.withOpacity(0.5)
+                                                : darkColor.withOpacity(0.5),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      width: size.width * 0.3,
+                                      height: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.creditcard,
+                                            size: 40,
+                                            color:
+                                                payment_methods.contains('octo')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            payment_methods.contains('octo')
+                                                ? 'Done'
+                                                : 'Credit card',
+                                            maxLines: 3,
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                color: payment_methods
+                                                        .contains('octo')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
                     Card(
                       elevation: 10,
                       child: Padding(
@@ -1158,79 +1333,87 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       ph: 55,
                       text: 'CONTINUE',
                       press: () async {
-                        if (mon['status'] != null &&
-                            tue['status'] != null &&
-                            wed['status'] != null &&
-                            thu['status'] != null &&
-                            fri['status'] != null &&
-                            sat['status'] != null &&
-                            sun['status'] != null) {
-                          if (_formKey.currentState.validate()) {
-                            setState(() {
-                              loading = true;
-                            });
-                            String serviceId = DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString();
-                            FirebaseFirestore.instance
-                                .collection('locations')
-                                .doc(widget.placeId)
-                                .update(
-                              {
-                                'services': FieldValue.arrayUnion(
-                                  [
-                                    {
-                                      'id': serviceId,
-                                      'name': this.name,
-                                      'spm': this.spm,
-                                      'days': {
-                                        'Mon': mon,
-                                        'Tue': tue,
-                                        'Wed': wed,
-                                        'Thu': thu,
-                                        'Fri': fri,
-                                        'Sat': sat,
-                                        'Sun': sun,
+                        if (payment_methods.isNotEmpty) {
+                          if (mon['status'] != null &&
+                              tue['status'] != null &&
+                              wed['status'] != null &&
+                              thu['status'] != null &&
+                              fri['status'] != null &&
+                              sat['status'] != null &&
+                              sun['status'] != null) {
+                            if (_formKey.currentState.validate()) {
+                              setState(() {
+                                loading = true;
+                              });
+                              String serviceId = DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString();
+                              FirebaseFirestore.instance
+                                  .collection('locations')
+                                  .doc(widget.placeId)
+                                  .update(
+                                {
+                                  'services': FieldValue.arrayUnion(
+                                    [
+                                      {
+                                        'id': serviceId,
+                                        'name': this.name,
+                                        'spm': this.spm,
+                                        'payment_methods': payment_methods,
+                                        'days': {
+                                          'Mon': mon,
+                                          'Tue': tue,
+                                          'Wed': wed,
+                                          'Thu': thu,
+                                          'Fri': fri,
+                                          'Sat': sat,
+                                          'Sun': sun,
+                                        }
                                       }
-                                    }
-                                  ],
-                                ),
-                              },
-                            ).catchError((error) {
-                              print('MISTAKE HERE');
-                              print(error);
+                                    ],
+                                  ),
+                                },
+                              ).catchError((error) {
+                                print('MISTAKE HERE');
+                                print(error);
+                                PushNotificationMessage notification =
+                                    PushNotificationMessage(
+                                  title: 'Fail',
+                                  body: 'Failed to create',
+                                );
+                                showSimpleNotification(
+                                  Container(child: Text(notification.body)),
+                                  position: NotificationPosition.top,
+                                  background: Colors.red,
+                                );
+                              });
                               PushNotificationMessage notification =
                                   PushNotificationMessage(
-                                title: 'Fail',
-                                body: 'Failed to create',
+                                title: 'Success',
+                                body: 'Added new service',
                               );
                               showSimpleNotification(
                                 Container(child: Text(notification.body)),
                                 position: NotificationPosition.top,
-                                background: Colors.red,
+                                background: darkPrimaryColor,
                               );
-                            });
-                            PushNotificationMessage notification =
-                                PushNotificationMessage(
-                              title: 'Success',
-                              body: 'Added new service',
-                            );
-                            showSimpleNotification(
-                              Container(child: Text(notification.body)),
-                              position: NotificationPosition.top,
-                              background: darkPrimaryColor,
-                            );
-                            Navigator.pop(context);
+                              Navigator.pop(context);
+                              setState(() {
+                                loading = false;
+                                this.name = '';
+                                this.spm = '';
+                              });
+                            }
+                          } else {
                             setState(() {
                               loading = false;
-                              this.name = '';
-                              this.spm = '';
+                              error = 'Select all days';
                             });
                           }
                         } else {
                           setState(() {
                             loading = false;
-                            error = 'Select all days';
+                            error = 'Select at least one payment method';
                           });
                         }
                       },

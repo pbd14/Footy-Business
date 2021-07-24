@@ -47,6 +47,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
   Map fri = {};
   Map sat = {};
   Map sun = {};
+  List payment_methods = [];
 
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
   TimeOfDay selectedTime2 = TimeOfDay(hour: 00, minute: 00);
@@ -454,8 +455,56 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
         // sun = widget.service['days']['Sun'];
         name = widget.service['name'];
         spm = widget.service['spm'];
+        payment_methods = widget.service['payment_methods'];
       });
-    } else {}
+    } else {
+      mon = {
+        'status': widget.service['days']['Mon']['status'],
+        'from': widget.service['days']['Mon']['from'],
+        'to': widget.service['days']['Mon']['to']
+      };
+      tue = {
+        'status': widget.service['days']['Tue']['status'],
+        'from': widget.service['days']['Tue']['from'],
+        'to': widget.service['days']['Tue']['to']
+      };
+      wed = {
+        'status': widget.service['days']['Wed']['status'],
+        'from': widget.service['days']['Wed']['from'],
+        'to': widget.service['days']['Wed']['to']
+      };
+      thu = {
+        'status': widget.service['days']['Thu']['status'],
+        'from': widget.service['days']['Thu']['from'],
+        'to': widget.service['days']['Thu']['to']
+      };
+      fri = {
+        'status': widget.service['days']['Fri']['status'],
+        'from': widget.service['days']['Fri']['from'],
+        'to': widget.service['days']['Fri']['to']
+      };
+      sat = {
+        'status': widget.service['days']['Sat']['status'],
+        'from': widget.service['days']['Sat']['from'],
+        'to': widget.service['days']['Sat']['to']
+      };
+      sun = {
+        'status': widget.service['days']['Sun']['status'],
+        'from': widget.service['days']['Sun']['from'],
+        'to': widget.service['days']['Sun']['to']
+      };
+
+      // mon = widget.service['days']['Mon'];
+      // tue = widget.service['days']['Tue'];
+      // wed = widget.service['days']['Wed'];
+      // thu = widget.service['days']['Thu'];
+      // fri = widget.service['days']['Fri'];
+      // sat = widget.service['days']['Sat'];
+      // sun = widget.service['days']['Sun'];
+      name = widget.service['name'];
+      spm = widget.service['spm'];
+      payment_methods = widget.service['payment_methods'];
+    }
   }
 
   @override
@@ -541,6 +590,198 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Payment methods',
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (this
+                                          .payment_methods
+                                          .contains('cash')) {
+                                        setState(() {
+                                          this.payment_methods.remove('cash');
+                                        });
+                                      } else {
+                                        setState(() {
+                                          this.payment_methods.add('cash');
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: this
+                                                .payment_methods
+                                                .contains('cash')
+                                            ? lightPrimaryColor
+                                            : whiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: this
+                                                    .payment_methods
+                                                    .contains('cash')
+                                                ? primaryColor.withOpacity(0.5)
+                                                : darkColor.withOpacity(0.5),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      width: size.width * 0.3,
+                                      height: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.money_dollar,
+                                            size: 40,
+                                            color: this
+                                                    .payment_methods
+                                                    .contains('cash')
+                                                ? whiteColor
+                                                : darkPrimaryColor,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            this
+                                                    .payment_methods
+                                                    .contains('cash')
+                                                ? 'Done'
+                                                : 'Cash',
+                                            maxLines: 3,
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                color: this
+                                                        .payment_methods
+                                                        .contains('cash')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (this
+                                          .payment_methods
+                                          .contains('octo')) {
+                                        setState(() {
+                                          this.payment_methods.remove('octo');
+                                        });
+                                      } else {
+                                        setState(() {
+                                          this.payment_methods.add('octo');
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: this
+                                                .payment_methods
+                                                .contains('octo')
+                                            ? lightPrimaryColor
+                                            : whiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: this
+                                                    .payment_methods
+                                                    .contains('octo')
+                                                ? primaryColor.withOpacity(0.5)
+                                                : darkColor.withOpacity(0.5),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      width: size.width * 0.3,
+                                      height: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.creditcard,
+                                            size: 40,
+                                            color: this
+                                                    .payment_methods
+                                                    .contains('octo')
+                                                ? whiteColor
+                                                : darkPrimaryColor,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            this
+                                                    .payment_methods
+                                                    .contains('octo')
+                                                ? 'Done'
+                                                : 'Credit card',
+                                            maxLines: 3,
+                                            style: GoogleFonts.montserrat(
+                                              textStyle: TextStyle(
+                                                color: this
+                                                        .payment_methods
+                                                        .contains('octo')
+                                                    ? whiteColor
+                                                    : darkPrimaryColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
                     Card(
                       elevation: 10,
                       child: Padding(
@@ -1215,6 +1456,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                       ph: 55,
                       text: 'CONTINUE',
                       press: () async {
+                        // if (this.payment_methods.isNotEmpty) {
                         if (mon['status'] != null &&
                             tue['status'] != null &&
                             wed['status'] != null &&
@@ -1228,19 +1470,22 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                             });
                             List toRemove = [];
                             widget.otherServices.forEach((element) {
-                              if (element.toString() ==
-                                  widget.service.toString()) {
-                                toRemove.add(element);
+
+                              if (element['id'].toString() ==
+                                  widget.service['id'].toString()) {
+                                toRemove.add(element['id']);
                               } else {
                                 print('VS');
                               }
                             });
                             widget.otherServices.removeWhere(
-                                (element) => toRemove.contains(element));
+                                (element) => toRemove.contains(element['id']));
                             widget.otherServices.add(
                               {
+                                'id': widget.service['id'],
                                 'name': this.name,
                                 'spm': this.spm,
+                                'payment_methods': this.payment_methods,
                                 'days': {
                                   'Mon': mon,
                                   'Tue': tue,
@@ -1295,6 +1540,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                               loading = false;
                               this.name = '';
                               this.spm = '';
+                              this.payment_methods = [];
                             });
                           }
                         } else {
@@ -1303,6 +1549,12 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                             error = 'Select all days';
                           });
                         }
+                        // } else {
+                        //   setState(() {
+                        //     loading = false;
+                        //     error = 'Select at least one payment method';
+                        //   });
+                        // }
                       },
                       color: darkPrimaryColor,
                       textColor: whiteColor,

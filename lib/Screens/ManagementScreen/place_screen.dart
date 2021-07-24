@@ -266,7 +266,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                     width: 7,
                                   ),
                                   Text(
-                                    rating.toStringAsFixed(1) + '/5',
+                                    rating.toStringAsFixed(1),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: GoogleFonts.montserrat(
