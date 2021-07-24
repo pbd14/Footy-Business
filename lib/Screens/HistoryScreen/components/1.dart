@@ -506,9 +506,6 @@ class _History1State extends State<History1>
                                     )
                                   ],
                             onChanged: (value) {
-                              setState(() {
-                                loading = true;
-                              });
                               companyId = value;
                               loadData();
                             },
@@ -553,9 +550,6 @@ class _History1State extends State<History1>
                                     )
                                   ],
                             onChanged: (value) {
-                              setState(() {
-                                loading = true;
-                              });
                               placeId = value;
                               loadData();
                             },

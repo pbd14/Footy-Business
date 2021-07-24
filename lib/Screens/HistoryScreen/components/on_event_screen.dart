@@ -304,6 +304,136 @@ class _OnEventScreenState extends State<OnEventScreen> {
                         ),
                       ),
                     ),
+                    Center(
+                      child: Text(
+                        'Payment method',
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          textStyle: TextStyle(
+                            color: darkPrimaryColor,
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        booking.data()['payment_method'] == 'cash'
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      booking.data()['payment_method'] == 'cash'
+                                          ? darkPrimaryColor
+                                          : whiteColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: booking.data()['payment_method'] ==
+                                              'cash'
+                                          ? darkPrimaryColor.withOpacity(0.5)
+                                          : darkColor.withOpacity(0.5),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10),
+                                  shape: BoxShape.rectangle,
+                                ),
+                                width: size.width * 0.3,
+                                height: 100,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.money_dollar,
+                                      size: 40,
+                                      color: booking.data()['payment_method'] ==
+                                              'cash'
+                                          ? whiteColor
+                                          : darkPrimaryColor,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'Cash',
+                                      maxLines: 3,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                          color: booking.data()[
+                                                      'payment_method'] ==
+                                                  'cash'
+                                              ? whiteColor
+                                              : darkPrimaryColor,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                        booking.data()['payment_method'] == 'octo'
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      booking.data()['payment_method'] == 'octo'
+                                          ? darkPrimaryColor
+                                          : whiteColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: booking.data()['payment_method'] ==
+                                              'octo'
+                                          ? darkPrimaryColor.withOpacity(0.5)
+                                          : darkColor.withOpacity(0.5),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10),
+                                  shape: BoxShape.rectangle,
+                                ),
+                                width: size.width * 0.3,
+                                height: 100,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.creditcard,
+                                      size: 40,
+                                      color: booking.data()['payment_method'] ==
+                                              'octo'
+                                          ? whiteColor
+                                          : darkPrimaryColor,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text('Credit card',
+                                      maxLines: 3,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                          color: booking.data()[
+                                                      'payment_method'] ==
+                                                  'octo'
+                                              ? whiteColor
+                                              : darkPrimaryColor,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
                     SizedBox(
                       height: 50,
                     ),
@@ -316,6 +446,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                 'Event has not started yet',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                     color: darkColor,
@@ -334,6 +465,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                 'Event is going on',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                     color: darkColor,
@@ -349,9 +481,12 @@ class _OnEventScreenState extends State<OnEventScreen> {
                             child: Container(
                               width: size.width * 0.9,
                               child: Text(
-                                'Client should pay',
+                                booking.data()['payment_method'] == 'cash'
+                                    ? 'Client should pay with cash. You can report if client has left without paying'
+                                    : 'Cleint is paying with credit card',
                                 overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
+                                maxLines: 10,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                     color: Colors.red,
@@ -370,6 +505,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                 'Event has ended',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   textStyle: TextStyle(
                                     color: darkPrimaryColor,
@@ -641,7 +777,8 @@ class _OnEventScreenState extends State<OnEventScreen> {
                           )
                         : Container(),
 
-                    booking.data()['status'] == 'unpaid'
+                    booking.data()['status'] == 'unpaid' &&
+                            booking.data()['payment_method'] == 'cash'
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
