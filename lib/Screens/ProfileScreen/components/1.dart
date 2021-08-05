@@ -1,8 +1,10 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:footy_business/Services/auth_service.dart';
-import 'package:footy_business/widgets/card.dart';
-import 'package:footy_business/widgets/rounded_button.dart';
+import 'package:footy_business/Screens/HistoryScreen/components/on_event_screen.dart';
+import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../constants.dart';
@@ -13,15 +15,79 @@ class ProfileScreen1 extends StatefulWidget {
   _ProfileScreen1State createState() => _ProfileScreen1State();
 }
 
-class _ProfileScreen1State extends State<ProfileScreen1>
-    with AutomaticKeepAliveClientMixin<ProfileScreen1> {
-  @override
-  bool get wantKeepAlive => true;
-  bool loading = false;
+class _ProfileScreen1State extends State<ProfileScreen1> {
+  bool loading = true;
+
+  List notifs = [];
+
+  StreamSubscription<DocumentSnapshot> notifications;
+
+  Future<void> prepare() async {
+    notifications = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .snapshots()
+        .listen((docsnap) {
+      if (docsnap.exists) {
+        if (docsnap.data()['notifications_business'] != null) {
+          if (docsnap.data()['notifications_business'].length != 0) {
+            if (docsnap.data()['notifications_business'].length > 3) {
+              for (int i = docsnap.data()['notifications_business'].length - 1;
+                  i >= docsnap.data()['notifications_business'].length - 3;
+                  i--) {
+                if (this.mounted) {
+                  setState(() {
+                    notifs.add(docsnap.data()['notifications_business'][i]);
+                  });
+                } else {
+                  notifs.add(docsnap.data()['notifications_business'][i]);
+                }
+              }
+              List notifsReversed = [];
+              for (Map notif in notifs.reversed) {
+                notifsReversed.add(notif);
+              }
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser.uid)
+                  .update({
+                'notifications_business': notifsReversed,
+              });
+            } else {
+              for (Map notif
+                  in docsnap.data()['notifications_business'].reversed) {
+                if (this.mounted) {
+                  setState(() {
+                    notifs.add(notif);
+                  });
+                } else {
+                  notifs.add(notif);
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 
   @override
   void initState() {
+    prepare();
+    if (this.mounted) {
+      setState(() {
+        loading = false;
+      });
+    } else {
+      loading = false;
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    notifications.cancel();
+    super.dispose();
   }
 
   @override
@@ -30,65 +96,121 @@ class _ProfileScreen1State extends State<ProfileScreen1>
     return loading
         ? LoadingScreen()
         : Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CardW(
-                      height: 0.5,
-                      width: 0.8,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: size.height * 0.04,
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.person,
-                                size: 30,
-                                color: darkPrimaryColor,
-                              ),
-                              Text(
-                                FirebaseAuth.instance.currentUser.phoneNumber
-                                    .toString(),
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                    color: darkPrimaryColor,
-                                    fontSize: 25,
+            body: Column(
+              children: [
+                SizedBox(height: 30),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(bottom: 10),
+                    itemCount: notifs.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (notifs[index]['type'] == 'offered') {
+                          setState(() {
+                            loading = true;
+                          });
+                          Navigator.push(
+                            context,
+                            SlideRightRoute(
+                                page: OnEventScreen(
+                              bookingId: notifs[index]['bookingId'],
+                            )),
+                          );
+                          setState(() {
+                            loading = false;
+                          });
+                        }
+                        if (notifs[index]['type'] == 'new_booking') {
+                          setState(() {
+                            loading = true;
+                          });
+                          Navigator.push(
+                            context,
+                            SlideRightRoute(
+                                page: OnEventScreen(
+                              bookingId: notifs[index]['bookingId'],
+                            )),
+                          );
+                          setState(() {
+                            loading = false;
+                          });
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                        // padding: EdgeInsets.all(10),
+                        child: Card(
+                          color: notifs[index]['type'] == 'booking_canceled'
+                              ? Colors.red
+                              : whiteColor,
+                          margin: EdgeInsets.all(5),
+                          elevation: 10,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    notifs[index]['title'],
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: notifs[index]['type'] ==
+                                                'booking_canceled'
+                                            ? whiteColor
+                                            : darkColor,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    notifs[index]['text'],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                          color: notifs[index]['type'] ==
+                                                  'booking_canceled'
+                                              ? whiteColor
+                                              : darkColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Company: ' + notifs[index]['companyName'],
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                          color: notifs[index]['type'] ==
+                                                  'booking_canceled'
+                                              ? whiteColor
+                                              : darkColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          RoundedButton(
-                            width: 0.5,
-                            height: 0.07,
-                            text: 'Sign out',
-                            press: () {
-                              setState(() {
-                                loading = true;
-                              });
-                              AuthService().signOut(context);
-                              setState(() {
-                                loading = false;
-                              });
-                            },
-                            color: darkPrimaryColor,
-                            textColor: whiteColor,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           );
 

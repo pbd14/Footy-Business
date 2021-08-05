@@ -208,6 +208,40 @@ class _History1State extends State<History1>
                 .collection('bookings')
                 .doc(book.id)
                 .delete();
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser.uid)
+                .update({
+              'notifications_business': FieldValue.arrayUnion([
+                {
+                  'seen': false,
+                  'type': 'booking_canceled',
+                  'title': 'Deadline passed',
+                  'text': 'Booking was canceled because deadline has passed (' +
+                      chosenPlace.data()['name'] +
+                      ')',
+                  'companyName': chosenCompany.data()['name'],
+                  'date': DateTime.now(),
+                }
+              ])
+            });
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(book.data()['userId'])
+                .update({
+              'notifications': FieldValue.arrayUnion([
+                {
+                  'seen': false,
+                  'type': 'booking_canceled',
+                  'title': 'Deadline passed',
+                  'text': 'Booking was canceled because deadline has passed (' +
+                      chosenPlace.data()['name'] +
+                      ')',
+                  'companyName': chosenCompany.data()['name'],
+                  'date': DateTime.now(),
+                }
+              ])
+            });
           }
 
           for (QueryDocumentSnapshot place in places.docs) {
@@ -1334,9 +1368,6 @@ class _History1State extends State<History1>
                                                 children: [
                                                   TextButton(
                                                     onPressed: () {
-                                                      setState(() {
-                                                        loading = true;
-                                                      });
                                                       if (DateTime.now()
                                                           .isAfter(
                                                         DateTime.fromMillisecondsSinceEpoch(
@@ -1353,6 +1384,66 @@ class _History1State extends State<History1>
                                                                 'bookings')
                                                             .doc(book.id)
                                                             .delete();
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .doc(FirebaseAuth
+                                                                .instance
+                                                                .currentUser
+                                                                .uid)
+                                                            .update({
+                                                          'notifications_business':
+                                                              FieldValue
+                                                                  .arrayUnion([
+                                                            {
+                                                              'seen': false,
+                                                              'type':
+                                                                  'booking_canceled',
+                                                              'title':
+                                                                  'Deadline passed',
+                                                              'text': 'Booking was canceled because deadline has passed (' +
+                                                                  chosenPlace
+                                                                          .data()[
+                                                                      'name'] +
+                                                                  ')',
+                                                              'companyName':
+                                                                  chosenCompany
+                                                                          .data()[
+                                                                      'name'],
+                                                              'date': DateTime
+                                                                  .now(),
+                                                            }
+                                                          ])
+                                                        });
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .doc(book.data()[
+                                                                'userId'])
+                                                            .update({
+                                                          'notifications':
+                                                              FieldValue
+                                                                  .arrayUnion([
+                                                            {
+                                                              'seen': false,
+                                                              'type':
+                                                                  'booking_canceled',
+                                                              'title':
+                                                                  'Deadline passed',
+                                                              'text': 'Booking was canceled because deadline has passed (' +
+                                                                  chosenPlace
+                                                                          .data()[
+                                                                      'name'] +
+                                                                  ')',
+                                                              'companyName':
+                                                                  chosenCompany
+                                                                          .data()[
+                                                                      'name'],
+                                                              'date': DateTime
+                                                                  .now(),
+                                                            }
+                                                          ])
+                                                        });
                                                         PushNotificationMessage
                                                             notification =
                                                             PushNotificationMessage(
@@ -1391,11 +1482,6 @@ class _History1State extends State<History1>
                                                                 TextButton(
                                                                   onPressed:
                                                                       () {
-                                                                    setState(
-                                                                        () {
-                                                                      loading =
-                                                                          true;
-                                                                    });
                                                                     FirebaseFirestore
                                                                         .instance
                                                                         .collection(
@@ -1429,6 +1515,57 @@ class _History1State extends State<History1>
                                                                             Colors.red,
                                                                       );
                                                                     });
+                                                                    FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'users')
+                                                                        .doc(book.data()[
+                                                                            'userId'])
+                                                                        .update({
+                                                                      'notifications':
+                                                                          FieldValue
+                                                                              .arrayUnion([
+                                                                        {
+                                                                          'seen': false,
+                                                                          'type':
+                                                                              'offer_accepted',
+                                                                          'bookingId':
+                                                                              book.id,
+                                                                          'title':
+                                                                              'Accepted',
+                                                                          'text': 'Offer was accepted. Booking is made at ' +
+                                                                              chosenPlace.data()['name'],
+                                                                          'companyName':
+                                                                              chosenCompany.data()['name'],
+                                                                          'date':
+                                                                              DateTime.now(),
+                                                                        }
+                                                                      ])
+                                                                    }).catchError(
+                                                                            (error) {
+                                                                      print(
+                                                                          'MISTAKE HERE');
+                                                                      print(
+                                                                          error);
+                                                                      PushNotificationMessage
+                                                                          notification =
+                                                                          PushNotificationMessage(
+                                                                        title:
+                                                                            'Fail',
+                                                                        body:
+                                                                            'Failed to accept',
+                                                                      );
+                                                                      showSimpleNotification(
+                                                                        Container(
+                                                                            child:
+                                                                                Text(notification.body)),
+                                                                        position:
+                                                                            NotificationPosition.top,
+                                                                        background:
+                                                                            Colors.red,
+                                                                      );
+                                                                    });
+
                                                                     PushNotificationMessage
                                                                         notification =
                                                                         PushNotificationMessage(
@@ -1493,9 +1630,6 @@ class _History1State extends State<History1>
                                                   ),
                                                   TextButton(
                                                     onPressed: () {
-                                                      setState(() {
-                                                        loading = true;
-                                                      });
 
                                                       if (DateTime.now()
                                                           .isAfter(DateTime
@@ -1549,11 +1683,6 @@ class _History1State extends State<History1>
                                                                 TextButton(
                                                                   onPressed:
                                                                       () {
-                                                                    setState(
-                                                                        () {
-                                                                      loading =
-                                                                          true;
-                                                                    });
                                                                     FirebaseFirestore
                                                                         .instance
                                                                         .collection(
@@ -1562,6 +1691,59 @@ class _History1State extends State<History1>
                                                                             .id)
                                                                         .delete()
                                                                         .catchError(
+                                                                            (error) {
+                                                                      print(
+                                                                          'MISTAKE HERE');
+                                                                      print(
+                                                                          error);
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              false);
+                                                                      PushNotificationMessage
+                                                                          notification =
+                                                                          PushNotificationMessage(
+                                                                        title:
+                                                                            'Fail',
+                                                                        body:
+                                                                            'Failed to reject',
+                                                                      );
+                                                                      showSimpleNotification(
+                                                                        Container(
+                                                                            child:
+                                                                                Text(notification.body)),
+                                                                        position:
+                                                                            NotificationPosition.top,
+                                                                        background:
+                                                                            Colors.red,
+                                                                      );
+                                                                    });
+
+                                                                    FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'users')
+                                                                        .doc(book.data()[
+                                                                            'userId'])
+                                                                        .update({
+                                                                      'notifications':
+                                                                          FieldValue
+                                                                              .arrayUnion([
+                                                                        {
+                                                                          'seen': false,
+                                                                          'type':
+                                                                              'offer_rejected',
+                                                                          'title':
+                                                                              'Rejected',
+                                                                          'text': 'Offer was rejecte. Booking was canceled at ' +
+                                                                              chosenPlace.data()['name'],
+                                                                          'companyName':
+                                                                              chosenCompany.data()['name'],
+                                                                          'date':
+                                                                              DateTime.now(),
+                                                                        }
+                                                                      ])
+                                                                    }).catchError(
                                                                             (error) {
                                                                       print(
                                                                           'MISTAKE HERE');

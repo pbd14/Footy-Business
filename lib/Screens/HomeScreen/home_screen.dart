@@ -21,10 +21,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isNotif = false;
+  bool isProfileNotif = false;
   bool can = true;
   bool loading = false;
   int _selectedIndex = 0;
   int notifCounter = 0;
+  int profileNotifCounter = 0;
+  StreamSubscription<DocumentSnapshot> userSubscription;
 
   // ignore: cancel_subscriptions
   StreamSubscription<QuerySnapshot> subscription;
@@ -109,15 +112,59 @@ class _HomeScreenState extends State<HomeScreen> {
     //       //   });
     //       // }
     //     });
+    userSubscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .snapshots()
+        .listen((docsnap) {
+      if (docsnap != null) {
+        if (docsnap.data()['notifications_business'] != null) {
+          if (docsnap.data()['notifications_business'].length != 0) {
+            List acts = [];
+            for (var act in docsnap.data()['notifications_business']) {
+              if (!act['seen']) {
+                acts.add(act);
+              }
+            }
+            if (acts.length != 0) {
+              setState(() {
+                isProfileNotif = true;
+                profileNotifCounter = acts.length;
+              });
+            } else {
+              if (this.mounted) {
+                setState(() {
+                  isProfileNotif = false;
+                  profileNotifCounter = 0;
+                });
+              } else {
+                isProfileNotif = false;
+                profileNotifCounter = 0;
+              }
+            }
+          } else {
+            setState(() {
+              isProfileNotif = false;
+              profileNotifCounter = 0;
+            });
+          }
+        } else {
+          setState(() {
+            isProfileNotif = false;
+            profileNotifCounter = 0;
+          });
+        }
+      }
+    });
     prepare();
     super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   subscription.cancel();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    userSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +219,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: '',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.person),
+                      icon: isProfileNotif
+                          ? new Stack(
+                              children: <Widget>[
+                                new Icon(CupertinoIcons.person_fill),
+                                new Positioned(
+                                  right: 0,
+                                  child: new Container(
+                                    padding: EdgeInsets.all(1),
+                                    decoration: new BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      minWidth: 15,
+                                      minHeight: 15,
+                                    ),
+                                    child: new Text(
+                                      profileNotifCounter.toString(),
+                                      style: new TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          : Icon(CupertinoIcons.person_alt),
                       label: '',
                     ),
                   ],

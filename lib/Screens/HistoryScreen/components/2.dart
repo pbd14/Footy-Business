@@ -33,6 +33,7 @@ class _History2State extends State<History2>
   @override
   void dispose() {
     ordinaryBookSubscr.cancel();
+    super.dispose();
   }
 
   Future<void> loadData() async {
