@@ -10,7 +10,7 @@ import 'package:footy_business/Screens/ProfileScreen/profile_screen.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:encrypt/encrypt.dart' as enc;
 import '../../constants.dart';
 
 // ignore: must_be_immutable
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ignore: cancel_subscriptions
   StreamSubscription<QuerySnapshot> subscription;
   List<Widget> _widgetOptions = <Widget>[
-    DashboardScreen(),
+    // DashboardScreen(),
     ManagementScreen(),
     HistoryScreen(),
     ProfileScreen(),
@@ -131,10 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 bottomNavigationBar: BottomNavigationBar(
                   items: <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: '',
-                    ),
+                    // BottomNavigationBarItem(
+                    //   icon: Icon(Icons.home),
+                    //   label: '',
+                    // ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.apartment_rounded),
                       label: '',

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/PlacesScreens/add_place_screen.dart';
+import 'package:footy_business/Services/encryption_service.dart';
 import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:footy_business/widgets/rounded_text_input.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
@@ -119,7 +120,8 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                           FirebaseAuth
                                               .instance.currentUser.phoneNumber
                                         ]),
-                                        'balance': 0,
+                                        'balance': EncryptionService().enc('0'),
+                                        'balanceCurrency': 'UZS',
                                         'id': id,
                                       }).catchError((error) {
                                         PushNotificationMessage notification =
