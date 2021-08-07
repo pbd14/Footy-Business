@@ -22,6 +22,73 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
 
   StreamSubscription<DocumentSnapshot> notifications;
 
+  String getDate(int millisecondsSinceEpoch) {
+    String date = '';
+    DateTime d = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+    if (d.year == DateTime.now().year) {
+      if (d.month == DateTime.now().month) {
+        if (d.day == DateTime.now().day) {
+          date = 'today';
+        } else {
+          int n = DateTime.now().day - d.day;
+          switch (n) {
+            case 1:
+              date = 'yesterday';
+              break;
+            case 2:
+              date = '2 days ago';
+              break;
+            case 3:
+              date = n.toString() + ' days ago';
+              break;
+            case 4:
+              date = n.toString() + ' days ago';
+              break;
+            default:
+              date = n.toString() + ' days ago';
+          }
+        }
+      } else {
+        int n = DateTime.now().month - d.month;
+        switch (n) {
+          case 1:
+            date = 'last month';
+            break;
+          case 2:
+            date = n.toString() + ' months ago';
+            break;
+          case 3:
+            date = n.toString() + ' months ago';
+            break;
+          case 4:
+            date = n.toString() + ' months ago';
+            break;
+          default:
+            date = n.toString() + ' months ago';
+        }
+      }
+    } else {
+      int n = DateTime.now().year - d.year;
+      switch (n) {
+        case 1:
+          date = 'last year';
+          break;
+        case 2:
+          date = n.toString() + ' years ago';
+          break;
+        case 3:
+          date = n.toString() + ' years ago';
+          break;
+        case 4:
+          date = n.toString() + ' years ago';
+          break;
+        default:
+          date = n.toString() + ' years ago';
+      }
+    }
+    return date;
+  }
+
   Future<void> prepare() async {
     notifications = FirebaseFirestore.instance
         .collection('users')
@@ -96,6 +163,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     return loading
         ? LoadingScreen()
         : Scaffold(
+          backgroundColor: grayColor,
             body: Column(
               children: [
                 SizedBox(height: 30),
@@ -198,6 +266,24 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                                               ? whiteColor
                                               : darkColor,
                                           fontSize: 15,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    getDate(notifs[index]['date']
+                                        .millisecondsSinceEpoch),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                          color: notifs[index]['type'] ==
+                                                  'booking_canceled'
+                                              ? whiteColor
+                                              : darkColor,
+                                          fontSize: 17,
                                           fontWeight: FontWeight.w400),
                                     ),
                                   ),

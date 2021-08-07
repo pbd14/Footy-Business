@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : DefaultTabController(
             length: 2,
             child: Scaffold(
-              backgroundColor: whiteColor,
+              backgroundColor: grayColor,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 toolbarHeight: 60,

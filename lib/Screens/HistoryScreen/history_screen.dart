@@ -23,7 +23,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         : DefaultTabController(
             length: 2,
             child: Scaffold(
-              backgroundColor: whiteColor,
+              backgroundColor: grayColor,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 toolbarHeight: 60,

@@ -77,6 +77,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
     return loading
         ? LoadingScreen()
         : Scaffold(
+          backgroundColor: grayColor,
             body: SingleChildScrollView(
               child: RefreshIndicator(
                 color: primaryColor,
@@ -236,28 +237,31 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             width: size.width * 0.8,
                             padding: EdgeInsets.all(15),
                             child: Card(
-                              elevation: 0,
+                              elevation: 10,
                               margin: EdgeInsets.all(15),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.plus_square_on_square,
-                                    color: darkPrimaryColor,
-                                    size: 25,
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    'Create location',
-                                    textScaleFactor: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          color: darkPrimaryColor,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.plus_square_on_square,
+                                      color: darkPrimaryColor,
+                                      size: 25,
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Create location',
+                                      textScaleFactor: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                            color: darkPrimaryColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

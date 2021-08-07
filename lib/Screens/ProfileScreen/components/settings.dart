@@ -96,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            backgroundColor: lightPrimaryColor,
+            backgroundColor: grayColor,
             body: Container(
               child: SingleChildScrollView(
                 child: Center(
@@ -276,6 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       ],
                                     ),
                                     ExpansionPanelList(
+                                      elevation: 0,
                                       children: [
                                         ExpansionPanel(
                                           isExpanded: expV1,

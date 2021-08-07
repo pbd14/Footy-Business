@@ -72,7 +72,7 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                 elevation: 0,
                 automaticallyImplyLeading: false,
                 toolbarHeight: size.width * 0.17,
-                backgroundColor: whiteColor,
+                backgroundColor: grayColor,
                 centerTitle: true,
                 actions: [
                   IconButton(
@@ -136,6 +136,7 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                     },
                   ),
                 ]),
+            backgroundColor: grayColor,
             body: RefreshIndicator(
               onRefresh: _refresh,
               child: CustomScrollView(
@@ -257,29 +258,33 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                     width: size.width * 0.8,
                                     padding: EdgeInsets.all(15),
                                     child: Card(
-                                      elevation: 0,
+                                      elevation: 10,
                                       margin: EdgeInsets.all(15),
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons
-                                                .plus_square_on_square,
-                                            color: darkPrimaryColor,
-                                            size: 25,
-                                          ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            'Create company',
-                                            textScaleFactor: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  color: darkPrimaryColor,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              CupertinoIcons
+                                                  .plus_square_on_square,
+                                              color: darkPrimaryColor,
+                                              size: 25,
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 5),
+                                            Text(
+                                              'Create company',
+                                              textScaleFactor: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                    color: darkPrimaryColor,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -323,29 +328,33 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                     width: size.width * 0.8,
                                     padding: EdgeInsets.all(15),
                                     child: Card(
-                                      elevation: 0,
+                                      elevation: 10,
                                       margin: EdgeInsets.all(15),
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons
-                                                .plus_square_on_square,
-                                            color: darkPrimaryColor,
-                                            size: 25,
-                                          ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            'Create company',
-                                            textScaleFactor: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  color: darkPrimaryColor,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              CupertinoIcons
+                                                  .plus_square_on_square,
+                                              color: darkPrimaryColor,
+                                              size: 25,
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 5),
+                                            Text(
+                                              'Create company',
+                                              textScaleFactor: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                    color: darkPrimaryColor,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
