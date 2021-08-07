@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ProfileScreen/components/settings.dart';
 import 'package:footy_business/Services/auth_service.dart';
+import 'package:footy_business/Services/encryption_service.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -200,35 +201,64 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                       child: Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
-                                          width: size.width * 0.45,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Text(
-                                                company.data()['name'],
-                                                overflow: TextOverflow.ellipsis,
-                                                style: GoogleFonts.montserrat(
-                                                  textStyle: TextStyle(
-                                                    color: darkPrimaryColor,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    company.data()['name'],
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    company
+                                                        .data()['owner_name'],
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          color:
+                                                              darkPrimaryColor,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                               SizedBox(
-                                                height: 10,
+                                                width: 25,
                                               ),
                                               Text(
-                                                company.data()['owner_name'],
+                                                EncryptionService().dec(company
+                                                        .data()['balance']) +
+                                                    ' UZS',
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GoogleFonts.montserrat(
                                                   textStyle: TextStyle(
                                                       color: darkPrimaryColor,
-                                                      fontSize: 10,
+                                                      fontSize: 15,
                                                       fontWeight:
-                                                          FontWeight.w400),
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                             ],
