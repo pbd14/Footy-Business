@@ -140,7 +140,8 @@ class _ManagementScreenState extends State<ManagementScreen> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                       child: AppBar(
-                        backgroundColor: Colors.grey.shade200.withOpacity(0.2),
+                        // backgroundColor: Colors.grey.shade200.withOpacity(0.2),
+                        backgroundColor: darkPrimaryColor,
                         centerTitle: true,
                         title: Text(
                           'Management',
@@ -279,6 +280,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           width: size.width * 0.9,
                           margin: EdgeInsets.all(10),
                           child: Card(
+                            shadowColor: whiteColor,
                             color: whiteColor,
                             elevation: 10,
                             child: Padding(
@@ -486,6 +488,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10.0),
                               child: Card(
+                                shadowColor: whiteColor,
                                 margin: EdgeInsets.all(5),
                                 elevation: 10,
                                 child: Center(
@@ -584,7 +587,6 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 600),
                       ],
                     ),
                   ),

@@ -77,279 +77,299 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     return loading
         ? LoadingScreen()
-        : Scaffold(
-            appBar: AppBar(
-              iconTheme: IconThemeData(color: whiteColor),
-              toolbarHeight: size.width * 0.17,
-              backgroundColor: darkPrimaryColor,
-              centerTitle: true,
-              title: Text(
-                'Settings',
-                overflow: TextOverflow.ellipsis,
-                textScaleFactor: 1,
-                style: GoogleFonts.montserrat(
-                  textStyle: TextStyle(
-                    color: whiteColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
+        : Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    // stops: [0.3, 1],
+                    colors: [
+                  lightPrimaryColor.withOpacity(0.5),
+                  primaryColor,
+                  darkPrimaryColor,
+                  darkColor
+                ])),
+            child: Scaffold(
+              appBar: AppBar(
+                iconTheme: IconThemeData(color: whiteColor),
+                toolbarHeight: size.width * 0.17,
+                backgroundColor: darkPrimaryColor,
+                centerTitle: true,
+                title: Text(
+                  'Settings',
+                  overflow: TextOverflow.ellipsis,
+                  textScaleFactor: 1,
+                  style: GoogleFonts.montserrat(
+                    textStyle: TextStyle(
+                      color: whiteColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                    ),
                   ),
                 ),
               ),
-            ),
-            backgroundColor: grayColor,
-            body: Container(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: size.height * 0.5 - 225,
-                      ),
-                      Container(
-                        width: 0.9 * size.width,
-                        child: Column(
-                          children: [
-                            Card(
-                              elevation: 10,
-                              margin: EdgeInsets.all(5),
-                              shadowColor: whiteColor,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Form(
-                                  key: _formKey1,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Center(
-                                          child: Text(
-                                            'Settings',
+              backgroundColor: Colors.transparent,
+              body: Container(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: size.height * 0.5 - 225,
+                        ),
+                        Container(
+                          width: 0.9 * size.width,
+                          child: Column(
+                            children: [
+                              Card(
+                                elevation: 10,
+                                margin: EdgeInsets.all(5),
+                                shadowColor: whiteColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    key: _formKey1,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Center(
+                                            child: Text(
+                                              'Settings',
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 27,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Language',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            textStyle: TextStyle(
+                                              color: darkColor,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        DropdownButton<String>(
+                                          isExpanded: true,
+                                          hint: Text(
+                                            lang != null ? lang : 'Language',
+                                            textScaleFactor: 1,
                                             style: GoogleFonts.montserrat(
                                               textStyle: TextStyle(
-                                                color: darkColor,
-                                                fontSize: 27,
+                                                color: darkPrimaryColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ),
+                                          items: [
+                                            new DropdownMenuItem<String>(
+                                              value: 'UZ',
+                                              child: new Text(
+                                                'Uzbek',
+                                                textScaleFactor: 1,
+                                              ),
+                                            ),
+                                            new DropdownMenuItem<String>(
+                                              value: 'RU',
+                                              child: new Text(
+                                                'Russian',
+                                                textScaleFactor: 1,
+                                              ),
+                                            ),
+                                            new DropdownMenuItem<String>(
+                                              value: 'EN',
+                                              child: new Text(
+                                                'English',
+                                                textScaleFactor: 1,
+                                              ),
+                                            ),
+                                          ],
+                                          onChanged: (value) {
+                                            setState(() {
+                                              lang = value;
+                                            });
+                                            prefs.setString('lang', value);
+                                            PushNotificationMessage
+                                                notification =
+                                                PushNotificationMessage(
+                                              title: 'Saved',
+                                              body: 'Language is saved',
+                                            );
+                                            showSimpleNotification(
+                                              Container(
+                                                  child:
+                                                      Text(notification.body)),
+                                              position:
+                                                  NotificationPosition.top,
+                                              background: primaryColor,
+                                            );
+                                          },
                                         ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        'Language',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                            color: darkColor,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                                        SizedBox(
+                                          height: 20,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      DropdownButton<String>(
-                                        isExpanded: true,
-                                        hint: Text(
-                                          lang != null ? lang : 'Language',
-                                          textScaleFactor: 1,
-                                          style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                              color: darkPrimaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        items: [
-                                          new DropdownMenuItem<String>(
-                                            value: 'UZ',
-                                            child: new Text(
-                                              'Uzbek',
-                                              textScaleFactor: 1,
-                                            ),
-                                          ),
-                                          new DropdownMenuItem<String>(
-                                            value: 'RU',
-                                            child: new Text(
-                                              'Russian',
-                                              textScaleFactor: 1,
-                                            ),
-                                          ),
-                                          new DropdownMenuItem<String>(
-                                            value: 'EN',
-                                            child: new Text(
-                                              'English',
-                                              textScaleFactor: 1,
-                                            ),
-                                          ),
-                                        ],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            lang = value;
-                                          });
-                                          prefs.setString('lang', value);
-                                          PushNotificationMessage notification =
-                                              PushNotificationMessage(
-                                            title: 'Saved',
-                                            body: 'Language is saved',
-                                          );
-                                          showSimpleNotification(
-                                            Container(
-                                                child: Text(notification.body)),
-                                            position: NotificationPosition.top,
-                                            background: primaryColor,
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Card(
-                              elevation: 10,
-                              margin: EdgeInsets.all(5),
-                              shadowColor: whiteColor,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 7,
-                                          child: Text(
-                                            'Local password',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                color: darkColor,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w400,
+                              Card(
+                                elevation: 10,
+                                margin: EdgeInsets.all(5),
+                                shadowColor: whiteColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 7,
+                                            child: Text(
+                                              'Local password',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Switch(
-                                            activeColor: primaryColor,
-                                            value: expV1,
-                                            onChanged: (val) {
-                                              if (this.mounted) {
-                                                setState(() {
-                                                  expV1 = val;
-                                                  if (!val) {
+                                          SizedBox(width: 5),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Switch(
+                                              activeColor: primaryColor,
+                                              value: expV1,
+                                              onChanged: (val) {
+                                                if (this.mounted) {
+                                                  setState(() {
+                                                    expV1 = val;
+                                                    if (!val) {
+                                                      prefs.setBool(
+                                                          'local_auth', expV1);
+                                                      prefs.setString(
+                                                          'local_password', '');
+                                                      PushNotificationMessage
+                                                          notification =
+                                                          PushNotificationMessage(
+                                                        title: 'Сохранено',
+                                                        body:
+                                                            'Локальный пароль отключен',
+                                                      );
+                                                      showSimpleNotification(
+                                                        Container(
+                                                          child: Text(
+                                                              notification
+                                                                  .body),
+                                                        ),
+                                                        position:
+                                                            NotificationPosition
+                                                                .top,
+                                                        background: Colors.red,
+                                                      );
+                                                    }
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      ExpansionPanelList(
+                                        elevation: 0,
+                                        children: [
+                                          ExpansionPanel(
+                                            isExpanded: expV1,
+                                            headerBuilder: (context, isOpen) {
+                                              return Center(
+                                                child: Container(
+                                                    margin: EdgeInsets.fromLTRB(
+                                                        5, 2, 5, 2),
+                                                    child: Text(
+                                                        '4-значный пароль')),
+                                              );
+                                            },
+                                            body: Center(
+                                              child: RoundedTextInput(
+                                                height: 80,
+                                                length: 4,
+                                                initialValue: prefs.getString(
+                                                            'local_password') !=
+                                                        null
+                                                    ? '****'
+                                                    : '',
+                                                validator: (val) {
+                                                  if (val.length != 4) {
+                                                    return "Нужен 4-значный код";
+                                                  }
+                                                },
+                                                formatters: [
+                                                  FilteringTextInputFormatter
+                                                      .allow(
+                                                          RegExp(r"[0-9]+|\s")),
+                                                ],
+                                                hintText: 'Пароль',
+                                                type: TextInputType.number,
+                                                onChanged: (value) {
+                                                  if (value.length == 4) {
                                                     prefs.setBool(
                                                         'local_auth', expV1);
                                                     prefs.setString(
-                                                        'local_password', '');
+                                                        'local_password',
+                                                        value);
                                                     PushNotificationMessage
                                                         notification =
                                                         PushNotificationMessage(
                                                       title: 'Сохранено',
                                                       body:
-                                                          'Локальный пароль отключен',
+                                                          'Локальный пароль включен',
                                                     );
                                                     showSimpleNotification(
                                                       Container(
-                                                        child: Text(
-                                                            notification.body),
-                                                      ),
+                                                          child: Text(
+                                                              notification
+                                                                  .body)),
                                                       position:
                                                           NotificationPosition
                                                               .top,
-                                                      background: Colors.red,
+                                                      background: primaryColor,
                                                     );
                                                   }
-                                                });
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    ExpansionPanelList(
-                                      elevation: 0,
-                                      children: [
-                                        ExpansionPanel(
-                                          isExpanded: expV1,
-                                          headerBuilder: (context, isOpen) {
-                                            return Center(
-                                              child: Container(
-                                                  margin: EdgeInsets.fromLTRB(
-                                                      5, 2, 5, 2),
-                                                  child:
-                                                      Text('4-значный пароль')),
-                                            );
-                                          },
-                                          body: Center(
-                                            child: RoundedTextInput(
-                                              height: 80,
-                                              length: 4,
-                                              initialValue: prefs.getString(
-                                                          'local_password') !=
-                                                      null
-                                                  ? '****'
-                                                  : '',
-                                              validator: (val) {
-                                                if (val.length != 4) {
-                                                  return "Нужен 4-значный код";
-                                                }
-                                              },
-                                              formatters: [
-                                                FilteringTextInputFormatter
-                                                    .allow(
-                                                        RegExp(r"[0-9]+|\s")),
-                                              ],
-                                              hintText: 'Пароль',
-                                              type: TextInputType.number,
-                                              onChanged: (value) {
-                                                if (value.length == 4) {
-                                                  prefs.setBool(
-                                                      'local_auth', expV1);
-                                                  prefs.setString(
-                                                      'local_password', value);
-                                                  PushNotificationMessage
-                                                      notification =
-                                                      PushNotificationMessage(
-                                                    title: 'Сохранено',
-                                                    body:
-                                                        'Локальный пароль включен',
-                                                  );
-                                                  showSimpleNotification(
-                                                    Container(
-                                                        child: Text(
-                                                            notification.body)),
-                                                    position:
-                                                        NotificationPosition
-                                                            .top,
-                                                    background: primaryColor,
-                                                  );
-                                                }
-                                              },
+                                                },
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

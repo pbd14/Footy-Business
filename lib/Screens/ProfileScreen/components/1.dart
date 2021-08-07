@@ -181,133 +181,147 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
         ? LoadingScreen()
         : RefreshIndicator(
             onRefresh: _refresh,
-            child: Scaffold(
-              backgroundColor: grayColor,
-              body: Column(
-                children: [
-                  SizedBox(height: 30),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(bottom: 10),
-                      itemCount: notifs.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                          CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          if (notifs[index]['type'] == 'offered') {
-                            setState(() {
-                              loading = true;
-                            });
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: OnEventScreen(
-                                bookingId: notifs[index]['bookingId'],
-                              )),
-                            );
-                            setState(() {
-                              loading = false;
-                            });
-                          }
-                          if (notifs[index]['type'] == 'new_booking') {
-                            setState(() {
-                              loading = true;
-                            });
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: OnEventScreen(
-                                bookingId: notifs[index]['bookingId'],
-                              )),
-                            );
-                            setState(() {
-                              loading = false;
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10.0),
-                          // padding: EdgeInsets.all(10),
-                          child: Card(
-                            color: notifs[index]['type'] == 'booking_canceled'
-                                ? Colors.red
-                                : whiteColor,
-                            margin: EdgeInsets.all(5),
-                            elevation: 10,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      notifs[index]['title'],
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                          color: notifs[index]['type'] ==
-                                                  'booking_canceled'
-                                              ? whiteColor
-                                              : darkColor,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    // stops: [0.3, 1],
+                    colors: [
+                  lightPrimaryColor.withOpacity(0.5),
+                  primaryColor,
+                  darkPrimaryColor,
+                  darkColor
+                ])),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Column(
+                  children: [
+                    SizedBox(height: 30),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(bottom: 10),
+                        itemCount: notifs.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            if (notifs[index]['type'] == 'offered') {
+                              setState(() {
+                                loading = true;
+                              });
+                              Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                    page: OnEventScreen(
+                                  bookingId: notifs[index]['bookingId'],
+                                )),
+                              );
+                              setState(() {
+                                loading = false;
+                              });
+                            }
+                            if (notifs[index]['type'] == 'new_booking') {
+                              setState(() {
+                                loading = true;
+                              });
+                              Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                    page: OnEventScreen(
+                                  bookingId: notifs[index]['bookingId'],
+                                )),
+                              );
+                              setState(() {
+                                loading = false;
+                              });
+                            }
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            // padding: EdgeInsets.all(10),
+                            child: Card(
+                              shadowColor: whiteColor,
+                              color: notifs[index]['type'] == 'booking_canceled'
+                                  ? Colors.red
+                                  : whiteColor,
+                              margin: EdgeInsets.all(5),
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        notifs[index]['title'],
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: notifs[index]['type'] ==
+                                                    'booking_canceled'
+                                                ? whiteColor
+                                                : darkColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      notifs[index]['text'],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                            color: notifs[index]['type'] ==
-                                                    'booking_canceled'
-                                                ? whiteColor
-                                                : darkColor,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400),
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Company: ' +
-                                          notifs[index]['companyName'],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                            color: notifs[index]['type'] ==
-                                                    'booking_canceled'
-                                                ? whiteColor
-                                                : darkColor,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400),
+                                      Text(
+                                        notifs[index]['text'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                              color: notifs[index]['type'] ==
+                                                      'booking_canceled'
+                                                  ? whiteColor
+                                                  : darkColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      getDate(notifs[index]['date']
-                                          .millisecondsSinceEpoch),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: TextStyle(
-                                            color: notifs[index]['type'] ==
-                                                    'booking_canceled'
-                                                ? whiteColor
-                                                : darkColor,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w400),
+                                      SizedBox(
+                                        height: 5,
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        'Company: ' +
+                                            notifs[index]['companyName'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                              color: notifs[index]['type'] ==
+                                                      'booking_canceled'
+                                                  ? whiteColor
+                                                  : darkColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        getDate(notifs[index]['date']
+                                            .millisecondsSinceEpoch),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                              color: notifs[index]['type'] ==
+                                                      'booking_canceled'
+                                                  ? whiteColor
+                                                  : darkColor,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -315,8 +329,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

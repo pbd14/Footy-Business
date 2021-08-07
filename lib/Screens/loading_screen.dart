@@ -13,14 +13,27 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          color: whiteColor,
-          child: Center(
-            child: SpinKitCubeGrid(
-              color: primaryColor,
-              size: 50.0,
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              // stops: [0.3, 1],
+              colors: [
+            lightPrimaryColor.withOpacity(0.5),
+            primaryColor,
+            darkPrimaryColor,
+            darkColor
+          ])),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Container(
+            child: Center(
+              child: SpinKitCubeGrid(
+                color: whiteColor,
+                size: 50.0,
+              ),
             ),
           ),
         ),
