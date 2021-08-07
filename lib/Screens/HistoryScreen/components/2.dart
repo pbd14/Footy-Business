@@ -130,532 +130,555 @@ class _History2State extends State<History2>
         ? LoadingScreen()
         : RefreshIndicator(
             onRefresh: _refresh,
-            child: Scaffold(
-              backgroundColor: grayColor,
-              body: CustomScrollView(
-                scrollDirection: Axis.vertical,
-                slivers: [
-                  _bookings != null
-                      ? SliverList(
-                          delegate: SliverChildListDelegate([
-                            Container(
-                              padding: EdgeInsets.fromLTRB(
-                                  size.width * 0.2, 0, size.width * 0.2, 0),
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                hint: Text(
-                                  chosenCompany.data()['name'] != null
-                                      ? chosenCompany.data()['name']
-                                      : 'No name',
-                                  textScaleFactor: 1,
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: TextStyle(
-                                      color: darkPrimaryColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                items: companies.docs != null
-                                    ? companies.docs
-                                        .map((QueryDocumentSnapshot value) {
-                                        return new DropdownMenuItem<String>(
-                                          value: value.id,
-                                          child: new Text(
-                                            value.data()['name'],
-                                            textScaleFactor: 1,
-                                          ),
-                                        );
-                                      }).toList()
-                                    : [
-                                        new DropdownMenuItem<String>(
-                                          value: '-',
-                                          child: new Text(
-                                            '-',
-                                            textScaleFactor: 1,
-                                          ),
-                                        )
-                                      ],
-                                onChanged: (value) {
-                                  companyId = value;
-                                  loadData();
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(
-                                  size.width * 0.2, 0, size.width * 0.2, 0),
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                hint: Text(
-                                  chosenPlace.data()['name'] != null
-                                      ? chosenPlace.data()['name']
-                                      : 'No name',
-                                  textScaleFactor: 1,
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: TextStyle(
-                                      color: darkPrimaryColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                items: places.docs != null
-                                    ? places.docs
-                                        .map((QueryDocumentSnapshot value) {
-                                        return new DropdownMenuItem<String>(
-                                          value: value.id,
-                                          child: new Text(
-                                            value.data()['name'],
-                                            textScaleFactor: 1,
-                                          ),
-                                        );
-                                      }).toList()
-                                    : [
-                                        new DropdownMenuItem<String>(
-                                          value: '-',
-                                          child: new Text(
-                                            '-',
-                                            textScaleFactor: 1,
-                                          ),
-                                        )
-                                      ],
-                                onChanged: (value) {
-                                  placeId = value;
-                                  loadData();
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            for (QueryDocumentSnapshot book in _bookings)
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      // stops: [0.3, 1],
+                      colors: [
+                    lightPrimaryColor.withOpacity(0.5),
+                    primaryColor,
+                    darkPrimaryColor,
+                    darkColor
+                  ])),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: CustomScrollView(
+                  scrollDirection: Axis.vertical,
+                  slivers: [
+                    _bookings != null
+                        ? SliverList(
+                            delegate: SliverChildListDelegate([
                               Container(
-                                // padding: EdgeInsets.all(10),
-                                child: Card(
-                                  margin: EdgeInsets.all(5),
-                                  elevation: 10,
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(5.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: size.width * 0.4,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  DateFormat.yMMMd()
-                                                      .format(book
-                                                          .data()[
-                                                              'timestamp_date']
-                                                          .toDate())
-                                                      .toString(),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
-                                                    textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  book.data()['from'] +
-                                                      ' - ' +
-                                                      book.data()['to'],
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
-                                                    textStyle: TextStyle(
-                                                      color: darkPrimaryColor,
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                              ],
+                                padding: EdgeInsets.fromLTRB(
+                                    size.width * 0.2, 0, size.width * 0.2, 0),
+                                child: DropdownButton<String>(
+                                  iconEnabledColor: whiteColor,
+                                  isExpanded: true,
+                                  hint: Text(
+                                    chosenCompany.data()['name'] != null
+                                        ? chosenCompany.data()['name']
+                                        : 'No name',
+                                    textScaleFactor: 1,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  items: companies.docs != null
+                                      ? companies.docs
+                                          .map((QueryDocumentSnapshot value) {
+                                          return new DropdownMenuItem<String>(
+                                            value: value.id,
+                                            child: new Text(
+                                              value.data()['name'],
+                                              textScaleFactor: 1,
                                             ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Container(
-                                              width: size.width * 0.5,
+                                          );
+                                        }).toList()
+                                      : [
+                                          new DropdownMenuItem<String>(
+                                            value: '-',
+                                            child: new Text(
+                                              '-',
+                                              textScaleFactor: 1,
+                                            ),
+                                          )
+                                        ],
+                                  onChanged: (value) {
+                                    companyId = value;
+                                    loadData();
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(
+                                    size.width * 0.2, 0, size.width * 0.2, 0),
+                                child: DropdownButton<String>(
+                                  iconEnabledColor: whiteColor,
+                                  isExpanded: true,
+                                  hint: Text(
+                                    chosenPlace.data()['name'] != null
+                                        ? chosenPlace.data()['name']
+                                        : 'No name',
+                                    textScaleFactor: 1,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  items: places.docs != null
+                                      ? places.docs
+                                          .map((QueryDocumentSnapshot value) {
+                                          return new DropdownMenuItem<String>(
+                                            value: value.id,
+                                            child: new Text(
+                                              value.data()['name'],
+                                              textScaleFactor: 1,
+                                            ),
+                                          );
+                                        }).toList()
+                                      : [
+                                          new DropdownMenuItem<String>(
+                                            value: '-',
+                                            child: new Text(
+                                              '-',
+                                              textScaleFactor: 1,
+                                            ),
+                                          )
+                                        ],
+                                  onChanged: (value) {
+                                    placeId = value;
+                                    loadData();
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              for (QueryDocumentSnapshot book in _bookings)
+                                Container(
+                                  // padding: EdgeInsets.all(10),
+                                  child: Card(
+                                    margin: EdgeInsets.all(5),
+                                    elevation: 10,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: size.width * 0.4,
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    _places[book.id] != null
-                                                        ? _places[book.id]
-                                                            .data()['services']
-                                                            .where((service) {
-                                                            if (service['id'] ==
-                                                                book.data()[
-                                                                    'serviceId']) {
-                                                              return true;
-                                                            } else {
-                                                              return false;
-                                                            }
-                                                          }).first['name']
-                                                        : 'Service',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    _places[book.id] != null
-                                                        ? _places[book.id]
-                                                                        .data()[
-                                                                    'name'] !=
-                                                                null
-                                                            ? _places[book.id]
-                                                                .data()['name']
-                                                            : 'Place'
-                                                        : 'Place',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    book.data()['status'],
+                                                    DateFormat.yMMMd()
+                                                        .format(book
+                                                            .data()[
+                                                                'timestamp_date']
+                                                            .toDate())
+                                                        .toString(),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style:
                                                         GoogleFonts.montserrat(
                                                       textStyle: TextStyle(
                                                         color: darkPrimaryColor,
-                                                        fontSize: 15,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    book.data()['from'] +
+                                                        ' - ' +
+                                                        book.data()['to'],
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          )
-                                        ],
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Container(
+                                                width: size.width * 0.5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      _places[book.id] != null
+                                                          ? _places[book.id]
+                                                              .data()[
+                                                                  'services']
+                                                              .where((service) {
+                                                              if (service[
+                                                                      'id'] ==
+                                                                  book.data()[
+                                                                      'serviceId']) {
+                                                                return true;
+                                                              } else {
+                                                                return false;
+                                                              }
+                                                            }).first['name']
+                                                          : 'Service',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color:
+                                                                darkPrimaryColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      _places[book.id] != null
+                                                          ? _places[book.id]
+                                                                          .data()[
+                                                                      'name'] !=
+                                                                  null
+                                                              ? _places[book.id]
+                                                                      .data()[
+                                                                  'name']
+                                                              : 'Place'
+                                                          : 'Place',
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                            color:
+                                                                darkPrimaryColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(
+                                                      book.data()['status'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color:
+                                                              darkPrimaryColor,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            // CardW(
-                            //   ph: 170,
-                            //   child: Container(
-                            //     padding: EdgeInsets.all(6),
-                            //     child: Column(
-                            //       children: [
-                            //         SizedBox(
-                            //           height: 20,
-                            //         ),
-                            //         Expanded(
-                            //           child: Row(
-                            //             mainAxisAlignment:
-                            //                 MainAxisAlignment.center,
-                            //             children: [
-                            //               Container(
-                            //                 alignment: Alignment.centerLeft,
-                            //                 child: Column(
-                            //                   children: [
-                            //                     Text(
-                            //                       DateFormat.yMMMd()
-                            //                           .format(
-                            //                               Booking.fromSnapshot(
-                            //                                       book)
-                            //                                   .timestamp_date
-                            //                                   .toDate())
-                            //                           .toString(),
-                            //                       overflow:
-                            //                           TextOverflow.ellipsis,
-                            //                       style: GoogleFonts.montserrat(
-                            //                         textStyle: TextStyle(
-                            //                           color: darkPrimaryColor,
-                            //                           fontSize: 20,
-                            //                           fontWeight:
-                            //                               FontWeight.bold,
-                            //                         ),
-                            //                       ),
-                            //                     ),
-                            //                     SizedBox(
-                            //                       height: 10,
-                            //                     ),
-                            //                     Text(
-                            //                       Booking.fromSnapshot(book)
-                            //                           .status,
-                            //                       overflow:
-                            //                           TextOverflow.ellipsis,
-                            //                       style: GoogleFonts.montserrat(
-                            //                         textStyle: TextStyle(
-                            //                           color:
-                            //                               Booking.fromSnapshot(
-                            //                                               book)
-                            //                                           .status ==
-                            //                                       'unfinished'
-                            //                                   ? darkPrimaryColor
-                            //                                   : Colors.red,
-                            //                           fontSize: 15,
-                            //                         ),
-                            //                       ),
-                            //                     ),
-                            //                   ],
-                            //                 ),
-                            //               ),
-                            //               SizedBox(
-                            //                 width: size.width * 0.2,
-                            //               ),
-                            //               Flexible(
-                            //                 child: Container(
-                            //                   alignment: Alignment.centerLeft,
-                            //                   child: Column(
-                            //                     children: [
-                            //                       Text(
-                            //                         _places != null
-                            //                             ? _places[Booking.fromSnapshot(
-                            //                                                 book)
-                            //                                             .id]
-                            //                                         .name !=
-                            //                                     null
-                            //                                 ? _places[Booking
-                            //                                             .fromSnapshot(
-                            //                                                 book)
-                            //                                         .id]
-                            //                                     .name
-                            //                                 : 'Place'
-                            //                             : 'Place',
-                            //                         overflow:
-                            //                             TextOverflow.ellipsis,
-                            //                         style:
-                            //                             GoogleFonts.montserrat(
-                            //                           textStyle: TextStyle(
-                            //                             color: darkPrimaryColor,
-                            //                             fontSize: 20,
-                            //                           ),
-                            //                         ),
-                            //                       ),
-                            //                       SizedBox(
-                            //                         height: 10,
-                            //                       ),
-                            //                       Text(
-                            //                         Booking.fromSnapshot(book)
-                            //                                 .from +
-                            //                             ' - ' +
-                            //                             Booking.fromSnapshot(
-                            //                                     book)
-                            //                                 .to,
-                            //                         overflow:
-                            //                             TextOverflow.ellipsis,
-                            //                         style:
-                            //                             GoogleFonts.montserrat(
-                            //                           textStyle: TextStyle(
-                            //                             color: darkPrimaryColor,
-                            //                             fontSize: 15,
-                            //                           ),
-                            //                         ),
-                            //                       ),
-                            //                     ],
-                            //                   ),
-                            //                 ),
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //         Row(
-                            //           mainAxisAlignment:
-                            //               MainAxisAlignment.center,
-                            //           children: <Widget>[
-                            //             RoundedButton(
-                            //               width: 0.3,
-                            //               height: 0.07,
-                            //               text: 'On Map',
-                            //               press: () {
-                            //                 setState(() {
-                            //                   loading = true;
-                            //                 });
-                            //                 Navigator.push(
-                            //                   context,
-                            //                   SlideRightRoute(
-                            //                     page: MapScreen(
-                            //                       data: {
-                            //                         'lat': _places[Booking
-                            //                                     .fromSnapshot(
-                            //                                         book)
-                            //                                 .id]
-                            //                             .lat,
-                            //                         'lon': _places[Booking
-                            //                                     .fromSnapshot(
-                            //                                         book)
-                            //                                 .id]
-                            //                             .lon
-                            //                       },
-                            //                     ),
-                            //                   ),
-                            //                 );
-                            //                 setState(() {
-                            //                   loading = false;
-                            //                 });
-                            //               },
-                            //               color: darkPrimaryColor,
-                            //               textColor: whiteColor,
-                            //             ),
-                            //             SizedBox(
-                            //               width: size.width * 0.04,
-                            //             ),
-                            //             _places != null
-                            //                 ? LabelButton(
-                            //                     isC: false,
-                            //                     reverse: FirebaseFirestore
-                            //                         .instance
-                            //                         .collection('users')
-                            //                         .doc(FirebaseAuth.instance
-                            //                             .currentUser.uid),
-                            //                     containsValue: _places[
-                            //                             Booking.fromSnapshot(
-                            //                                     book)
-                            //                                 .id]
-                            //                         .id,
-                            //                     color1: Colors.red,
-                            //                     color2: lightPrimaryColor,
-                            //                     ph: 45,
-                            //                     pw: 45,
-                            //                     size: 40,
-                            //                     onTap: () {
-                            //                       setState(() {
-                            //                         FirebaseFirestore.instance
-                            //                             .collection('users')
-                            //                             .doc(FirebaseAuth
-                            //                                 .instance
-                            //                                 .currentUser
-                            //                                 .uid)
-                            //                             .update({
-                            //                           'favourites': FieldValue
-                            //                               .arrayUnion([
-                            //                             _places[Booking
-                            //                                         .fromSnapshot(
-                            //                                             book)
-                            //                                     .id]
-                            //                                 .id
-                            //                           ])
-                            //                         });
-                            //                       });
-                            //                       ScaffoldMessenger.of(context)
-                            //                           .showSnackBar(
-                            //                         SnackBar(
-                            //                           duration:
-                            //                               Duration(seconds: 2),
-                            //                           backgroundColor:
-                            //                               darkPrimaryColor,
-                            //                           content: Text(
-                            //                             'Saved to favourites',
-                            //                             style: GoogleFonts
-                            //                                 .montserrat(
-                            //                               textStyle: TextStyle(
-                            //                                 color: whiteColor,
-                            //                                 fontSize: 15,
-                            //                               ),
-                            //                             ),
-                            //                           ),
-                            //                         ),
-                            //                       );
-                            //                     },
-                            //                     onTap2: () {
-                            //                       setState(() {
-                            //                         FirebaseFirestore.instance
-                            //                             .collection('users')
-                            //                             .doc(FirebaseAuth
-                            //                                 .instance
-                            //                                 .currentUser
-                            //                                 .uid)
-                            //                             .update({
-                            //                           'favourites': FieldValue
-                            //                               .arrayRemove([
-                            //                             _places[Booking
-                            //                                         .fromSnapshot(
-                            //                                             book)
-                            //                                     .id]
-                            //                                 .id
-                            //                           ])
-                            //                         });
-                            //                       });
-                            //                       ScaffoldMessenger.of(context)
-                            //                           .showSnackBar(
-                            //                         SnackBar(
-                            //                           duration:
-                            //                               Duration(seconds: 2),
-                            //                           backgroundColor:
-                            //                               Colors.red,
-                            //                           content: Text(
-                            //                             'Removed from favourites',
-                            //                             style: GoogleFonts
-                            //                                 .montserrat(
-                            //                               textStyle: TextStyle(
-                            //                                 color: whiteColor,
-                            //                                 fontSize: 15,
-                            //                               ),
-                            //                             ),
-                            //                           ),
-                            //                         ),
-                            //                       );
-                            //                     },
-                            //                   )
-                            //                 : Container(),
-                            //           ],
-                            //         ),
-                            //         SizedBox(
-                            //           height: 20,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                          ]),
-                        )
-                      : SliverFillRemaining(
-                          child: Center(
-                            child: Text(
-                              'No history',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  color: darkPrimaryColor,
-                                  fontSize: 25,
+                              // CardW(
+                              //   ph: 170,
+                              //   child: Container(
+                              //     padding: EdgeInsets.all(6),
+                              //     child: Column(
+                              //       children: [
+                              //         SizedBox(
+                              //           height: 20,
+                              //         ),
+                              //         Expanded(
+                              //           child: Row(
+                              //             mainAxisAlignment:
+                              //                 MainAxisAlignment.center,
+                              //             children: [
+                              //               Container(
+                              //                 alignment: Alignment.centerLeft,
+                              //                 child: Column(
+                              //                   children: [
+                              //                     Text(
+                              //                       DateFormat.yMMMd()
+                              //                           .format(
+                              //                               Booking.fromSnapshot(
+                              //                                       book)
+                              //                                   .timestamp_date
+                              //                                   .toDate())
+                              //                           .toString(),
+                              //                       overflow:
+                              //                           TextOverflow.ellipsis,
+                              //                       style: GoogleFonts.montserrat(
+                              //                         textStyle: TextStyle(
+                              //                           color: darkPrimaryColor,
+                              //                           fontSize: 20,
+                              //                           fontWeight:
+                              //                               FontWeight.bold,
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                     SizedBox(
+                              //                       height: 10,
+                              //                     ),
+                              //                     Text(
+                              //                       Booking.fromSnapshot(book)
+                              //                           .status,
+                              //                       overflow:
+                              //                           TextOverflow.ellipsis,
+                              //                       style: GoogleFonts.montserrat(
+                              //                         textStyle: TextStyle(
+                              //                           color:
+                              //                               Booking.fromSnapshot(
+                              //                                               book)
+                              //                                           .status ==
+                              //                                       'unfinished'
+                              //                                   ? darkPrimaryColor
+                              //                                   : Colors.red,
+                              //                           fontSize: 15,
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                   ],
+                              //                 ),
+                              //               ),
+                              //               SizedBox(
+                              //                 width: size.width * 0.2,
+                              //               ),
+                              //               Flexible(
+                              //                 child: Container(
+                              //                   alignment: Alignment.centerLeft,
+                              //                   child: Column(
+                              //                     children: [
+                              //                       Text(
+                              //                         _places != null
+                              //                             ? _places[Booking.fromSnapshot(
+                              //                                                 book)
+                              //                                             .id]
+                              //                                         .name !=
+                              //                                     null
+                              //                                 ? _places[Booking
+                              //                                             .fromSnapshot(
+                              //                                                 book)
+                              //                                         .id]
+                              //                                     .name
+                              //                                 : 'Place'
+                              //                             : 'Place',
+                              //                         overflow:
+                              //                             TextOverflow.ellipsis,
+                              //                         style:
+                              //                             GoogleFonts.montserrat(
+                              //                           textStyle: TextStyle(
+                              //                             color: darkPrimaryColor,
+                              //                             fontSize: 20,
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                       SizedBox(
+                              //                         height: 10,
+                              //                       ),
+                              //                       Text(
+                              //                         Booking.fromSnapshot(book)
+                              //                                 .from +
+                              //                             ' - ' +
+                              //                             Booking.fromSnapshot(
+                              //                                     book)
+                              //                                 .to,
+                              //                         overflow:
+                              //                             TextOverflow.ellipsis,
+                              //                         style:
+                              //                             GoogleFonts.montserrat(
+                              //                           textStyle: TextStyle(
+                              //                             color: darkPrimaryColor,
+                              //                             fontSize: 15,
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ],
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //         Row(
+                              //           mainAxisAlignment:
+                              //               MainAxisAlignment.center,
+                              //           children: <Widget>[
+                              //             RoundedButton(
+                              //               width: 0.3,
+                              //               height: 0.07,
+                              //               text: 'On Map',
+                              //               press: () {
+                              //                 setState(() {
+                              //                   loading = true;
+                              //                 });
+                              //                 Navigator.push(
+                              //                   context,
+                              //                   SlideRightRoute(
+                              //                     page: MapScreen(
+                              //                       data: {
+                              //                         'lat': _places[Booking
+                              //                                     .fromSnapshot(
+                              //                                         book)
+                              //                                 .id]
+                              //                             .lat,
+                              //                         'lon': _places[Booking
+                              //                                     .fromSnapshot(
+                              //                                         book)
+                              //                                 .id]
+                              //                             .lon
+                              //                       },
+                              //                     ),
+                              //                   ),
+                              //                 );
+                              //                 setState(() {
+                              //                   loading = false;
+                              //                 });
+                              //               },
+                              //               color: darkPrimaryColor,
+                              //               textColor: whiteColor,
+                              //             ),
+                              //             SizedBox(
+                              //               width: size.width * 0.04,
+                              //             ),
+                              //             _places != null
+                              //                 ? LabelButton(
+                              //                     isC: false,
+                              //                     reverse: FirebaseFirestore
+                              //                         .instance
+                              //                         .collection('users')
+                              //                         .doc(FirebaseAuth.instance
+                              //                             .currentUser.uid),
+                              //                     containsValue: _places[
+                              //                             Booking.fromSnapshot(
+                              //                                     book)
+                              //                                 .id]
+                              //                         .id,
+                              //                     color1: Colors.red,
+                              //                     color2: lightPrimaryColor,
+                              //                     ph: 45,
+                              //                     pw: 45,
+                              //                     size: 40,
+                              //                     onTap: () {
+                              //                       setState(() {
+                              //                         FirebaseFirestore.instance
+                              //                             .collection('users')
+                              //                             .doc(FirebaseAuth
+                              //                                 .instance
+                              //                                 .currentUser
+                              //                                 .uid)
+                              //                             .update({
+                              //                           'favourites': FieldValue
+                              //                               .arrayUnion([
+                              //                             _places[Booking
+                              //                                         .fromSnapshot(
+                              //                                             book)
+                              //                                     .id]
+                              //                                 .id
+                              //                           ])
+                              //                         });
+                              //                       });
+                              //                       ScaffoldMessenger.of(context)
+                              //                           .showSnackBar(
+                              //                         SnackBar(
+                              //                           duration:
+                              //                               Duration(seconds: 2),
+                              //                           backgroundColor:
+                              //                               darkPrimaryColor,
+                              //                           content: Text(
+                              //                             'Saved to favourites',
+                              //                             style: GoogleFonts
+                              //                                 .montserrat(
+                              //                               textStyle: TextStyle(
+                              //                                 color: whiteColor,
+                              //                                 fontSize: 15,
+                              //                               ),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       );
+                              //                     },
+                              //                     onTap2: () {
+                              //                       setState(() {
+                              //                         FirebaseFirestore.instance
+                              //                             .collection('users')
+                              //                             .doc(FirebaseAuth
+                              //                                 .instance
+                              //                                 .currentUser
+                              //                                 .uid)
+                              //                             .update({
+                              //                           'favourites': FieldValue
+                              //                               .arrayRemove([
+                              //                             _places[Booking
+                              //                                         .fromSnapshot(
+                              //                                             book)
+                              //                                     .id]
+                              //                                 .id
+                              //                           ])
+                              //                         });
+                              //                       });
+                              //                       ScaffoldMessenger.of(context)
+                              //                           .showSnackBar(
+                              //                         SnackBar(
+                              //                           duration:
+                              //                               Duration(seconds: 2),
+                              //                           backgroundColor:
+                              //                               Colors.red,
+                              //                           content: Text(
+                              //                             'Removed from favourites',
+                              //                             style: GoogleFonts
+                              //                                 .montserrat(
+                              //                               textStyle: TextStyle(
+                              //                                 color: whiteColor,
+                              //                                 fontSize: 15,
+                              //                               ),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       );
+                              //                     },
+                              //                   )
+                              //                 : Container(),
+                              //           ],
+                              //         ),
+                              //         SizedBox(
+                              //           height: 20,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
+                            ]),
+                          )
+                        : SliverFillRemaining(
+                            child: Center(
+                              child: Text(
+                                'No history',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 25,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

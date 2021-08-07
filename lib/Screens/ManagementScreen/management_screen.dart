@@ -211,6 +211,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           padding: EdgeInsets.fromLTRB(
                               size.width * 0.2, 0, size.width * 0.2, 0),
                           child: DropdownButton<String>(
+                            iconEnabledColor: whiteColor,
                             isExpanded: true,
                             hint: Text(
                               company.data()['name'] != null
