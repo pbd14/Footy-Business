@@ -19,8 +19,9 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
   bool loading = true;
 
   List notifs = [];
+  List updatedNotifications = [];
 
-  StreamSubscription<DocumentSnapshot> notifications;
+  DocumentSnapshot user;
 
   String getDate(int millisecondsSinceEpoch) {
     String date = '';
@@ -90,57 +91,62 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
   }
 
   Future<void> prepare() async {
-    notifications = FirebaseFirestore.instance
+    user = await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser.uid)
-        .snapshots()
-        .listen((docsnap) {
-      if (docsnap.exists) {
-        if (docsnap.data()['notifications_business'] != null) {
-          if (docsnap.data()['notifications_business'].length != 0) {
-            if (docsnap.data()['notifications_business'].length > 3) {
-              for (int i = docsnap.data()['notifications_business'].length - 1;
-                  i >= docsnap.data()['notifications_business'].length - 3;
-                  i--) {
-                if (this.mounted) {
-                  setState(() {
-                    notifs.add(docsnap.data()['notifications_business'][i]);
-                  });
-                } else {
-                  notifs.add(docsnap.data()['notifications_business'][i]);
-                }
+        .get();
+
+    if (user.exists) {
+      if (user.data()['notifications_business'] != null) {
+        if (user.data()['notifications_business'].length != 0) {
+          if (user.data()['notifications_business'].length > 50) {
+            for (int i = user.data()['notifications_business'].length - 1;
+                i >= user.data()['notifications_business'].length - 50;
+                i--) {
+              if (this.mounted) {
+                setState(() {
+                  notifs.add(user.data()['notifications_business'][i]);
+                });
+              } else {
+                notifs.add(user.data()['notifications_business'][i]);
               }
-              List notifsReversed = [];
-              for (Map notif in notifs.reversed) {
-                notifsReversed.add(notif);
-              }
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(FirebaseAuth.instance.currentUser.uid)
-                  .update({
-                'notifications_business': notifsReversed,
-              });
-            } else {
-              for (Map notif
-                  in docsnap.data()['notifications_business'].reversed) {
-                if (this.mounted) {
-                  setState(() {
-                    notifs.add(notif);
-                  });
-                } else {
+            }
+            List notifsReversed = [];
+            for (Map notif in notifs.reversed) {
+              notifsReversed.add(notif);
+            }
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser.uid)
+                .update({
+              'notifications_business': notifsReversed,
+            });
+          } else {
+            for (Map notif in user.data()['notifications_business'].reversed) {
+              if (this.mounted) {
+                setState(() {
                   notifs.add(notif);
-                }
+                });
+              } else {
+                notifs.add(notif);
               }
             }
           }
         }
       }
-    });
-  }
+    }
 
-  @override
-  void initState() {
-    prepare();
+    for (Map notif in notifs.reversed) {
+      if (!notif['seen']) {
+        notif['seen'] = true;
+      }
+      updatedNotifications.add(notif);
+    }
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .update({'notifications_business': updatedNotifications});
+
     if (this.mounted) {
       setState(() {
         loading = false;
@@ -148,13 +154,24 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     } else {
       loading = false;
     }
-    super.initState();
   }
 
   @override
-  void dispose() {
-    notifications.cancel();
-    super.dispose();
+  void initState() {
+    prepare();
+    super.initState();
+  }
+
+  Future<void> _refresh() {
+    setState(() {
+      loading = true;
+    });
+    notifs = [];
+    updatedNotifications = [];
+    prepare();
+    Completer<Null> completer = new Completer<Null>();
+    completer.complete();
+    return completer.future;
   }
 
   @override
@@ -162,132 +179,136 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     Size size = MediaQuery.of(context).size;
     return loading
         ? LoadingScreen()
-        : Scaffold(
-          backgroundColor: grayColor,
-            body: Column(
-              children: [
-                SizedBox(height: 30),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(bottom: 10),
-                    itemCount: notifs.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        if (notifs[index]['type'] == 'offered') {
-                          setState(() {
-                            loading = true;
-                          });
-                          Navigator.push(
-                            context,
-                            SlideRightRoute(
-                                page: OnEventScreen(
-                              bookingId: notifs[index]['bookingId'],
-                            )),
-                          );
-                          setState(() {
-                            loading = false;
-                          });
-                        }
-                        if (notifs[index]['type'] == 'new_booking') {
-                          setState(() {
-                            loading = true;
-                          });
-                          Navigator.push(
-                            context,
-                            SlideRightRoute(
-                                page: OnEventScreen(
-                              bookingId: notifs[index]['bookingId'],
-                            )),
-                          );
-                          setState(() {
-                            loading = false;
-                          });
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                        // padding: EdgeInsets.all(10),
-                        child: Card(
-                          color: notifs[index]['type'] == 'booking_canceled'
-                              ? Colors.red
-                              : whiteColor,
-                          margin: EdgeInsets.all(5),
-                          elevation: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    notifs[index]['title'],
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                        color: notifs[index]['type'] ==
-                                                'booking_canceled'
-                                            ? whiteColor
-                                            : darkColor,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+        : RefreshIndicator(
+            onRefresh: _refresh,
+            child: Scaffold(
+              backgroundColor: grayColor,
+              body: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(bottom: 10),
+                      itemCount: notifs.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          if (notifs[index]['type'] == 'offered') {
+                            setState(() {
+                              loading = true;
+                            });
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(
+                                  page: OnEventScreen(
+                                bookingId: notifs[index]['bookingId'],
+                              )),
+                            );
+                            setState(() {
+                              loading = false;
+                            });
+                          }
+                          if (notifs[index]['type'] == 'new_booking') {
+                            setState(() {
+                              loading = true;
+                            });
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(
+                                  page: OnEventScreen(
+                                bookingId: notifs[index]['bookingId'],
+                              )),
+                            );
+                            setState(() {
+                              loading = false;
+                            });
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10.0),
+                          // padding: EdgeInsets.all(10),
+                          child: Card(
+                            color: notifs[index]['type'] == 'booking_canceled'
+                                ? Colors.red
+                                : whiteColor,
+                            margin: EdgeInsets.all(5),
+                            elevation: 10,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      notifs[index]['title'],
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                          color: notifs[index]['type'] ==
+                                                  'booking_canceled'
+                                              ? whiteColor
+                                              : darkColor,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    notifs[index]['text'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          color: notifs[index]['type'] ==
-                                                  'booking_canceled'
-                                              ? whiteColor
-                                              : darkColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    'Company: ' + notifs[index]['companyName'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          color: notifs[index]['type'] ==
-                                                  'booking_canceled'
-                                              ? whiteColor
-                                              : darkColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400),
+                                    Text(
+                                      notifs[index]['text'],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                            color: notifs[index]['type'] ==
+                                                    'booking_canceled'
+                                                ? whiteColor
+                                                : darkColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    getDate(notifs[index]['date']
-                                        .millisecondsSinceEpoch),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                          color: notifs[index]['type'] ==
-                                                  'booking_canceled'
-                                              ? whiteColor
-                                              : darkColor,
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w400),
+                                    SizedBox(
+                                      height: 5,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'Company: ' +
+                                          notifs[index]['companyName'],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                            color: notifs[index]['type'] ==
+                                                    'booking_canceled'
+                                                ? whiteColor
+                                                : darkColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      getDate(notifs[index]['date']
+                                          .millisecondsSinceEpoch),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        textStyle: TextStyle(
+                                            color: notifs[index]['type'] ==
+                                                    'booking_canceled'
+                                                ? whiteColor
+                                                : darkColor,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -295,8 +316,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
 
