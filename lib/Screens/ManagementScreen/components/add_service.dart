@@ -43,6 +43,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   Map sat = {};
   Map sun = {};
 
+  DateTime selectedDate = DateTime.now();
+
+  TextEditingController _dateController = TextEditingController();
+
+  List vacationDays = [];
+
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
   TimeOfDay selectedTime2 = TimeOfDay(hour: 00, minute: 00);
   TextEditingController _timeController = TextEditingController();
@@ -65,6 +71,21 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
         loading1 = false;
         verified = true;
         error = '';
+      });
+    }
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        _dateController.text = DateFormat.yMMMd().format(selectedDate);
       });
     }
   }
@@ -668,6 +689,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                           children: [
                             Text(
                               'Working Hours',
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.montserrat(
                                 textStyle: TextStyle(
                                   color: darkPrimaryColor,
@@ -1327,6 +1349,125 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 10),
+                    Card(
+                      elevation: 10,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Vacation days',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _selectDate(context);
+                                    },
+                                    child: Container(
+                                      width: 200,
+                                      height: 50,
+                                      margin: EdgeInsets.all(10),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color: lightPrimaryColor),
+                                      child: TextFormField(
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            fontSize: 27,
+                                            color: whiteColor,
+                                          ),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        enabled: false,
+                                        keyboardType: TextInputType.text,
+                                        controller: _dateController,
+                                        decoration: InputDecoration(
+                                            disabledBorder:
+                                                UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide.none),
+                                            contentPadding:
+                                                EdgeInsets.only(top: 0.0)),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  RoundedButton(
+                                    pw: 70,
+                                    ph: 45,
+                                    text: 'Add',
+                                    press: () {
+                                      setState(() {
+                                        if (!vacationDays
+                                            .contains(selectedDate)) {
+                                          vacationDays.add(selectedDate);
+                                          selectedDate = DateTime.now();
+                                          _dateController.clear();
+                                        }
+                                      });
+                                    },
+                                    color: primaryColor,
+                                    textColor: whiteColor,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              if (vacationDays.isNotEmpty)
+                                for (DateTime date in vacationDays)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        DateFormat.yMMMd()
+                                            .format(date)
+                                            .toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkPrimaryColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      IconButton(
+                                        iconSize: 20,
+                                        color: Colors.red,
+                                        icon: Icon(
+                                          CupertinoIcons.xmark_circle,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            vacationDays.remove(date);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                            ]),
+                      ),
+                    ),
                     SizedBox(height: 20),
                     RoundedButton(
                       width: 0.7,
@@ -1368,7 +1509,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                           'Fri': fri,
                                           'Sat': sat,
                                           'Sun': sun,
-                                        }
+                                        },
+                                        'vacation_days': vacationDays,
                                       }
                                     ],
                                   ),

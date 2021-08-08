@@ -11,6 +11,7 @@ import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import '../../loading_screen.dart';
+import 'package:intl/intl.dart';
 import '../place_screen.dart';
 
 class EditServiceScreen extends StatefulWidget {
@@ -49,6 +50,12 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
   Map sun = {};
   List payment_methods = [];
 
+  DateTime selectedDate = DateTime.now();
+
+  TextEditingController _dateController = TextEditingController();
+
+  List vacationDays = [];
+
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
   TimeOfDay selectedTime2 = TimeOfDay(hour: 00, minute: 00);
   TextEditingController _timeController = TextEditingController();
@@ -71,6 +78,21 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
         loading1 = false;
         verified = true;
         error = '';
+      });
+    }
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        _dateController.text = DateFormat.yMMMd().format(selectedDate);
       });
     }
   }
@@ -456,6 +478,13 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
         name = widget.service['name'];
         spm = widget.service['spm'];
         payment_methods = widget.service['payment_methods'];
+        if (widget.service['vacation_days'] != null) {
+          for (Timestamp vdate in widget.service['vacation_days']) {
+            DateTime newDate = DateTime.fromMillisecondsSinceEpoch(
+                vdate.millisecondsSinceEpoch);
+            vacationDays.add(newDate);
+          }
+        }
       });
     } else {
       mon = {
@@ -504,6 +533,13 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
       name = widget.service['name'];
       spm = widget.service['spm'];
       payment_methods = widget.service['payment_methods'];
+      if (widget.service['vacation_days'] != null) {
+        for (Timestamp vdate in widget.service['vacation_days']) {
+          DateTime newDate =
+              DateTime.fromMillisecondsSinceEpoch(vdate.millisecondsSinceEpoch);
+          vacationDays.add(newDate);
+        }
+      }
     }
   }
 
@@ -1451,6 +1487,125 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    Card(
+                      elevation: 10,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Vacation days',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    color: darkPrimaryColor,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _selectDate(context);
+                                    },
+                                    child: Container(
+                                      width: 200,
+                                      height: 50,
+                                      margin: EdgeInsets.all(10),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          color: lightPrimaryColor),
+                                      child: TextFormField(
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            fontSize: 27,
+                                            color: whiteColor,
+                                          ),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        enabled: false,
+                                        keyboardType: TextInputType.text,
+                                        controller: _dateController,
+                                        decoration: InputDecoration(
+                                            disabledBorder:
+                                                UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide.none),
+                                            contentPadding:
+                                                EdgeInsets.only(top: 0.0)),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  RoundedButton(
+                                    pw: 70,
+                                    ph: 45,
+                                    text: 'Add',
+                                    press: () {
+                                      setState(() {
+                                        if (!vacationDays
+                                            .contains(selectedDate)) {
+                                          vacationDays.add(selectedDate);
+                                          selectedDate = DateTime.now();
+                                          _dateController.clear();
+                                        }
+                                      });
+                                    },
+                                    color: primaryColor,
+                                    textColor: whiteColor,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              if (vacationDays.isNotEmpty)
+                                for (DateTime date in vacationDays)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        DateFormat.yMMMd()
+                                            .format(date)
+                                            .toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkPrimaryColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      IconButton(
+                                        iconSize: 20,
+                                        color: Colors.red,
+                                        icon: Icon(
+                                          CupertinoIcons.xmark_circle,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            vacationDays.remove(date);
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                            ]),
+                      ),
+                    ),
+                    SizedBox(height: 20),
                     RoundedButton(
                       width: 0.7,
                       ph: 55,
@@ -1470,7 +1625,6 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                             });
                             List toRemove = [];
                             widget.otherServices.forEach((element) {
-
                               if (element['id'].toString() ==
                                   widget.service['id'].toString()) {
                                 toRemove.add(element['id']);
@@ -1495,6 +1649,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                                   'Sat': sat,
                                   'Sun': sun,
                                 },
+                                'vacation_days': vacationDays,
                               },
                             );
                             FirebaseFirestore.instance
