@@ -153,7 +153,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                   ? null
                                   : 'Minimum 5 characters',
                               hintText: "Description",
-                              type: TextInputType.text,
+                              type: TextInputType.multiline,
                               onChanged: (value) {
                                 this.description = value;
                               },

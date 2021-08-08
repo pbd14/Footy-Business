@@ -9,6 +9,7 @@ import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OnEventScreen extends StatefulWidget {
   final String bookingId;
@@ -21,6 +22,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
   bool loading = true;
   DocumentSnapshot booking;
   DocumentSnapshot place;
+  DocumentSnapshot client;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   StreamSubscription<DocumentSnapshot> bookingSubscr;
 
@@ -39,6 +41,10 @@ class _OnEventScreenState extends State<OnEventScreen> {
       place = await FirebaseFirestore.instance
           .collection('locations')
           .doc(thisBooking.data()['placeId'])
+          .get();
+      client = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(thisBooking.data()['userId'])
           .get();
       if (this.mounted) {
         setState(() {
@@ -153,7 +159,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                     style: GoogleFonts.montserrat(
                                       textStyle: TextStyle(
                                         color: whiteColor,
-                                        fontSize: 20,
+                                        fontSize: 15,
                                       ),
                                     ),
                                   ),
@@ -262,6 +268,74 @@ class _OnEventScreenState extends State<OnEventScreen> {
                         //               Place.fromSnapshot(place).lon))
                         //     ]),
                         //   )
+
+                        Container(
+                          width: size.width * 0.8,
+                          child: Card(
+                            elevation: 10,
+                            margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                            child: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        client.data()['phone'],
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      CupertinoButton(
+                                        padding: EdgeInsets.zero,
+                                        onPressed: () async {
+                                          await launch(
+                                              "tel:" + client.data()['phone']);
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: footyColor,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: footyColor
+                                                    .withOpacity(0.5),
+                                                spreadRadius: 5,
+                                                blurRadius: 7,
+                                                offset: Offset(0,
+                                                    3), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            CupertinoIcons.phone_fill,
+                                            color: whiteColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         Container(
                           width: size.width * 0.8,

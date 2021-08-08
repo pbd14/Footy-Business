@@ -183,16 +183,16 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
             onRefresh: _refresh,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    // stops: [0.3, 1],
-                    colors: [
-                  lightPrimaryColor.withOpacity(0.5),
-                  primaryColor,
-                  darkPrimaryColor,
-                  darkColor
-                ])),
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      // stops: [0.3, 1],
+                      colors: [
+                    lightPrimaryColor.withOpacity(0.5),
+                    primaryColor,
+                    darkPrimaryColor,
+                    darkColor
+                  ])),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Column(
@@ -251,7 +251,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                                 padding: const EdgeInsets.all(10.0),
                                 child: Container(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         notifs[index]['title'],
@@ -272,7 +273,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                                       ),
                                       Text(
                                         notifs[index]['text'],
-                                        maxLines: 2,
+                                        maxLines: 100,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(
                                           textStyle: TextStyle(

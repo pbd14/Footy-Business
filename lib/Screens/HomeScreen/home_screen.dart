@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: isProfileNotif
                           ? new Stack(
                               children: <Widget>[
-                                new Icon(CupertinoIcons.person_fill),
+                                new Icon(CupertinoIcons.person_alt),
                                 new Positioned(
                                   right: 0,
                                   child: new Container(

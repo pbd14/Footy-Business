@@ -5,6 +5,7 @@ import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/PlacesScreens/add_place_screen.dart';
 import 'package:footy_business/Services/encryption_service.dart';
 import 'package:footy_business/widgets/rounded_button.dart';
+import 'package:footy_business/widgets/rounded_phone_input_field.dart';
 import 'package:footy_business/widgets/rounded_text_input.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +27,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
   String error = '';
   String name;
   String owner;
+  String phone;
 
   bool loading = false;
 
@@ -84,6 +86,13 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                   },
                                 ),
                                 SizedBox(height: 30),
+                                RoundedPhoneInputField(
+                                  hintText: "Your Phone",
+                                  onChanged: (value) {
+                                    this.phone = value;
+                                  },
+                                ),
+                                SizedBox(height: 30),
                                 RoundedTextInput(
                                   validator: (val) => val.length >= 2
                                       ? null
@@ -118,7 +127,8 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                         'owner_name': this.owner.trim(),
                                         'phones': FieldValue.arrayUnion([
                                           FirebaseAuth
-                                              .instance.currentUser.phoneNumber
+                                              .instance.currentUser.phoneNumber,
+                                          this.phone,
                                         ]),
                                         'balance': EncryptionService().enc('0'),
                                         'balanceCurrency': 'UZS',
