@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/widgets/card.dart';
 import 'package:footy_business/widgets/rounded_button.dart';
@@ -30,7 +31,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
   bool loading = false;
   String name, description;
   String category = 'other';
-  String type = 'No verification';
+  bool needsVer = true;
   String error = '';
   List categs;
   File i1, i2, i3, i4, i5, i6;
@@ -92,6 +93,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return loading
         ? LoadingScreen()
         : Scaffold(
@@ -119,7 +121,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                     ),
                     SizedBox(height: 30),
                     CardW(
-                      ph: 450,
+                      ph: 600,
                       width: 0.7,
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -191,28 +193,74 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                               },
                             ),
                             SizedBox(height: 20),
-                            DropdownButton<String>(
-                              hint: Text(
-                                this.type != null ? this.type : 'Type',
-                                style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                    color: darkPrimaryColor,
-                                    fontWeight: FontWeight.bold,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  CupertinoIcons.info_circle,
+                                  color: darkPrimaryColor,
+                                  size: 30,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'If you turn on VERIFICATION, when client wants to make booking, your agreement is needed to complete booking. if you turn verification OFF, then clients will be able to make bookings automatically, without your agreement.',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 200,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkPrimaryColor,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ),
-                              items: ['With verification', 'No verification']
-                                  .map((dynamic value) {
-                                return new DropdownMenuItem<String>(
-                                  value: value.toString().toUpperCase(),
-                                  child: new Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  this.type = value;
-                                });
-                              },
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    'Turn on verification?',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Switch(
+                                    activeColor: primaryColor,
+                                    value: needsVer,
+                                    onChanged: (val) {
+                                      if (this.mounted) {
+                                        setState(() {
+                                          this.needsVer = val;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -381,9 +429,9 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                                     'name': this.name,
                                     'description': this.description,
                                     'category': this.category.toLowerCase(),
-                                    'type': this.type == 'No verification'
-                                        ? 'nonver'
-                                        : 'verification_needed',
+                                    'type': this.needsVer
+                                        ? 'verification_needed'
+                                        : 'nonver',
                                     'images': [
                                       if (a1 != null)
                                         await a1.ref.getDownloadURL(),
@@ -408,7 +456,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                               loading = false;
                               this.name = '';
                               this.description = '';
-                              this.type = '';
+                              this.needsVer = true;
                               this.category = '';
                             });
                           } else {
