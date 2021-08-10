@@ -622,6 +622,71 @@ class _History1State extends State<History1>
                             ),
                           ),
 
+                          // Custom booking button
+
+                          // SliverList(
+                          //   delegate: SliverChildListDelegate([
+                          //     SizedBox(
+                          //       height: 20,
+                          //     ),
+                          //     Center(
+                          //       child: CupertinoButton(
+                          //         padding: EdgeInsets.zero,
+                          //         onPressed: () {
+                          //           setState(() {
+                          //             loading = true;
+                          //           });
+                          //           Navigator.push(
+                          //               context,
+                          //               SlideRightRoute(
+                          //                 page: AddPlaceScreen(
+                          //                   username: company.data()['name'],
+                          //                   companyId: company.id,
+                          //                 ),
+                          //               ));
+                          //           setState(() {
+                          //             loading = false;
+                          //           });
+                          //         },
+                          //         child: Container(
+                          //           width: size.width * 0.8,
+                          //           padding: EdgeInsets.all(15),
+                          //           child: Card(
+                          //             elevation: 10,
+                          //             margin: EdgeInsets.all(15),
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.all(10.0),
+                          //               child: Column(
+                          //                 children: [
+                          //                   Icon(
+                          //                     CupertinoIcons
+                          //                         .plus_square_on_square,
+                          //                     color: darkPrimaryColor,
+                          //                     size: 25,
+                          //                   ),
+                          //                   SizedBox(height: 5),
+                          //                   Text(
+                          //                     'Create booking',
+                          //                     textScaleFactor: 1,
+                          //                     overflow: TextOverflow.ellipsis,
+                          //                     style: GoogleFonts.montserrat(
+                          //                       textStyle: TextStyle(
+                          //                           color: darkPrimaryColor,
+                          //                           fontSize: 20,
+                          //                           fontWeight:
+                          //                               FontWeight.bold),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ]),
+                          // ),
+
                           // Unpaid
                           unpaidBookingsSlivers.length != 0
                               ? SliverList(
@@ -1176,7 +1241,9 @@ class _History1State extends State<History1>
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(width: 20,),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
                                                 Align(
                                                   alignment:
                                                       Alignment.centerRight,

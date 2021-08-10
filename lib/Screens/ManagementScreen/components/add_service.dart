@@ -29,6 +29,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   bool verified = false;
   bool verifying = false;
   bool workingDay = true;
+  bool fixedDuration = false;
+  int duration;
   String name, spm;
   String selectedDay = '';
   String error = '';
@@ -461,7 +463,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     ),
                     SizedBox(height: 30),
                     CardW(
-                      ph: 450,
+                      ph: 630,
                       width: 0.7,
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -501,6 +503,112 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                               },
                             ),
                             SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  CupertinoIcons.info_circle,
+                                  color: darkPrimaryColor,
+                                  size: 30,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'If you turn ON fixed duration for bookings, then all bookings will last for same amount of time. In this case clients will be able to choose only time when booking begins',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 200,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkPrimaryColor,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    'Set fixed duration?',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Switch(
+                                    activeColor: primaryColor,
+                                    value: fixedDuration,
+                                    onChanged: (val) {
+                                      if (this.mounted) {
+                                        setState(() {
+                                          this.fixedDuration = val;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            fixedDuration
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: size.width * 0.4,
+                                        child: RoundedTextInput(
+                                          validator: (val) => val.length >= 1
+                                              ? null
+                                              : 'Minimum 1 character',
+                                          hintText: "Fixed duration in MINUTES",
+                                          type: TextInputType.number,
+                                          onChanged: (value) {
+                                            this.duration = int.parse(value);
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        ' minutes',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -1501,6 +1609,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                         'name': this.name,
                                         'spm': this.spm,
                                         'payment_methods': payment_methods,
+                                        'isFixed': fixedDuration,
+                                        'fixedDuration': this.duration,
                                         'days': {
                                           'Mon': mon,
                                           'Tue': tue,
