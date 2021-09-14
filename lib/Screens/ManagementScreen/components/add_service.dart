@@ -496,7 +496,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                               validator: (val) => val.length >= 3
                                   ? null
                                   : 'Minimum 3 characters',
-                              hintText: "So'm per minute",
+                              hintText: "UZS per minute",
                               type: TextInputType.number,
                               onChanged: (value) {
                                 this.spm = value;

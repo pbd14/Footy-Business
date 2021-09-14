@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/constants.dart';
 import 'package:footy_business/widgets/card.dart';
@@ -725,6 +726,10 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                                           validator: (val) => val.length >= 1
                                               ? null
                                               : 'Minimum 1 character',
+                                          formatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[0-9]')),
+                                          ],
                                           hintText: "Fixed duration in MINUTES",
                                           initialValue: duration.toString(),
                                           type: TextInputType.number,

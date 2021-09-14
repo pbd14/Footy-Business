@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:footy_business/Screens/DashboardScreen/dashboard_screen.dart';
 import 'package:footy_business/Screens/HistoryScreen/history_screen.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ManagementScreen/management_screen.dart';
@@ -10,7 +9,6 @@ import 'package:footy_business/Screens/ProfileScreen/profile_screen.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:flutter/material.dart';
-import 'package:encrypt/encrypt.dart' as enc;
 import '../../constants.dart';
 
 // ignore: must_be_immutable

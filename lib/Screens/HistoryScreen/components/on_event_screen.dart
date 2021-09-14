@@ -310,8 +310,8 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                             color: footyColor,
                                             boxShadow: [
                                               BoxShadow(
-                                                color: footyColor
-                                                    .withOpacity(0.5),
+                                                color:
+                                                    footyColor.withOpacity(0.5),
                                                 spreadRadius: 5,
                                                 blurRadius: 7,
                                                 offset: Offset(0,
@@ -612,11 +612,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                             : Container(),
                                         booking.data()['status'] == 'unpaid'
                                             ? Text(
-                                                booking.data()[
-                                                            'payment_method'] ==
-                                                        'cash'
-                                                    ? 'Client should pay with cash. You can report if client has left without paying'
-                                                    : 'Cleint is paying with credit card',
+                                                'Client should pay. You can report if client has left without paying',
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 10,
                                                 textAlign: TextAlign.center,
@@ -923,8 +919,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                               )
                             : Container(),
 
-                        booking.data()['status'] == 'unpaid' &&
-                                booking.data()['payment_method'] == 'cash'
+                        booking.data()['status'] == 'unpaid'
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

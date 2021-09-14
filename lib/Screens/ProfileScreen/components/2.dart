@@ -1,16 +1,21 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ProfileScreen/components/settings.dart';
 import 'package:footy_business/Services/auth_service.dart';
 import 'package:footy_business/Services/encryption_service.dart';
+import 'package:footy_business/widgets/rounded_button.dart';
+import 'package:footy_business/widgets/rounded_text_input.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:overlay_support/overlay_support.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../constants.dart';
 import '../../loading_screen.dart';
 
@@ -24,7 +29,18 @@ class _ProfileScreen2State extends State<ProfileScreen2>
   @override
   bool get wantKeepAlive => true;
   bool loading = false;
+  int paymentAmount = 0;
   List<QueryDocumentSnapshot> companies = [];
+
+  Future<http.Response> makePayment(Map data) {
+    return http.post(
+      Uri.parse('https://secure.octo.uz/prepare_payment'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+  }
 
   Future<void> loadData() async {
     setState(() {
@@ -215,35 +231,67 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Container(
-                                            child: Row(
+                                            child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: [
-                                                    Text(
-                                                      company.data()['name'],
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          company
+                                                              .data()['name'],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color:
+                                                                  darkPrimaryColor,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          company.data()[
+                                                              'owner_name'],
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            textStyle: TextStyle(
+                                                                color:
+                                                                    darkPrimaryColor,
+                                                                fontSize: 10,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                     SizedBox(
-                                                      height: 10,
+                                                      width: 25,
                                                     ),
                                                     Text(
-                                                      company
-                                                          .data()['owner_name'],
+                                                      EncryptionService().dec(
+                                                              company.data()[
+                                                                  'balance']) +
+                                                          ' UZS',
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -252,33 +300,223 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                         textStyle: TextStyle(
                                                             color:
                                                                 darkPrimaryColor,
-                                                            fontSize: 10,
+                                                            fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w400),
+                                                                    .bold),
                                                       ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
                                                     ),
                                                   ],
                                                 ),
                                                 SizedBox(
-                                                  width: 25,
+                                                  height: 15,
                                                 ),
-                                                Text(
-                                                  EncryptionService().dec(
-                                                          company.data()[
-                                                              'balance']) +
-                                                      ' UZS',
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
-                                                    textStyle: TextStyle(
-                                                        color: darkPrimaryColor,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 200,
+                                                      child: RoundedTextInput(
+                                                        height: 60,
+                                                        validator: (val) => val
+                                                                    .length >=
+                                                                31
+                                                            ? null
+                                                            : 'Minimum 1 character',
+                                                        hintText: "UZS",
+                                                        type: TextInputType
+                                                            .number,
+                                                        onChanged: (value) {
+                                                          if (value == null) {
+                                                            setState(() {
+                                                              this.paymentAmount =
+                                                                  0;
+                                                            });
+                                                          } else {}
+                                                          setState(() {
+                                                            this.paymentAmount =
+                                                                int.parse(
+                                                                    value);
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    paymentAmount > 0
+                                                        ? Center(
+                                                            child: Container(
+                                                              child:
+                                                                  RoundedButton(
+                                                                pw: 100,
+                                                                ph: 45,
+                                                                text: 'PAY',
+                                                                press:
+                                                                    () async {
+                                                                  String
+                                                                      ownerBalance =
+                                                                      EncryptionService().dec(
+                                                                          company
+                                                                              .data()['balance']);
+                                                                  double
+                                                                      newBalance =
+                                                                      double.parse(
+                                                                              ownerBalance) +
+                                                                          paymentAmount;
+                                                                  String
+                                                                      encBalance =
+                                                                      EncryptionService().enc(
+                                                                          newBalance
+                                                                              .toString());
+                                                                  String
+                                                                      encPrevBalance =
+                                                                      EncryptionService()
+                                                                          .enc(
+                                                                              ownerBalance);
+                                                                  String id = DateTime
+                                                                          .now()
+                                                                      .millisecondsSinceEpoch
+                                                                      .toString();
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'transactions')
+                                                                      .doc(id)
+                                                                      .set({
+                                                                    "companyId":
+                                                                        company
+                                                                            .id,
+                                                                    "newBalance":
+                                                                        encBalance,
+                                                                    "previousBalance":
+                                                                        encPrevBalance,
+                                                                    "method":
+                                                                        "octo",
+                                                                    "bookingId":
+                                                                        id,
+                                                                    "date":
+                                                                        DateTime
+                                                                            .now(),
+                                                                    "status":
+                                                                        "created",
+                                                                  });
+                                                                  http.Response
+                                                                      response =
+                                                                      await makePayment({
+                                                                    "octo_shop_id":
+                                                                        3876,
+                                                                    "octo_secret":
+                                                                        "c66db06a-6bd7-4029-bb8c-1f582d33b62a",
+                                                                    "shop_transaction_id":
+                                                                        id,
+                                                                    "auto_capture":
+                                                                        true,
+                                                                    "test":
+                                                                        true,
+                                                                    "init_time":
+                                                                        DateTime.now()
+                                                                            .toString(),
+                                                                    "user_data":
+                                                                        {
+                                                                      "user_id": FirebaseAuth
+                                                                          .instance
+                                                                          .currentUser
+                                                                          .uid,
+                                                                      "phone": FirebaseAuth
+                                                                          .instance
+                                                                          .currentUser
+                                                                          .phoneNumber,
+                                                                      "email":
+                                                                          "user@mail.com"
+                                                                    },
+                                                                    "total_sum":
+                                                                        paymentAmount,
+                                                                    "currency":
+                                                                        "UZS",
+                                                                    // "tag": "booking",
+                                                                    "description":
+                                                                        "Filling up balance in Footy Business",
+                                                                    "payment_methods":
+                                                                        [
+                                                                      {
+                                                                        "method":
+                                                                            "bank_card"
+                                                                      },
+                                                                    ],
+                                                                    "return_url": "https://footyuz.web.app/payment_done.html?id=" +
+                                                                        id +
+                                                                        "&balance=" +
+                                                                        encBalance +
+                                                                        "&companyId=" +
+                                                                        company
+                                                                            .id
+                                                                  });
+                                                                  Map responseData =
+                                                                      jsonDecode(
+                                                                          response
+                                                                              .body);
+                                                                  if (responseData[
+                                                                          'error'] ==
+                                                                      0) {
+                                                                    Map responseData =
+                                                                        jsonDecode(
+                                                                            response.body);
+                                                                    if (responseData[
+                                                                            'status'] ==
+                                                                        'created') {
+                                                                      launch(responseData[
+                                                                          'octo_pay_url']);
+                                                                    }
+                                                                    if (responseData[
+                                                                            'status'] ==
+                                                                        'succeeded') {
+                                                                      setState(
+                                                                          () {
+                                                                        paymentAmount =
+                                                                            0;
+                                                                      });
+                                                                    }
+                                                                  } else {
+                                                                    PushNotificationMessage
+                                                                        notification =
+                                                                        PushNotificationMessage(
+                                                                      title:
+                                                                          'Failed',
+                                                                      body:
+                                                                          'Server returned mistake',
+                                                                    );
+                                                                    showSimpleNotification(
+                                                                      Container(
+                                                                          child:
+                                                                              Text(notification.body)),
+                                                                      position:
+                                                                          NotificationPosition
+                                                                              .top,
+                                                                      background:
+                                                                          Colors
+                                                                              .red,
+                                                                    );
+
+                                                                    setState(
+                                                                        () {
+                                                                      paymentAmount =
+                                                                          0;
+                                                                    });
+                                                                  }
+                                                                },
+                                                                color:
+                                                                    darkPrimaryColor,
+                                                                textColor:
+                                                                    whiteColor,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Container(),
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ),
