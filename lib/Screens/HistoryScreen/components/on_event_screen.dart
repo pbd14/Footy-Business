@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
+import 'package:footy_business/Services/encryption_service.dart';
 import 'package:intl/intl.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/constants.dart';
@@ -386,7 +387,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                       ),
                                       Text(
                                         booking.data()['price'].toString() +
-                                            " So'm",
+                                            " UZS",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(
                                           textStyle: TextStyle(
@@ -768,7 +769,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                       ),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: darkPrimaryColor,
+                                        color: lightPrimaryColor,
                                       ),
                                     ),
                                   ),
@@ -939,6 +940,31 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                   onPressed: () {
                                                     setState(() {
                                                       loading = true;
+                                                    });
+                                                    FirebaseFirestore.instance
+                                                        .collection('companies')
+                                                        .doc(place
+                                                            .data()['owner'])
+                                                        .get()
+                                                        .then((company) {
+                                                      double newBalance = double.parse(
+                                                              EncryptionService()
+                                                                  .dec(company
+                                                                          .data()[
+                                                                      'balance'])) -
+                                                          booking.data()[
+                                                              'commissionPrice'];
+
+                                                      FirebaseFirestore.instance
+                                                          .collection(
+                                                              'companies')
+                                                          .doc(company.id)
+                                                          .update({
+                                                        'balance':
+                                                            EncryptionService()
+                                                                .enc(newBalance
+                                                                    .toString()),
+                                                      });
                                                     });
                                                     FirebaseFirestore.instance
                                                         .collection(

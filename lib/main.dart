@@ -23,70 +23,70 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    this.initDynamicLinks();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   this.initDynamicLinks();
+  // }
 
-  void initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
+  // void initDynamicLinks() async {
+  //   FirebaseDynamicLinks.instance.onLink(
+  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
+  //     final Uri deepLink = dynamicLink?.link;
 
-      if (deepLink != null) {
-        // String id = Uri.base.queryParameters['id'];
-        // String companyId = Uri.base.queryParameters['companyId'];
-        // String balance = Uri.base.queryParameters['balance'];
-        // String status = Uri.base.queryParameters['octo_status'];
-        // if (status == 'succeeded') {
-        //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
-        //     'status': 'finished',
-        //   });
-        //   FirebaseFirestore.instance
-        //       .collection('companies')
-        //       .doc(companyId)
-        //       .update({'balance': balance}).catchError(() {
-        //     FirebaseFirestore.instance
-        //         .collection('transactions')
-        //         .doc(id)
-        //         .update({
-        //       'status': 'updateFailed',
-        //     });
-        //   });
-        // }
-        Navigator.pushNamed(context, deepLink.path);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
+  //     if (deepLink != null) {
+  //       // String id = Uri.base.queryParameters['id'];
+  //       // String companyId = Uri.base.queryParameters['companyId'];
+  //       // String balance = Uri.base.queryParameters['balance'];
+  //       // String status = Uri.base.queryParameters['octo_status'];
+  //       // if (status == 'succeeded') {
+  //       //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
+  //       //     'status': 'finished',
+  //       //   });
+  //       //   FirebaseFirestore.instance
+  //       //       .collection('companies')
+  //       //       .doc(companyId)
+  //       //       .update({'balance': balance}).catchError(() {
+  //       //     FirebaseFirestore.instance
+  //       //         .collection('transactions')
+  //       //         .doc(id)
+  //       //         .update({
+  //       //       'status': 'updateFailed',
+  //       //     });
+  //       //   });
+  //       // }
+  //       Navigator.pushNamed(context, deepLink.path);
+  //     }
+  //   }, onError: (OnLinkErrorException e) async {
+  //     print('onLinkError');
+  //     print(e.message);
+  //   });
 
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+  //   final PendingDynamicLinkData data =
+  //       await FirebaseDynamicLinks.instance.getInitialLink();
+  //   final Uri deepLink = data?.link;
 
-    if (deepLink != null) {
-      // String id = Uri.base.queryParameters['id'];
-      // String companyId = Uri.base.queryParameters['companyId'];
-      // String balance = Uri.base.queryParameters['balance'];
-      // String status = Uri.base.queryParameters['octo_status'];
-      // if (status == 'succeeded') {
-      //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
-      //     'status': 'finished',
-      //   });
-      //   FirebaseFirestore.instance
-      //       .collection('companies')
-      //       .doc(companyId)
-      //       .update({'balance': balance}).catchError(() {
-      //     FirebaseFirestore.instance.collection('transactions').doc(id).update({
-      //       'status': 'updateFailed',
-      //     });
-      //   });
-      // }
-      Navigator.pushNamed(context, deepLink.path);
-    }
-  }
+  //   if (deepLink != null) {
+  //     // String id = Uri.base.queryParameters['id'];
+  //     // String companyId = Uri.base.queryParameters['companyId'];
+  //     // String balance = Uri.base.queryParameters['balance'];
+  //     // String status = Uri.base.queryParameters['octo_status'];
+  //     // if (status == 'succeeded') {
+  //     //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
+  //     //     'status': 'finished',
+  //     //   });
+  //     //   FirebaseFirestore.instance
+  //     //       .collection('companies')
+  //     //       .doc(companyId)
+  //     //       .update({'balance': balance}).catchError(() {
+  //     //     FirebaseFirestore.instance.collection('transactions').doc(id).update({
+  //     //       'status': 'updateFailed',
+  //     //     });
+  //     //   });
+  //     // }
+  //     Navigator.pushNamed(context, deepLink.path);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
