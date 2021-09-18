@@ -280,6 +280,9 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           width: size.width * 0.9,
                           margin: EdgeInsets.all(10),
                           child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                             shadowColor: whiteColor,
                             color: whiteColor,
                             elevation: 10,
@@ -488,6 +491,9 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10.0),
                               child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
                                 shadowColor: whiteColor,
                                 margin: EdgeInsets.all(5),
                                 elevation: 10,
