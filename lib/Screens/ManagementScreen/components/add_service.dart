@@ -1647,7 +1647,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                               showSimpleNotification(
                                 Container(child: Text(notification.body)),
                                 position: NotificationPosition.top,
-                                background: darkPrimaryColor,
+                                background: footyColor,
                               );
                               Navigator.pop(context);
                               setState(() {

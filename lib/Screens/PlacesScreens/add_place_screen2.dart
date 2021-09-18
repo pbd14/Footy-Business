@@ -168,7 +168,7 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                       showSimpleNotification(
                         Container(child: Text(notification.body)),
                         position: NotificationPosition.top,
-                        background: darkPrimaryColor,
+                        background: footyColor,
                       );
                       Navigator.push(
                           context,

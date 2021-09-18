@@ -535,7 +535,7 @@ class _EditPlaceScreenState extends State<EditPlaceScreen> {
                             showSimpleNotification(
                               Container(child: Text(notification.body)),
                               position: NotificationPosition.top,
-                              background: darkPrimaryColor,
+                              background: footyColor,
                             );
                             Navigator.push(
                               context,

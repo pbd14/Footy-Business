@@ -1817,7 +1817,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                             showSimpleNotification(
                               Container(child: Text(notification.body)),
                               position: NotificationPosition.top,
-                              background: darkPrimaryColor,
+                              background: footyColor,
                             );
                             Navigator.push(
                               context,

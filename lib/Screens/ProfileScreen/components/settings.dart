@@ -215,7 +215,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                       Text(notification.body)),
                                               position:
                                                   NotificationPosition.top,
-                                              background: primaryColor,
+                                              background: footyColor,
                                             );
                                           },
                                         ),
@@ -349,7 +349,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                                       position:
                                                           NotificationPosition
                                                               .top,
-                                                      background: primaryColor,
+                                                      background: footyColor,
                                                     );
                                                   }
                                                 },
