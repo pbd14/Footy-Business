@@ -39,15 +39,31 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return loading
         ? LoadingScreen()
-        : Scaffold(
-            backgroundColor: whiteColor,
-            body: SingleChildScrollView(
-              child: Background(
+        : Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                // stops: [0.3, 1],
+                colors: [
+                  lightPrimaryColor.withOpacity(0.5),
+                  primaryColor,
+                  darkPrimaryColor,
+                  darkColor
+                ],
+              ),
+            ),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      SizedBox(
+                        height: 50,
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
@@ -64,11 +80,221 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 20,
+                        height: !codeSent ? 100 : 0,
+                      ),
+                      !codeSent
+                          ? Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                Image.asset(
+                                  'assets/images/nature1.jpg',
+                                  height: 200,
+                                  width: size.width * 0.9,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  top: 120,
+                                  child: Container(
+                                    width: size.width * 0.8,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      elevation: 10,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Go online',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Start receiving clients online in few steps',
+                                              maxLines: 10,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: !codeSent ? 200 : 0,
+                      ),
+                      !codeSent
+                          ? Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                Image.asset(
+                                  'assets/images/nature2.jpg',
+                                  height: 200,
+                                  width: size.width * 0.9,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  top: 120,
+                                  child: Container(
+                                    width: size.width * 0.8,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      elevation: 10,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Manage',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Manage your bookings and clients easily with our tools. Make schedules, contact clients and organize bookings',
+                                              maxLines: 10,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: !codeSent ? 200 : 0,
+                      ),
+                      !codeSent
+                          ? Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                Image.asset(
+                                  'assets/images/nature3.webp',
+                                  height: 200,
+                                  width: size.width * 0.9,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  top: 120,
+                                  child: Container(
+                                    width: size.width * 0.8,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      elevation: 10,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Free',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Our system is totally free, which maximizes your profit',
+                                              maxLines: 10,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: TextStyle(
+                                                  color: darkColor,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: !codeSent ? 150 : 50,
                       ),
                       Container(
                         width: size.width * 0.85,
                         child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
                           elevation: 10,
                           child: Padding(
                             padding: EdgeInsets.all(20),
