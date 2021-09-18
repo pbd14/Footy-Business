@@ -199,29 +199,29 @@ class _EditPlaceScreenState extends State<EditPlaceScreen> {
                               },
                             ),
                             SizedBox(height: 20),
-                            DropdownButton<String>(
-                              hint: Text(
-                                this.type != null ? this.type : 'Type',
-                                style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(
-                                    color: darkPrimaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              items: ['With verification', 'No verification']
-                                  .map((dynamic value) {
-                                return new DropdownMenuItem<String>(
-                                  value: value.toString().toUpperCase(),
-                                  child: new Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  this.type = value;
-                                });
-                              },
-                            ),
+                            // DropdownButton<String>(
+                            //   hint: Text(
+                            //     this.type != null ? this.type : 'Type',
+                            //     style: GoogleFonts.montserrat(
+                            //       textStyle: TextStyle(
+                            //         color: darkPrimaryColor,
+                            //         fontWeight: FontWeight.bold,
+                            //       ),
+                            //     ),
+                            //   ),
+                            //   items: ['With verification', 'No verification']
+                            //       .map((dynamic value) {
+                            //     return new DropdownMenuItem<String>(
+                            //       value: value.toString().toUpperCase(),
+                            //       child: new Text(value),
+                            //     );
+                            //   }).toList(),
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       this.type = value;
+                            //     });
+                            //   },
+                            // ),
                           ],
                         ),
                       ),

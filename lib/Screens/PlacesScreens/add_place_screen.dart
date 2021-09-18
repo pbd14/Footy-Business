@@ -121,7 +121,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                     ),
                     SizedBox(height: 30),
                     CardW(
-                      ph: 600,
+                      ph: 500,
                       width: 0.7,
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -193,75 +193,78 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                               },
                             ),
                             SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  CupertinoIcons.info_circle,
-                                  color: darkPrimaryColor,
-                                  size: 30,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'If you turn on VERIFICATION, when client wants to make booking, your agreement is needed to complete booking. if you turn verification OFF, then clients will be able to make bookings automatically, without your agreement.',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 200,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat(
-                                          textStyle: TextStyle(
-                                            color: darkPrimaryColor,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 7,
-                                  child: Text(
-                                    'Turn on verification?',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      textStyle: TextStyle(
-                                        color: darkColor,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Switch(
-                                    activeColor: primaryColor,
-                                    value: needsVer,
-                                    onChanged: (val) {
-                                      if (this.mounted) {
-                                        setState(() {
-                                          this.needsVer = val;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+
+                            // IMPORTANT
+
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   children: [
+                            //     Icon(
+                            //       CupertinoIcons.info_circle,
+                            //       color: darkPrimaryColor,
+                            //       size: 30,
+                            //     ),
+                            //     SizedBox(
+                            //       width: 10,
+                            //     ),
+                            //     Expanded(
+                            //       child: Column(
+                            //         crossAxisAlignment:
+                            //             CrossAxisAlignment.start,
+                            //         children: [
+                            //           Text(
+                            //             'If you turn on VERIFICATION, when client wants to make booking, your agreement is needed to complete booking. if you turn verification OFF, then clients will be able to make bookings automatically, without your agreement.',
+                            //             overflow: TextOverflow.ellipsis,
+                            //             maxLines: 200,
+                            //             textAlign: TextAlign.center,
+                            //             style: GoogleFonts.montserrat(
+                            //               textStyle: TextStyle(
+                            //                 color: darkPrimaryColor,
+                            //                 fontSize: 15,
+                            //               ),
+                            //             ),
+                            //           )
+                            //         ],
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: 5,
+                            // ),
+                            // Row(
+                            //   children: [
+                            //     Expanded(
+                            //       flex: 7,
+                            //       child: Text(
+                            //         'Turn on verification?',
+                            //         overflow: TextOverflow.ellipsis,
+                            //         style: GoogleFonts.montserrat(
+                            //           textStyle: TextStyle(
+                            //             color: darkColor,
+                            //             fontSize: 17,
+                            //             fontWeight: FontWeight.w400,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     SizedBox(width: 5),
+                            //     Align(
+                            //       alignment: Alignment.centerRight,
+                            //       child: Switch(
+                            //         activeColor: primaryColor,
+                            //         value: needsVer,
+                            //         onChanged: (val) {
+                            //           if (this.mounted) {
+                            //             setState(() {
+                            //               this.needsVer = val;
+                            //             });
+                            //           }
+                            //         },
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),
