@@ -577,6 +577,10 @@ class _History1State extends State<History1>
                                     height: 450,
                                     width: size.width * 0.9,
                                     child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
                                       shadowColor: whiteColor,
                                       elevation: 10,
                                       child: Padding(
@@ -732,6 +736,10 @@ class _History1State extends State<History1>
                                           margin: EdgeInsets.symmetric(
                                               horizontal: 5.0),
                                           child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
                                             shadowColor: whiteColor,
                                             color: Colors.red,
                                             elevation: 10,
@@ -956,6 +964,10 @@ class _History1State extends State<History1>
                                         },
                                         child: Container(
                                           child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
                                             shadowColor: whiteColor,
                                             color: footyColor,
                                             elevation: 10,
@@ -1182,6 +1194,10 @@ class _History1State extends State<History1>
                                         });
                                       },
                                       child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
                                         shadowColor: whiteColor,
                                         elevation: 10,
                                         child: Center(
@@ -1367,6 +1383,10 @@ class _History1State extends State<History1>
                                         });
                                       },
                                       child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
                                         margin: EdgeInsets.all(10),
                                         elevation: 10,
                                         child: Center(
