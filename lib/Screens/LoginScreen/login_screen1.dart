@@ -133,6 +133,7 @@ class _LoginScreen1State extends State<LoginScreen1> {
                                         'balance': EncryptionService().enc('0'),
                                         'balanceCurrency': 'UZS',
                                         'id': id,
+                                        'isActive': true,
                                       }).catchError((error) {
                                         PushNotificationMessage notification =
                                             PushNotificationMessage(

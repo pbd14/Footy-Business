@@ -1621,6 +1621,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                           'Sun': sun,
                                         },
                                         'vacation_days': vacationDays,
+                                        'isActive': true,
                                       }
                                     ],
                                   ),

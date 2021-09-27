@@ -37,6 +37,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
   bool verifying = false;
   bool workingDay = true;
   bool fixedDuration = false;
+  bool isActive = true;
 
   int duration = 0;
 
@@ -483,6 +484,9 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
         name = widget.service['name'];
         spm = widget.service['spm'];
         payment_methods = widget.service['payment_methods'];
+        if (widget.service['isActive'] != null) {
+          isActive = widget.service['isActive'];
+        }
         if (widget.service['vacation_days'] != null) {
           for (Timestamp vdate in widget.service['vacation_days']) {
             DateTime newDate = DateTime.fromMillisecondsSinceEpoch(
@@ -556,6 +560,9 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
       name = widget.service['name'];
       spm = widget.service['spm'];
       payment_methods = widget.service['payment_methods'];
+      if (widget.service['isActive'] != null) {
+        isActive = widget.service['isActive'];
+      }
       if (widget.service['vacation_days'] != null) {
         for (Timestamp vdate in widget.service['vacation_days']) {
           DateTime newDate =
@@ -636,7 +643,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                               validator: (val) => val.length >= 3
                                   ? null
                                   : 'Minimum 3 characters',
-                              hintText: "So'm per minute",
+                              hintText: "UZS per minute",
                               initialValue: widget.service['spm'],
                               type: TextInputType.number,
                               onChanged: (value) {
@@ -644,6 +651,42 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                               },
                             ),
                             SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    'Active',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                      textStyle: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Switch(
+                                    activeColor: primaryColor,
+                                    value: isActive,
+                                    onChanged: (val) {
+                                      if (this.mounted) {
+                                        setState(() {
+                                          this.isActive = val;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1786,6 +1829,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                                   'Sun': sun,
                                 },
                                 'vacation_days': vacationDays,
+                                'isActive': isActive,
                               },
                             );
                             FirebaseFirestore.instance
@@ -1832,6 +1876,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
                               this.name = '';
                               this.spm = '';
                               this.payment_methods = [];
+                              this.isActive = true;
                             });
                           }
                         } else {

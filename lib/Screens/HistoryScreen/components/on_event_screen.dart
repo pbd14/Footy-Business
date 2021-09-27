@@ -368,22 +368,25 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                             ),
                                             booking.data()['status'] == 'unpaid'
                                                 ? Center(
-                                                  child: Text(
-                                                      booking.data()['price'].toString() +
+                                                    child: Text(
+                                                      booking
+                                                              .data()['price']
+                                                              .toString() +
                                                           ' UZS',
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines: 15,
-                                                      textAlign: TextAlign.center,
-                                                      style:
-                                                          GoogleFonts.montserrat(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts
+                                                          .montserrat(
                                                         textStyle: TextStyle(
                                                           color: darkColor,
                                                           fontSize: 25,
                                                         ),
                                                       ),
                                                     ),
-                                                )
+                                                  )
                                                 : Container(),
                                             booking.data()['status'] ==
                                                     'finished'
@@ -734,7 +737,39 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                                           'balance'])) -
                                                               booking.data()[
                                                                   'commissionPrice'];
-
+                                                          bool isActive = true;
+                                                          if (newBalance <
+                                                              -100000) {
+                                                            isActive = false;
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'users')
+                                                                .doc(company
+                                                                        .data()[
+                                                                    'owner'])
+                                                                .update({
+                                                              'notifications_business':
+                                                                  FieldValue
+                                                                      .arrayUnion([
+                                                                {
+                                                                  'seen': false,
+                                                                  'type':
+                                                                      'booking_canceled',
+                                                                  'title':
+                                                                      'Deactivated',
+                                                                  'text':
+                                                                      'Your company was deactivated because your debt is over 100 000 UZS. Please make appropriate payments.',
+                                                                  'companyName':
+                                                                      company.data()[
+                                                                          'name'],
+                                                                  'date':
+                                                                      DateTime
+                                                                          .now(),
+                                                                }
+                                                              ])
+                                                            });
+                                                          }
                                                           FirebaseFirestore
                                                               .instance
                                                               .collection(
@@ -744,8 +779,33 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                             'balance': EncryptionService()
                                                                 .enc(newBalance
                                                                     .toString()),
+                                                            'isActive':
+                                                                isActive,
                                                           });
+                                                        }).catchError((error) {
+                                                          print('MISTAKE HERE');
+                                                          print(error);
+                                                          Navigator.of(context)
+                                                              .pop(false);
+                                                          PushNotificationMessage
+                                                              notification =
+                                                              PushNotificationMessage(
+                                                            title: 'Fail',
+                                                            body: 'Failed',
+                                                          );
+                                                          showSimpleNotification(
+                                                            Container(
+                                                                child: Text(
+                                                                    notification
+                                                                        .body)),
+                                                            position:
+                                                                NotificationPosition
+                                                                    .top,
+                                                            background:
+                                                                Colors.red,
+                                                          );
                                                         });
+
                                                         FirebaseFirestore
                                                             .instance
                                                             .collection(
