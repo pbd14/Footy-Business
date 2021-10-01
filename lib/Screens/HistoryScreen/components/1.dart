@@ -271,15 +271,6 @@ class _History1State extends State<History1>
           'placeId',
           isEqualTo: chosenPlace.id,
         )
-        .where(
-          'date',
-          isEqualTo: DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
-            0,
-          ).toString(),
-        )
         .snapshots()
         .listen((bookings) {
       setState(() {
