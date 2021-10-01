@@ -333,7 +333,7 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                                           'balance']);
                                                               double
                                                                   newBalance =
-                                                                  0.0;
+                                                                  0;
                                                               String
                                                                   encBalance =
                                                                   EncryptionService().enc(
@@ -412,12 +412,9 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                                         "bank_card"
                                                                   },
                                                                 ],
-                                                                "return_url": "https://footyuz.web.app/payment_done.html?id=" +
-                                                                    id +
-                                                                    "&balance=" +
-                                                                    encBalance +
-                                                                    "&companyId=" +
-                                                                    company.id
+                                                                "return_url":
+                                                                    "https://footyuz.web.app/payment_done.html?id=" +
+                                                                        id,
                                                               });
                                                               Map responseData =
                                                                   jsonDecode(
