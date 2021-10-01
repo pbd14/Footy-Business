@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
+import 'package:footy_business/Screens/HomeScreen/home_screen.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
 import 'package:footy_business/Screens/ProfileScreen/components/settings.dart';
 import 'package:footy_business/Services/auth_service.dart';
@@ -432,6 +433,12 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                                     'created') {
                                                                   launch(responseData[
                                                                       'octo_pay_url']);
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      SlideRightRoute(
+                                                                        page:
+                                                                            HomeScreen(),
+                                                                      ));
                                                                 }
                                                                 if (responseData[
                                                                         'status'] ==
@@ -440,6 +447,12 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                                     paymentAmount =
                                                                         0;
                                                                   });
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      SlideRightRoute(
+                                                                        page:
+                                                                            HomeScreen(),
+                                                                      ));
                                                                 }
                                                               } else {
                                                                 PushNotificationMessage
