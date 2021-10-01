@@ -314,209 +314,350 @@ class _ProfileScreen2State extends State<ProfileScreen2>
                                                 SizedBox(
                                                   height: 15,
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      width: 200,
-                                                      child: RoundedTextInput(
-                                                        height: 60,
-                                                        validator: (val) => val
-                                                                    .length >=
-                                                                31
-                                                            ? null
-                                                            : 'Minimum 1 character',
-                                                        hintText: "UZS",
-                                                        type: TextInputType
-                                                            .number,
-                                                        onChanged: (value) {
-                                                          if (value == null) {
-                                                            setState(() {
-                                                              this.paymentAmount =
-                                                                  0;
-                                                            });
-                                                          } else {}
-                                                          setState(() {
-                                                            this.paymentAmount =
-                                                                int.parse(
-                                                                    value);
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    paymentAmount > 0
-                                                        ? Center(
-                                                            child: Container(
-                                                              child:
-                                                                  RoundedButton(
-                                                                pw: 100,
-                                                                ph: 45,
-                                                                text: 'PAY',
-                                                                press:
-                                                                    () async {
-                                                                  String
-                                                                      ownerBalance =
-                                                                      EncryptionService().dec(
-                                                                          company
-                                                                              .data()['balance']);
-                                                                  double
-                                                                      newBalance =
-                                                                      double.parse(
-                                                                              ownerBalance) +
-                                                                          paymentAmount;
-                                                                  String
-                                                                      encBalance =
-                                                                      EncryptionService().enc(
-                                                                          newBalance
-                                                                              .toString());
-                                                                  String
-                                                                      encPrevBalance =
-                                                                      EncryptionService()
-                                                                          .enc(
-                                                                              ownerBalance);
-                                                                  String id = DateTime
-                                                                          .now()
-                                                                      .millisecondsSinceEpoch
-                                                                      .toString();
-                                                                  FirebaseFirestore
+                                                double.parse(EncryptionService()
+                                                            .dec(company.data()[
+                                                                'balance'])) <
+                                                        0
+                                                    ? Center(
+                                                        child: Container(
+                                                          child: RoundedButton(
+                                                            pw: 100,
+                                                            ph: 45,
+                                                            text: 'PAY DEBT',
+                                                            press: () async {
+                                                              String
+                                                                  ownerBalance =
+                                                                  EncryptionService()
+                                                                      .dec(company
+                                                                              .data()[
+                                                                          'balance']);
+                                                              double
+                                                                  newBalance =
+                                                                  0.0;
+                                                              String
+                                                                  encBalance =
+                                                                  EncryptionService().enc(
+                                                                      newBalance
+                                                                          .toString());
+                                                              String
+                                                                  encPrevBalance =
+                                                                  EncryptionService()
+                                                                      .enc(
+                                                                          ownerBalance);
+                                                              String id = DateTime
+                                                                      .now()
+                                                                  .millisecondsSinceEpoch
+                                                                  .toString();
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'transactions')
+                                                                  .doc(id)
+                                                                  .set({
+                                                                "companyId":
+                                                                    company.id,
+                                                                "newBalance":
+                                                                    encBalance,
+                                                                "previousBalance":
+                                                                    encPrevBalance,
+                                                                "method":
+                                                                    "octo",
+                                                                "transactionId":
+                                                                    id,
+                                                                "date": DateTime
+                                                                    .now(),
+                                                                "status":
+                                                                    "created",
+                                                              });
+                                                              http.Response
+                                                                  response =
+                                                                  await makePayment({
+                                                                "octo_shop_id":
+                                                                    3876,
+                                                                "octo_secret":
+                                                                    "c66db06a-6bd7-4029-bb8c-1f582d33b62a",
+                                                                "shop_transaction_id":
+                                                                    id,
+                                                                "auto_capture":
+                                                                    true,
+                                                                "test": true,
+                                                                "init_time": DateTime
+                                                                        .now()
+                                                                    .toString(),
+                                                                "user_data": {
+                                                                  "user_id": FirebaseAuth
                                                                       .instance
-                                                                      .collection(
-                                                                          'transactions')
-                                                                      .doc(id)
-                                                                      .set({
-                                                                    "companyId":
-                                                                        company
-                                                                            .id,
-                                                                    "newBalance":
-                                                                        encBalance,
-                                                                    "previousBalance":
-                                                                        encPrevBalance,
-                                                                    "method":
-                                                                        "octo",
-                                                                    "bookingId":
-                                                                        id,
-                                                                    "date":
-                                                                        DateTime
-                                                                            .now(),
-                                                                    "status":
-                                                                        "created",
-                                                                  });
-                                                                  http.Response
-                                                                      response =
-                                                                      await makePayment({
-                                                                    "octo_shop_id":
-                                                                        3876,
-                                                                    "octo_secret":
-                                                                        "c66db06a-6bd7-4029-bb8c-1f582d33b62a",
-                                                                    "shop_transaction_id":
-                                                                        id,
-                                                                    "auto_capture":
-                                                                        true,
-                                                                    "test":
-                                                                        true,
-                                                                    "init_time":
-                                                                        DateTime.now()
-                                                                            .toString(),
-                                                                    "user_data":
-                                                                        {
-                                                                      "user_id": FirebaseAuth
-                                                                          .instance
-                                                                          .currentUser
-                                                                          .uid,
-                                                                      "phone": FirebaseAuth
-                                                                          .instance
-                                                                          .currentUser
-                                                                          .phoneNumber,
-                                                                      "email":
-                                                                          "user@mail.com"
-                                                                    },
-                                                                    "total_sum":
-                                                                        paymentAmount,
-                                                                    "currency":
-                                                                        "UZS",
-                                                                    // "tag": "booking",
-                                                                    "description":
-                                                                        "Filling up balance in Footy Business",
-                                                                    "payment_methods":
-                                                                        [
-                                                                      {
-                                                                        "method":
-                                                                            "bank_card"
-                                                                      },
-                                                                    ],
-                                                                    "return_url": "https://footyuz.web.app/payment_done.html?id=" +
-                                                                        id +
-                                                                        "&balance=" +
-                                                                        encBalance +
-                                                                        "&companyId=" +
-                                                                        company
-                                                                            .id
-                                                                  });
-                                                                  Map responseData =
-                                                                      jsonDecode(
-                                                                          response
-                                                                              .body);
-                                                                  if (responseData[
-                                                                          'error'] ==
-                                                                      0) {
-                                                                    Map responseData =
-                                                                        jsonDecode(
-                                                                            response.body);
-                                                                    if (responseData[
-                                                                            'status'] ==
-                                                                        'created') {
-                                                                      launch(responseData[
-                                                                          'octo_pay_url']);
-                                                                    }
-                                                                    if (responseData[
-                                                                            'status'] ==
-                                                                        'succeeded') {
-                                                                      setState(
-                                                                          () {
-                                                                        paymentAmount =
-                                                                            0;
-                                                                      });
-                                                                    }
-                                                                  } else {
-                                                                    PushNotificationMessage
-                                                                        notification =
-                                                                        PushNotificationMessage(
-                                                                      title:
-                                                                          'Failed',
-                                                                      body:
-                                                                          'Server returned mistake',
-                                                                    );
-                                                                    showSimpleNotification(
-                                                                      Container(
-                                                                          child:
-                                                                              Text(notification.body)),
-                                                                      position:
-                                                                          NotificationPosition
-                                                                              .top,
-                                                                      background:
-                                                                          Colors
-                                                                              .red,
-                                                                    );
-
-                                                                    setState(
-                                                                        () {
-                                                                      paymentAmount =
-                                                                          0;
-                                                                    });
-                                                                  }
+                                                                      .currentUser
+                                                                      .uid,
+                                                                  "phone": FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser
+                                                                      .phoneNumber,
+                                                                  "email":
+                                                                      "user@mail.com"
                                                                 },
-                                                                color:
-                                                                    darkPrimaryColor,
-                                                                textColor:
-                                                                    whiteColor,
-                                                              ),
+                                                                "total_sum":
+                                                                    double.parse(
+                                                                            ownerBalance) *
+                                                                        (-1),
+                                                                "currency":
+                                                                    "UZS",
+                                                                // "tag": "booking",
+                                                                "description":
+                                                                    "Filling up balance in Footy Business",
+                                                                "payment_methods":
+                                                                    [
+                                                                  {
+                                                                    "method":
+                                                                        "bank_card"
+                                                                  },
+                                                                ],
+                                                                "return_url": "https://footyuz.web.app/payment_done.html?id=" +
+                                                                    id +
+                                                                    "&balance=" +
+                                                                    encBalance +
+                                                                    "&companyId=" +
+                                                                    company.id
+                                                              });
+                                                              Map responseData =
+                                                                  jsonDecode(
+                                                                      response
+                                                                          .body);
+                                                              if (responseData[
+                                                                      'error'] ==
+                                                                  0) {
+                                                                Map responseData =
+                                                                    jsonDecode(
+                                                                        response
+                                                                            .body);
+                                                                if (responseData[
+                                                                        'status'] ==
+                                                                    'created') {
+                                                                  launch(responseData[
+                                                                      'octo_pay_url']);
+                                                                }
+                                                                if (responseData[
+                                                                        'status'] ==
+                                                                    'succeeded') {
+                                                                  setState(() {
+                                                                    paymentAmount =
+                                                                        0;
+                                                                  });
+                                                                }
+                                                              } else {
+                                                                PushNotificationMessage
+                                                                    notification =
+                                                                    PushNotificationMessage(
+                                                                  title:
+                                                                      'Failed',
+                                                                  body:
+                                                                      'Server returned mistake',
+                                                                );
+                                                                showSimpleNotification(
+                                                                  Container(
+                                                                      child: Text(
+                                                                          notification
+                                                                              .body)),
+                                                                  position:
+                                                                      NotificationPosition
+                                                                          .top,
+                                                                  background:
+                                                                      Colors
+                                                                          .red,
+                                                                );
+
+                                                                setState(() {
+                                                                  paymentAmount =
+                                                                      0;
+                                                                });
+                                                              }
+                                                            },
+                                                            color:
+                                                                darkPrimaryColor,
+                                                            textColor:
+                                                                whiteColor,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: 200,
+                                                            child:
+                                                                RoundedTextInput(
+                                                              height: 60,
+                                                              validator: (val) =>
+                                                                  val.length >=
+                                                                          31
+                                                                      ? null
+                                                                      : 'Minimum 1 character',
+                                                              hintText: "UZS",
+                                                              type:
+                                                                  TextInputType
+                                                                      .number,
+                                                              onChanged:
+                                                                  (value) {
+                                                                if (value ==
+                                                                    null) {
+                                                                  setState(() {
+                                                                    this.paymentAmount =
+                                                                        0;
+                                                                  });
+                                                                } else {}
+                                                                setState(() {
+                                                                  this.paymentAmount =
+                                                                      int.parse(
+                                                                          value);
+                                                                });
+                                                              },
                                                             ),
-                                                          )
-                                                        : Container(),
-                                                  ],
-                                                )
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          paymentAmount > 0
+                                                              ? Center(
+                                                                  child:
+                                                                      Container(
+                                                                    child:
+                                                                        RoundedButton(
+                                                                      pw: 100,
+                                                                      ph: 45,
+                                                                      text:
+                                                                          'PAY',
+                                                                      press:
+                                                                          () async {
+                                                                        String
+                                                                            ownerBalance =
+                                                                            EncryptionService().dec(company.data()['balance']);
+                                                                        double
+                                                                            newBalance =
+                                                                            double.parse(ownerBalance) +
+                                                                                paymentAmount;
+                                                                        String
+                                                                            encBalance =
+                                                                            EncryptionService().enc(newBalance.toString());
+                                                                        String
+                                                                            encPrevBalance =
+                                                                            EncryptionService().enc(ownerBalance);
+                                                                        String id = DateTime.now()
+                                                                            .millisecondsSinceEpoch
+                                                                            .toString();
+                                                                        FirebaseFirestore
+                                                                            .instance
+                                                                            .collection('transactions')
+                                                                            .doc(id)
+                                                                            .set({
+                                                                          "companyId":
+                                                                              company.id,
+                                                                          "newBalance":
+                                                                              encBalance,
+                                                                          "previousBalance":
+                                                                              encPrevBalance,
+                                                                          "method":
+                                                                              "octo",
+                                                                          "bookingId":
+                                                                              id,
+                                                                          "date":
+                                                                              DateTime.now(),
+                                                                          "status":
+                                                                              "created",
+                                                                        });
+                                                                        http.Response
+                                                                            response =
+                                                                            await makePayment({
+                                                                          "octo_shop_id":
+                                                                              3876,
+                                                                          "octo_secret":
+                                                                              "c66db06a-6bd7-4029-bb8c-1f582d33b62a",
+                                                                          "shop_transaction_id":
+                                                                              id,
+                                                                          "auto_capture":
+                                                                              true,
+                                                                          "test":
+                                                                              true,
+                                                                          "init_time":
+                                                                              DateTime.now().toString(),
+                                                                          "user_data":
+                                                                              {
+                                                                            "user_id":
+                                                                                FirebaseAuth.instance.currentUser.uid,
+                                                                            "phone":
+                                                                                FirebaseAuth.instance.currentUser.phoneNumber,
+                                                                            "email":
+                                                                                "user@mail.com"
+                                                                          },
+                                                                          "total_sum":
+                                                                              paymentAmount,
+                                                                          "currency":
+                                                                              "UZS",
+                                                                          // "tag": "booking",
+                                                                          "description":
+                                                                              "Filling up balance in Footy Business",
+                                                                          "payment_methods":
+                                                                              [
+                                                                            {
+                                                                              "method": "bank_card"
+                                                                            },
+                                                                          ],
+                                                                          "return_url": "https://footyuz.web.app/payment_done.html?id=" +
+                                                                              id +
+                                                                              "&balance=" +
+                                                                              encBalance +
+                                                                              "&companyId=" +
+                                                                              company.id
+                                                                        });
+                                                                        Map responseData =
+                                                                            jsonDecode(response.body);
+                                                                        if (responseData['error'] ==
+                                                                            0) {
+                                                                          Map responseData =
+                                                                              jsonDecode(response.body);
+                                                                          if (responseData['status'] ==
+                                                                              'created') {
+                                                                            launch(responseData['octo_pay_url']);
+                                                                          }
+                                                                          if (responseData['status'] ==
+                                                                              'succeeded') {
+                                                                            setState(() {
+                                                                              paymentAmount = 0;
+                                                                            });
+                                                                          }
+                                                                        } else {
+                                                                          PushNotificationMessage
+                                                                              notification =
+                                                                              PushNotificationMessage(
+                                                                            title:
+                                                                                'Failed',
+                                                                            body:
+                                                                                'Server returned mistake',
+                                                                          );
+                                                                          showSimpleNotification(
+                                                                            Container(child: Text(notification.body)),
+                                                                            position:
+                                                                                NotificationPosition.top,
+                                                                            background:
+                                                                                Colors.red,
+                                                                          );
+
+                                                                          setState(
+                                                                              () {
+                                                                            paymentAmount =
+                                                                                0;
+                                                                          });
+                                                                        }
+                                                                      },
+                                                                      color:
+                                                                          darkPrimaryColor,
+                                                                      textColor:
+                                                                          whiteColor,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Container(),
+                                                        ],
+                                                      )
                                               ],
                                             ),
                                           ),
