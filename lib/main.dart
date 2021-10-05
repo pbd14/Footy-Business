@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/Screens/sww_screen.dart';
+import 'package:footy_business/Services/languages/locale_constant.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'Services/auth_service.dart';
+import 'Services/languages/applocalizationsdelegate.dart';
 import 'constants.dart';
 
 // applicationId com.example.footy_business
@@ -18,76 +19,35 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+  static void setLocale(BuildContext context, Locale newLocale) {
+    var state = context.findAncestorStateOfType<_MyAppState>();
+    state.setLocale(newLocale);
+  }
+
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   this.initDynamicLinks();
-  // }
+  Locale _locale;
 
-  // void initDynamicLinks() async {
-  //   FirebaseDynamicLinks.instance.onLink(
-  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-  //     final Uri deepLink = dynamicLink?.link;
+  void setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
 
-  //     if (deepLink != null) {
-  //       // String id = Uri.base.queryParameters['id'];
-  //       // String companyId = Uri.base.queryParameters['companyId'];
-  //       // String balance = Uri.base.queryParameters['balance'];
-  //       // String status = Uri.base.queryParameters['octo_status'];
-  //       // if (status == 'succeeded') {
-  //       //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
-  //       //     'status': 'finished',
-  //       //   });
-  //       //   FirebaseFirestore.instance
-  //       //       .collection('companies')
-  //       //       .doc(companyId)
-  //       //       .update({'balance': balance}).catchError(() {
-  //       //     FirebaseFirestore.instance
-  //       //         .collection('transactions')
-  //       //         .doc(id)
-  //       //         .update({
-  //       //       'status': 'updateFailed',
-  //       //     });
-  //       //   });
-  //       // }
-  //       Navigator.pushNamed(context, deepLink.path);
-  //     }
-  //   }, onError: (OnLinkErrorException e) async {
-  //     print('onLinkError');
-  //     print(e.message);
-  //   });
-
-  //   final PendingDynamicLinkData data =
-  //       await FirebaseDynamicLinks.instance.getInitialLink();
-  //   final Uri deepLink = data?.link;
-
-  //   if (deepLink != null) {
-  //     // String id = Uri.base.queryParameters['id'];
-  //     // String companyId = Uri.base.queryParameters['companyId'];
-  //     // String balance = Uri.base.queryParameters['balance'];
-  //     // String status = Uri.base.queryParameters['octo_status'];
-  //     // if (status == 'succeeded') {
-  //     //   FirebaseFirestore.instance.collection('transactions').doc(id).update({
-  //     //     'status': 'finished',
-  //     //   });
-  //     //   FirebaseFirestore.instance
-  //     //       .collection('companies')
-  //     //       .doc(companyId)
-  //     //       .update({'balance': balance}).catchError(() {
-  //     //     FirebaseFirestore.instance.collection('transactions').doc(id).update({
-  //     //       'status': 'updateFailed',
-  //     //     });
-  //     //   });
-  //     // }
-  //     Navigator.pushNamed(context, deepLink.path);
-  //   }
-  // }
-
+  @override
+  void didChangeDependencies() async {
+    getLocale().then((locale) {
+      setState(() {
+        _locale = locale;
+      });
+    });
+    super.didChangeDependencies();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return OverlaySupport(
@@ -97,6 +57,26 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
             primaryColor: primaryColor, scaffoldBackgroundColor: whiteColor),
         home: AuthService().handleAuth(),
+        supportedLocales: [
+          Locale('en', ''),
+          Locale('ru', ''),
+          Locale('uz', ''),
+        ],
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        localeResolutionCallback: (locale, supportedLocales) {
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale?.languageCode == locale?.languageCode &&
+                supportedLocale?.countryCode == locale?.countryCode) {
+              return supportedLocale;
+            }
+          }
+          return supportedLocales?.first;
+        },
         routes: <String, WidgetBuilder>{
           // Default home route
           '/payment_done': (BuildContext context) => SomethingWentWrongScreen(
