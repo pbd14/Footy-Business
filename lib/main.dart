@@ -24,7 +24,6 @@ class MyApp extends StatefulWidget {
     state.setLocale(newLocale);
   }
 
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -47,13 +46,14 @@ class _MyAppState extends State<MyApp> {
     });
     super.didChangeDependencies();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return OverlaySupport(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Footy',
+        title: 'Footy Business',
+        locale: _locale,
         theme: ThemeData(
             primaryColor: primaryColor, scaffoldBackgroundColor: whiteColor),
         home: AuthService().handleAuth(),

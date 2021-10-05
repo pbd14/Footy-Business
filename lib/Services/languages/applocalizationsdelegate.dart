@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/Services/languages/en.dart';
-import 'package:flutter_complete_guide/Services/languages/languages.dart';
-import 'package:flutter_complete_guide/Services/languages/ru.dart';
-import 'package:flutter_complete_guide/Services/languages/uz.dart';
+import 'package:footy_business/Services/languages/languages.dart';
+import 'package:footy_business/Services/languages/ru.dart';
+
+import 'en.dart';
+import 'uz.dart';
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<Languages> {
   const AppLocalizationsDelegate();

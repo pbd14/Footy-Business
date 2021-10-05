@@ -2,7 +2,7 @@ import 'languages.dart';
 
 class LanguageRu extends Languages {
   @override
-  String get welcomeToFooty => "ДОБРО ПОЖАЛОВАТЬ";
+  String get footyBusiness => "Footy Бизнесс";
   @override
   String get labelSelectLanguage => "Русский";
   @override

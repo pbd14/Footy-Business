@@ -1,15 +1,21 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:footy_business/Models/LanguageData.dart';
 import 'package:footy_business/Services/auth_service.dart';
+import 'package:footy_business/Services/languages/languages.dart';
+import 'package:footy_business/Services/languages/locale_constant.dart';
 import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:footy_business/widgets/rounded_phone_input_field.dart';
 import 'package:footy_business/widgets/rounded_text_input.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../constants.dart';
 import '../loading_screen.dart';
-import 'components/background.dart';
+import 'package:native_updater/native_updater.dart';
+import 'package:package_info/package_info.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class LoginScreen extends StatefulWidget {
   final String errors;
@@ -28,6 +34,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool codeSent = false;
   bool loading = false;
+
+  Future<void> checkVersion() async {
+    RemoteConfig remoteConfig = RemoteConfig.instance;
+    bool updated = await remoteConfig.fetchAndActivate();
+    String requiredVersion = remoteConfig.getString(Platform.isAndroid
+        ? 'footy_business_google_play_version'
+        : 'footy_business_appstore_version');
+    String appStoreLink = remoteConfig.getString('footy_business_appstore_link');
+    String googlePlayLink = remoteConfig.getString('footy_business_google_play_link');
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    if (packageInfo.version != requiredVersion) {
+      NativeUpdater.displayUpdateAlert(
+        context,
+        forceUpdate: true,
+        appStoreUrl: appStoreLink,
+        playStoreUrl: googlePlayLink,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    checkVersion();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
                           child: Text(
-                            'FOOTY BUSINESS',
+                            Languages.of(context).footyBusiness,
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
                                 color: whiteColor,
@@ -79,6 +111,74 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: !codeSent ? 100 : 0,
+                      ),
+                      !codeSent
+                          ? Container(
+                              width: size.width * 0.8,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                elevation: 10,
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        'Language',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      DropdownButton<LanguageData>(
+                                        iconSize: 30,
+                                        hint: Text(Languages.of(context)
+                                            .labelSelectLanguage),
+                                        onChanged: (LanguageData language) {
+                                          changeLanguage(
+                                              context, language.languageCode);
+                                        },
+                                        items: LanguageData.languageList()
+                                            .map<
+                                                DropdownMenuItem<LanguageData>>(
+                                              (e) => DropdownMenuItem<
+                                                  LanguageData>(
+                                                value: e,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      e.flag,
+                                                      style: TextStyle(
+                                                          fontSize: 30),
+                                                    ),
+                                                    Text(e.name)
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: !codeSent ? 100 : 0,
                       ),

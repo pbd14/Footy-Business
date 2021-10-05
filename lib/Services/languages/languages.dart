@@ -6,7 +6,7 @@ abstract class Languages {
     return Localizations.of<Languages>(context, Languages);
   }
 
-  String get welcomeToFooty;
+  String get footyBusiness;
   String get labelSelectLanguage;
   String get loginScreen1head;
   String get loginScreen1text;

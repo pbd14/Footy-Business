@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:footy_business/Screens/HistoryScreen/history_screen.dart';
 import 'package:footy_business/Screens/LoginScreen/login_screen1.dart';
@@ -9,6 +11,8 @@ import 'package:footy_business/Screens/ProfileScreen/profile_screen.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:flutter/material.dart';
+import 'package:native_updater/native_updater.dart';
+import 'package:package_info/package_info.dart';
 import '../../constants.dart';
 
 // ignore: must_be_immutable
@@ -65,51 +69,32 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> checkVersion() async {
+    RemoteConfig remoteConfig = RemoteConfig.instance;
+    bool updated = await remoteConfig.fetchAndActivate();
+    String requiredVersion = remoteConfig.getString(Platform.isAndroid
+        ? 'footy_business_google_play_version'
+        : 'footy_business_appstore_version');
+    String appStoreLink =
+        remoteConfig.getString('footy_business_appstore_link');
+    String googlePlayLink =
+        remoteConfig.getString('footy_business_google_play_link');
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    if (packageInfo.version != requiredVersion) {
+      NativeUpdater.displayUpdateAlert(
+        context,
+        forceUpdate: true,
+        appStoreUrl: appStoreLink,
+        playStoreUrl: googlePlayLink,
+      );
+    }
+  }
+
   @override
   void initState() {
-    // subscription = FirebaseFirestore.instance
-    //     .collection('bookings')
-    //     .where(
-    //       'status',
-    //       isEqualTo: 'in process',
-    //     )
-    //     .where(
-    //       'userId',
-    //       isEqualTo: FirebaseAuth.instance.currentUser.uid.toString(),
-    //     )
-    //     .where('seen_status', whereIn: ['unseen'])
-    //     .snapshots()
-    //     .listen((docsnap) {
-    //       if (docsnap != null) {
-    //         if (docsnap.docs.length != 0) {
-    //           setState(() {
-    //             isNotif = true;
-    //             notifCounter = docsnap.docs.length;
-    //           });
-    //         } else {
-    //           setState(() {
-    //             isNotif = false;
-    //             notifCounter = 0;
-    //           });
-    //         }
-    //       } else {
-    //         setState(() {
-    //           isNotif = false;
-    //           notifCounter = 0;
-    //         });
-    //       }
-    //       // if (docsnap.data()['favourites'].contains(widget.containsValue)) {
-    //       //   setState(() {
-    //       //     isColored = true;
-    //       //     isOne = false;
-    //       //   });
-    //       // } else if (!docsnap.data()['favourites'].contains(widget.containsValue)) {
-    //       //   setState(() {
-    //       //     isColored = false;
-    //       //     isOne = true;
-    //       //   });
-    //       // }
-    //     });
+    checkVersion();
+
     userSubscription = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser.uid)
