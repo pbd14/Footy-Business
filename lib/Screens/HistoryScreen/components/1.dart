@@ -511,6 +511,20 @@ class _History1State extends State<History1>
                                           ],
                                     onChanged: (value) {
                                       companyId = value;
+                                      _bookings = [];
+                                      _places = {};
+                                      placesSlivers = {};
+                                      unrplacesSlivers = {};
+                                      _bookings1 = [];
+                                      slivers = [];
+                                      sliversList = [];
+                                      unpaidPlacesSlivers = {};
+                                      unpaidBookings = [];
+                                      unpaidBookingsSlivers = [];
+                                      ordinaryBookSubscr.cancel();
+                                      inprocessBookSubscr.cancel();
+                                      nonverBookSubscr.cancel();
+                                      unpaidBookSubscr.cancel();
                                       loadData();
                                     },
                                   ),
@@ -555,6 +569,19 @@ class _History1State extends State<History1>
                                             )
                                           ],
                                     onChanged: (value) {
+                                      _places = {};
+                                      placesSlivers = {};
+                                      unrplacesSlivers = {};
+                                      _bookings1 = [];
+                                      slivers = [];
+                                      sliversList = [];
+                                      unpaidPlacesSlivers = {};
+                                      unpaidBookings = [];
+                                      unpaidBookingsSlivers = [];
+                                      ordinaryBookSubscr.cancel();
+                                      inprocessBookSubscr.cancel();
+                                      nonverBookSubscr.cancel();
+                                      unpaidBookSubscr.cancel();
                                       placeId = value;
                                       loadData();
                                     },
@@ -705,7 +732,9 @@ class _History1State extends State<History1>
                                       height: 15,
                                     ),
                                     for (QueryDocumentSnapshot book
-                                        in unpaidBookingsSlivers.toSet().toList())
+                                        in unpaidBookingsSlivers
+                                            .toSet()
+                                            .toList())
                                       CupertinoButton(
                                         padding: EdgeInsets.zero,
                                         onPressed: () {
@@ -719,6 +748,16 @@ class _History1State extends State<History1>
                                                   bookingId: book.id,
                                                 ),
                                               ));
+                                          _bookings = [];
+                                          _places = {};
+                                          placesSlivers = {};
+                                          unrplacesSlivers = {};
+                                          _bookings1 = [];
+                                          slivers = [];
+                                          sliversList = [];
+                                          unpaidPlacesSlivers = {};
+                                          unpaidBookings = [];
+                                          unpaidBookingsSlivers = [];
                                           setState(() {
                                             loading = false;
                                           });
@@ -949,6 +988,16 @@ class _History1State extends State<History1>
                                               ),
                                             ),
                                           );
+                                          _bookings = [];
+                                          _places = {};
+                                          placesSlivers = {};
+                                          unrplacesSlivers = {};
+                                          _bookings1 = [];
+                                          slivers = [];
+                                          sliversList = [];
+                                          unpaidPlacesSlivers = {};
+                                          unpaidBookings = [];
+                                          unpaidBookingsSlivers = [];
                                           setState(() {
                                             loading = false;
                                           });
@@ -1162,7 +1211,8 @@ class _History1State extends State<History1>
                                 SizedBox(
                                   height: 15,
                                 ),
-                                for (QueryDocumentSnapshot book in _bookings.toSet().toList())
+                                for (QueryDocumentSnapshot book
+                                    in _bookings.toSet().toList())
                                   Container(
                                     margin: EdgeInsets.symmetric(horizontal: 7),
                                     // padding: EdgeInsets.all(10),
@@ -1180,6 +1230,16 @@ class _History1State extends State<History1>
                                             ),
                                           ),
                                         );
+                                        _bookings = [];
+                                          _places = {};
+                                          placesSlivers = {};
+                                          unrplacesSlivers = {};
+                                          _bookings1 = [];
+                                          slivers = [];
+                                          sliversList = [];
+                                          unpaidPlacesSlivers = {};
+                                          unpaidBookings = [];
+                                          unpaidBookingsSlivers = [];
                                         setState(() {
                                           loading = false;
                                         });
@@ -1352,7 +1412,8 @@ class _History1State extends State<History1>
                                   ),
 
                                 // Verification needed
-                                for (QueryDocumentSnapshot book in _bookings2.toSet().toList())
+                                for (QueryDocumentSnapshot book
+                                    in _bookings2.toSet().toList())
                                   Container(
                                     // padding: EdgeInsets.all(10),
                                     child: CupertinoButton(
@@ -1369,6 +1430,16 @@ class _History1State extends State<History1>
                                             ),
                                           ),
                                         );
+                                        _bookings = [];
+                                          _places = {};
+                                          placesSlivers = {};
+                                          unrplacesSlivers = {};
+                                          _bookings1 = [];
+                                          slivers = [];
+                                          sliversList = [];
+                                          unpaidPlacesSlivers = {};
+                                          unpaidBookings = [];
+                                          unpaidBookingsSlivers = [];
                                         setState(() {
                                           loading = false;
                                         });
