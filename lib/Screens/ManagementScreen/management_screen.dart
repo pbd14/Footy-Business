@@ -360,20 +360,23 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                         children: [
                                           CupertinoButton(
                                             onPressed: () {
-                                              setState(() {
-                                                loading = true;
-                                              });
-                                              Navigator.push(
-                                                context,
-                                                SlideRightRoute(
-                                                  page: OnEventScreen(
-                                                    bookingId: booking.id,
+                                              if (booking.data()['status'] !=
+                                                  'custom') {
+                                                setState(() {
+                                                  loading = true;
+                                                });
+                                                Navigator.push(
+                                                  context,
+                                                  SlideRightRoute(
+                                                    page: OnEventScreen(
+                                                      bookingId: booking.id,
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                              setState(() {
-                                                loading = false;
-                                              });
+                                                );
+                                                setState(() {
+                                                  loading = false;
+                                                });
+                                              }
                                             },
                                             child: Row(
                                               mainAxisAlignment:

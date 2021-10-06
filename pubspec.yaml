@@ -36,7 +36,6 @@ dependencies:
   geolocator: ^7.0.3
   carousel_slider: ^3.0.0
   syncfusion_flutter_calendar: ^19.1.64
-  date_format: ^2.0.2
   overlay_support: ^1.2.0
   image_picker: ^0.7.4
   cached_network_image: ^3.0.0
@@ -46,6 +45,7 @@ dependencies:
   url_launcher: ^6.0.9
   firebase_dynamic_links: ^2.0.9
   encrypt: ^5.0.0
+  date_format: ^2.0.2
   firebase_remote_config: ^0.10.0+5
   native_updater: ^0.1.0
   package_info: ^2.0.2
