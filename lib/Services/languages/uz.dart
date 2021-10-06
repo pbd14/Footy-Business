@@ -36,6 +36,19 @@ class LanguageUz extends Languages {
   @override
   String get loginScreenCodeIsNotValid => "Kodning muddati tugadi";
 
+  @override
+  String get instructions => "Ko'rsatmalar";
+  @override
+  String get instText1 =>
+      "Footy oilasining a'zosi bo'lganingiz bilan tabriklayman. Bu erda bizda ba'zi ko'rsatmalar mavjud. Birinchidan, siz kompaniya yaratishingiz kerak. Footy tizimida har bir kompaniyaning o'z balansi bor. Misol tariqasida Bowling club kompaniyasini olamiz. Siz o'z kompaniyangizni profilingizda ko'rishingiz mumkin. \n\nHar bir kompaniyaning har xil ofislari bor. Keyinchalik ularni qo'shishingiz mumkin. Misollar: Bowling club Tashkent, Bowling club Moscow. \n\nTurli joylarda siz turli xil xizmatlarni taklif qilishingiz mumkin. Bir joyda bir nechta xizmatlar bo'lishi mumkin. Misol: Bowling club Tashkent da 1 soatlik o'yin xizmati.";
+  @override
+  String get instText2 =>
+      "Mijozlar sizning xizmatlaringizdan biriga buyurtma berishganda, sizga xabar va taklif beriladi. Buyurtma boshlanishidan kamida 3 soat oldin siz ushbu taklifni qabul qilishingiz yoki rad qilishingiz kerak. Belgilangan muddatdan keyin buyurtma bekor qilinadi. Qo'shimcha ma'lumot olish uchun siz kartani bosishingiz mumkin.";
+  @override
+  String get instText3 =>
+      "Sizning kompaniyangiz balansi profil ekranida sozlanishi mumkin. Qachon xohlasangiz, balansni to'ldirishingiz mumkin. Balansingiz -100 000 so'mdan pastga tushganda, sizning kompaniyangiz o'chiriladi va siz qarzingizni to'lamaguningizcha buyurtmalarni qabul qila olmaysiz.";
+  @override
+  String get instText4 => "Taklifni qabul qilganingizdan so'ng, siz buyurtma kartasini bosish orqali uni tartibga solishingiz mumkin. Buyurtma vaqti kelganda, siz buyurtmani boshlashingiz mumkin. U tugagandan so'ng, siz mijozdan to'lov olasiz. To'lov amalga oshirilgandan so'ng, siz buyurtmani tugatshingiz mumkin. Buyurtmalar uchun 3 ta status mavjud. \n- Tugallanmagan - hali boshlanmagan buyurtma. \n- Jarayon - hozirda sodir bo'layotgan tartib. \n- To'lanmagan - buyurtma tugadi lekin mijoz hali to'lamadi.";
 
   @override
   String get homeScreenBook => "Bron qilish";
@@ -46,10 +59,8 @@ class LanguageUz extends Languages {
   @override
   String get homeScreenSaved => "Saqlandi";
 
-
   @override
   String get searchScreenName => "Joy nomi";
-
 
   @override
   String get historyScreenSchedule => "Jadval";
@@ -64,7 +75,6 @@ class LanguageUz extends Languages {
   @override
   String get historyScreenUnrated => "Baholanmagan";
 
-
   @override
   String get profileScreenFavs => "Sevimlilar";
   @override
@@ -73,7 +83,6 @@ class LanguageUz extends Languages {
   String get profileScreenSignOut => "Chiqish?";
   @override
   String get profileScreenWantToLeave => "Ketmoqchimisiz?";
-
 
   @override
   String get settingsSettings => "Sozlamalar";

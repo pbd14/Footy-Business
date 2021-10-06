@@ -22,6 +22,13 @@ abstract class Languages {
   String get loginScreenPolicy;
   String get loginScreenCodeIsNotValid;
 
+  String get instructions;
+  String get instText1;
+  String get instText2;
+  String get instText3;
+  String get instText4;
+
+
 
   String get homeScreenBook;
   String get homeScreenFail;

@@ -255,7 +255,58 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             },
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(
+                            height:
+                                company.data()['isActive'] == false ? 20 : 0),
+                        company.data()['isActive'] == false
+                            ? Container(
+                                width: size.width * 0.8,
+                                child: Card(
+                                  color: Colors.red,
+                                  elevation: 10,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.info_circle,
+                                          color: darkPrimaryColor,
+                                          size: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Your company was deactivated. You cannot receive any bookings. Please pay your debts in profile.',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 100,
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                    color: whiteColor,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Center(
                           child: Text(
                             'Today',
