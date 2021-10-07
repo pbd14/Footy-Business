@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overlay_support/overlay_support.dart';
 import '../../constants.dart';
 import '../loading_screen.dart';
+import 'package:location/location.dart';
 
 // ignore: must_be_immutable
 class AddPlaceScreen2 extends StatefulWidget {
@@ -31,6 +32,8 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
 
   @override
   void initState() {
+    _getPermission();
+    _getUserLocation();
     super.initState();
   }
 
@@ -60,6 +63,29 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
           positionParam:
               LatLng(newMarkerPosition.latitude, newMarkerPosition.longitude)));
     });
+  }
+
+  void _getPermission() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
   }
 
   void _getUserLocation() async {

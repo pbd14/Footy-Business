@@ -152,7 +152,15 @@ class _History1State extends State<History1>
         }
       }
     } else {
+      if(places.docs.first != null){
       chosenPlace = places.docs.first;
+      }
+      else{
+        setState(() {
+                  loading = false;
+                  error = true;
+                });
+      }
     }
     ordinaryBookSubscr = FirebaseFirestore.instance
         .collection('bookings')

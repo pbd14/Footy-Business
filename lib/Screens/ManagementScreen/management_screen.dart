@@ -272,7 +272,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                       children: [
                                         Icon(
                                           CupertinoIcons.info_circle,
-                                          color: darkPrimaryColor,
+                                          color: whiteColor,
                                           size: 15,
                                         ),
                                         SizedBox(
@@ -523,6 +523,52 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           ),
                         ),
                         SizedBox(height: 10),
+                        places.docs.isEmpty
+                            ? Container(
+                                width: size.width * 0.8,
+                                child: Card(
+                                  color: Colors.red,
+                                  elevation: 10,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.info_circle,
+                                          color: whiteColor,
+                                          size: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'You have 0 locations for this company. Please add them or your company might be banned',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 100,
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                    color: whiteColor,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         for (QueryDocumentSnapshot place in places.docs)
                           CupertinoButton(
                             padding: EdgeInsets.zero,
