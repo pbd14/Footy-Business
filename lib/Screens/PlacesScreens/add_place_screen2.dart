@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:flutter/material.dart';
 import 'package:footy_business/Models/PushNotificationMessage.dart';
 import 'package:footy_business/Screens/HomeScreen/home_screen.dart';
@@ -23,6 +23,7 @@ class AddPlaceScreen2 extends StatefulWidget {
 
 class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
   bool loading = false;
+  static LatLng _initialPosition = null;
   Set<Marker> _markers = HashSet<Marker>();
   GoogleMapController _mapController;
   double lat, lon;
@@ -61,6 +62,18 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
     });
   }
 
+  void _getUserLocation() async {
+    geolocator.Position position =
+        await geolocator.Geolocator.getCurrentPosition(
+            desiredAccuracy: geolocator.LocationAccuracy.high);
+    if (this.mounted) {
+      setState(() {
+        _initialPosition = LatLng(position.latitude, position.longitude);
+      });
+    }
+  }
+  
+
   void _setMapStyle() async {
     String style = await DefaultAssetBundle.of(context)
         .loadString('assets/images/map_style.json');
@@ -69,7 +82,7 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
       Marker(
         draggable: true,
         markerId: MarkerId('Marker'),
-        position: LatLng(41.3174, 69.2483),
+        position: LatLng(41.3209472793112, 69.24170952290297),
       ),
     );
   }
@@ -108,12 +121,18 @@ class _AddPlaceScreen2State extends State<AddPlaceScreen2> {
                   minMaxZoomPreference: MinMaxZoomPreference(10.0, 40.0),
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
-                  mapToolbarEnabled: false,
+                  mapToolbarEnabled: true,
                   onMapCreated: _onMapCreated,
                   onCameraMove: ((_position) => _updatePosition(_position)),
+                  // initialCameraPosition: CameraPosition(
+                  //   target: LatLng(41.3174, 69.2483),
+                  //   zoom: 11,
+                  // ),
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(41.3174, 69.2483),
-                    zoom: 11,
+                    target: widget.data != null
+                        ? LatLng(41.3209472793112, 69.20486602932215)
+                        : _initialPosition,
+                    zoom: 15,
                   ),
                   markers: _markers,
                 ),

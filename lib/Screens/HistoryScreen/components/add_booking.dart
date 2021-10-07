@@ -575,14 +575,14 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
     _checkInternetConnection();
 
     super.initState();
-    _dateController.text = DateFormat.yMMMd().format(DateTime.now());
+    // _dateController.text = DateFormat.yMMMd().format(DateTime.now());
 
-    _timeController.text = formatDate(
-        DateTime(2019, 08, 1, DateTime.now().hour, DateTime.now().minute), [
-      HH,
-      ':',
-      nn,
-    ]).toString();
+    // _timeController.text = formatDate(
+    //     DateTime(2019, 08, 1, DateTime.now().hour, DateTime.now().minute), [
+    //   HH,
+    //   ':',
+    //   nn,
+    // ]).toString();
   }
 
   @override

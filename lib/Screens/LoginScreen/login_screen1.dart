@@ -32,6 +32,38 @@ class _LoginScreen1State extends State<LoginScreen1> {
 
   bool loading = false;
 
+  Future<void> checkUserProfile() async {
+    DocumentSnapshot user = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .get();
+    if (!user.exists) {
+      print('HEEYEY HERE USER');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .set({
+        'status': 'default',
+        'cancellations_num': 0,
+        'phone': FirebaseAuth.instance.currentUser.phoneNumber,
+      });
+    } else {
+      print('NEOPE HERE USER');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .update({
+        'status': 'default',
+      });
+    }
+  }
+
+  @override
+  void initState(){
+    checkUserProfile();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

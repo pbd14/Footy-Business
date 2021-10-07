@@ -69,6 +69,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> checkUserProfile() async {
+    DocumentSnapshot user = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .get();
+    if (!user.exists) {
+      print('HEEYEY HERE USER');
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .set({
+        'status': 'default',
+        'cancellations_num': 0,
+        'phone': FirebaseAuth.instance.currentUser.phoneNumber,
+      });
+    } else {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .update({
+        'status': 'default',
+      });
+    }
+  }
+
   Future<void> checkVersion() async {
     RemoteConfig remoteConfig = RemoteConfig.instance;
     bool updated = await remoteConfig.fetchAndActivate();
@@ -93,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    checkUserProfile();
     checkVersion();
 
     userSubscription = FirebaseFirestore.instance
@@ -101,29 +127,36 @@ class _HomeScreenState extends State<HomeScreen> {
         .snapshots()
         .listen((docsnap) {
       if (docsnap != null) {
-        if (docsnap.data()['notifications_business'] != null) {
-          if (docsnap.data()['notifications_business'].length != 0) {
-            List acts = [];
-            for (var act in docsnap.data()['notifications_business']) {
-              if (!act['seen']) {
-                acts.add(act);
+        if (docsnap.data() != null) {
+          if (docsnap.data()['notifications_business'] != null) {
+            if (docsnap.data()['notifications_business'].length != 0) {
+              List acts = [];
+              for (var act in docsnap.data()['notifications_business']) {
+                if (!act['seen']) {
+                  acts.add(act);
+                }
               }
-            }
-            if (acts.length != 0) {
-              setState(() {
-                isProfileNotif = true;
-                profileNotifCounter = acts.length;
-              });
-            } else {
-              if (this.mounted) {
+              if (acts.length != 0) {
                 setState(() {
-                  isProfileNotif = false;
-                  profileNotifCounter = 0;
+                  isProfileNotif = true;
+                  profileNotifCounter = acts.length;
                 });
               } else {
+                if (this.mounted) {
+                  setState(() {
+                    isProfileNotif = false;
+                    profileNotifCounter = 0;
+                  });
+                } else {
+                  isProfileNotif = false;
+                  profileNotifCounter = 0;
+                }
+              }
+            } else {
+              setState(() {
                 isProfileNotif = false;
                 profileNotifCounter = 0;
-              }
+              });
             }
           } else {
             setState(() {
@@ -131,11 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
               profileNotifCounter = 0;
             });
           }
-        } else {
-          setState(() {
-            isProfileNotif = false;
-            profileNotifCounter = 0;
-          });
         }
       }
     });
