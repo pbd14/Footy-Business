@@ -8,7 +8,7 @@ import 'Services/auth_service.dart';
 import 'Services/languages/applocalizationsdelegate.dart';
 import 'constants.dart';
 
-// applicationId com.example.footy_business
+// applicationId com.footy_business.uz
 // SHA1: 19:15:92:FA:6D:EE:79:89:88:63:7A:59:5C:45:75:83:30:26:74:33
 // SHA-256: 33:88:C5:61:62:CC:38:A9:CC:FE:3A:37:0A:17:70:2C:4F:86:BF:47:4B:6A:75:DF:3C:88:AD:0D:8D:07:E5:5A
 

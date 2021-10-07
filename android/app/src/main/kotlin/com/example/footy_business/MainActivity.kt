@@ -1,4 +1,4 @@
-package com.example.footy_business
+package com.footy_business.uz
 
 import io.flutter.embedding.android.FlutterActivity
 
