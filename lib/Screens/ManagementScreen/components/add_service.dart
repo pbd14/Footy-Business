@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import '../../loading_screen.dart';
 
 class AddServiceScreen extends StatefulWidget {
-  String placeId;
+  final String placeId;
   AddServiceScreen({
     Key key,
     @required this.placeId,
@@ -36,6 +36,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   String error = '';
   String _hour, _minute, _time;
   String _hour2, _minute2, _time2;
+  // ignore: non_constant_identifier_names
   List<String> payment_methods = [];
   Map mon = {};
   Map tue = {};
@@ -59,7 +60,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   Future<void> _verify() async {
     double dtime1 = selectedTime.minute + selectedTime.hour * 60.0;
     double dtime2 = selectedTime2.minute + selectedTime2.hour * 60.0;
-    double dNow = DateTime.now().minute + DateTime.now().hour * 60.0;
 
     if (dtime1 >= dtime2) {
       setState(() {

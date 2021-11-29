@@ -74,6 +74,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
     );
 
     for (QueryDocumentSnapshot place in places.docs) {
+      // ignore: unused_local_variable
       QuerySnapshot middleBooks = await FirebaseFirestore.instance
           .collection('bookings')
           .where('placeId', isEqualTo: place.id)

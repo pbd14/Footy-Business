@@ -14,9 +14,9 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class AddBookingScreen extends StatefulWidget {
-  Map data;
-  String serviceId;
-  String placeId;
+  final Map data;
+  final String serviceId;
+  final String placeId;
   AddBookingScreen({Key key, this.data, this.serviceId, this.placeId})
       : super(key: key);
   @override
@@ -201,6 +201,7 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
             }
 
             RemoteConfig remoteConfig = RemoteConfig.instance;
+            // ignore: unused_local_variable
             bool updated = await remoteConfig.fetchAndActivate();
             print(remoteConfig.getDouble('booking_commission'));
             setState(() {
@@ -220,6 +221,7 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
     double dtime1 = selectedTime.minute + selectedTime.hour * 60.0;
     double dtime2 = selectedTime2.minute + selectedTime2.hour * 60.0;
     double dNow = DateTime.now().minute + DateTime.now().hour * 60.0;
+    // ignore: unused_local_variable
     var bPlaceData = await FirebaseFirestore.instance
         .collection('locations')
         .doc(widget.placeId)

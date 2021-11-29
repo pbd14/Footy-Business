@@ -13,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import '../../constants.dart';
 import '../loading_screen.dart';
-import 'components/background.dart';
 
 class LoginScreen1 extends StatefulWidget {
   final String errors;

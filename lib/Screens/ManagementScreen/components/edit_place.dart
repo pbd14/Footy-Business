@@ -18,7 +18,7 @@ import '../../../constants.dart';
 import '../../loading_screen.dart';
 
 class EditPlaceScreen extends StatefulWidget {
-  DocumentSnapshot place;
+  final DocumentSnapshot place;
   EditPlaceScreen({
     Key key,
     @required this.place,

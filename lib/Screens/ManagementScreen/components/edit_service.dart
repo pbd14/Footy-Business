@@ -16,9 +16,9 @@ import 'package:intl/intl.dart';
 import '../place_screen.dart';
 
 class EditServiceScreen extends StatefulWidget {
-  String placeId;
-  Map service;
-  List otherServices;
+  final String placeId;
+  final Map service;
+  final List otherServices;
   EditServiceScreen({
     Key key,
     @required this.placeId,
@@ -54,6 +54,7 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
   Map fri = {};
   Map sat = {};
   Map sun = {};
+  // ignore: non_constant_identifier_names
   List payment_methods = [];
 
   DateTime selectedDate = DateTime.now();
@@ -70,7 +71,6 @@ class _EditServiceScreenState extends State<EditServiceScreen> {
   Future<void> _verify() async {
     double dtime1 = selectedTime.minute + selectedTime.hour * 60.0;
     double dtime2 = selectedTime2.minute + selectedTime2.hour * 60.0;
-    double dNow = DateTime.now().minute + DateTime.now().hour * 60.0;
 
     if (dtime1 >= dtime2) {
       setState(() {

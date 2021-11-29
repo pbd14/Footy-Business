@@ -15,8 +15,8 @@ import '../loading_screen.dart';
 import 'add_place_screen2.dart';
 
 class AddPlaceScreen extends StatefulWidget {
-  String username;
-  String companyId;
+  final String username;
+  final String companyId;
   AddPlaceScreen({
     Key key,
     @required this.username,
@@ -93,7 +93,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return loading
         ? LoadingScreen()
         : Scaffold(
