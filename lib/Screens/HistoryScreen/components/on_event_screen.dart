@@ -1220,56 +1220,56 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Container(
-                                        width: size.width * 0.8,
-                                        child: Card(
-                                          elevation: 10,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Icon(
-                                                  CupertinoIcons.info_circle,
-                                                  color: darkPrimaryColor,
-                                                  size: 15,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Commission is paid by CLIENT. However client pays commission to YOU, and this commission is DEDUCTED from YOUR balance.',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 100,
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                          textStyle: TextStyle(
-                                                            color: darkColor,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      // SizedBox(
+                                      //   height: 5,
+                                      // ),
+                                      // Container(
+                                      //   width: size.width * 0.8,
+                                      //   child: Card(
+                                      //     elevation: 10,
+                                      //     child: Padding(
+                                      //       padding: const EdgeInsets.all(10.0),
+                                      //       child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.start,
+                                      //         children: [
+                                      //           Icon(
+                                      //             CupertinoIcons.info_circle,
+                                      //             color: darkPrimaryColor,
+                                      //             size: 15,
+                                      //           ),
+                                      //           SizedBox(
+                                      //             width: 10,
+                                      //           ),
+                                      //           Expanded(
+                                      //             child: Column(
+                                      //               crossAxisAlignment:
+                                      //                   CrossAxisAlignment
+                                      //                       .start,
+                                      //               children: [
+                                      //                 Text(
+                                      //                   'Commission is paid by CLIENT. However client pays commission to YOU, and this commission is DEDUCTED from YOUR balance.',
+                                      //                   overflow: TextOverflow
+                                      //                       .ellipsis,
+                                      //                   maxLines: 100,
+                                      //                   textAlign:
+                                      //                       TextAlign.start,
+                                      //                   style: GoogleFonts
+                                      //                       .montserrat(
+                                      //                     textStyle: TextStyle(
+                                      //                       color: darkColor,
+                                      //                       fontSize: 13,
+                                      //                     ),
+                                      //                   ),
+                                      //                 )
+                                      //               ],
+                                      //             ),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       SizedBox(
                                         height: 10,
                                       ),

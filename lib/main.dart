@@ -11,6 +11,8 @@ import 'constants.dart';
 // applicationId com.footy_business.uz
 // SHA1: 19:15:92:FA:6D:EE:79:89:88:63:7A:59:5C:45:75:83:30:26:74:33
 // SHA-256: 33:88:C5:61:62:CC:38:A9:CC:FE:3A:37:0A:17:70:2C:4F:86:BF:47:4B:6A:75:DF:3C:88:AD:0D:8D:07:E5:5A
+// Google Play SHA-1 DA:BC:40:C6:66:1B:20:0D:89:F5:7C:83:21:94:A1:E1:01:EA:73:DF
+// Google Play SHA-256 6B:ED:1C:5A:09:6D:FC:C5:E1:F0:BD:40:C6:56:BE:DF:AB:67:2E:22:61:15:DD:73:50:B2:D6:AD:AD:90:8E:E1
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
