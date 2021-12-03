@@ -36,6 +36,13 @@ abstract class Languages {
   String get homeScreenSaved;
 
 
+  String get managementScreenToday;
+  String get managementScreenNoBooksToday;
+  String get managementScreenLocations;
+  String get managementScreenNoLocations;
+  String get managementScreenCreateLocation;
+
+
   String get searchScreenName;
 
 
@@ -45,6 +52,12 @@ abstract class Languages {
   String get historyScreenInProcess;
   String get historyScreenUpcoming;
   String get historyScreenUnrated;
+  String get historyScreenCustom;
+  String get historyScreenVerificationNeeded;
+  String get historyScreenCreateCustomBook;
+  String get historyScreenSelectService;
+  String get historyScreenAcceptOffer;
+  String get historyScreenRejectOffer;
 
 
   String get profileScreenFavs;

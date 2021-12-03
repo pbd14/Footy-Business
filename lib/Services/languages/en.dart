@@ -59,6 +59,18 @@ class LanguageEn extends Languages {
   String get homeScreenSaved => "Saved";
 
   @override
+  String get managementScreenToday => "Today";
+  @override
+  String get managementScreenNoBooksToday => "No bookings today";
+  @override
+  String get managementScreenLocations => "Locations";
+  @override
+  String get managementScreenNoLocations => "You have 0 locations for this company. Please add them or your company might be banned.";
+  @override
+  String get managementScreenCreateLocation => "Create location";
+
+
+  @override
   String get searchScreenName => "Place name";
 
   @override
@@ -73,6 +85,18 @@ class LanguageEn extends Languages {
   String get historyScreenUpcoming => "Upcoming";
   @override
   String get historyScreenUnrated => "Unrated";
+  @override
+  String get historyScreenCustom => "Custom";
+  @override
+  String get historyScreenVerificationNeeded => "Verification needed";
+  @override
+  String get historyScreenCreateCustomBook => "Create custom booking";
+  @override
+  String get historyScreenSelectService => "Select service";
+  @override
+  String get historyScreenAcceptOffer => "Accept an offer";
+  @override
+  String get historyScreenRejectOffer => "Reject an offer";
 
   @override
   String get profileScreenFavs => "Favourites";

@@ -371,22 +371,22 @@ class _History2State extends State<History2>
                                                                     .w400),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Text(
-                                                      book.data()['status'],
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: GoogleFonts
-                                                          .montserrat(
-                                                        textStyle: TextStyle(
-                                                          color:
-                                                              darkPrimaryColor,
-                                                          fontSize: 15,
-                                                        ),
-                                                      ),
-                                                    ),
+                                                    // SizedBox(
+                                                    //   height: 10,
+                                                    // ),
+                                                    // Text(
+                                                    //   book.data()['status'],
+                                                    //   overflow:
+                                                    //       TextOverflow.ellipsis,
+                                                    //   style: GoogleFonts
+                                                    //       .montserrat(
+                                                    //     textStyle: TextStyle(
+                                                    //       color:
+                                                    //           darkPrimaryColor,
+                                                    //       fontSize: 15,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                   ],
                                                 ),
                                               ),

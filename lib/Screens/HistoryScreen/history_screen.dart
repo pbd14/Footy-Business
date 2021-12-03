@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:footy_business/Models/LanguageData.dart';
 import 'package:footy_business/Screens/HistoryScreen/components/1.dart';
 import 'package:footy_business/Screens/HistoryScreen/components/2.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
+import 'package:footy_business/Services/languages/languages.dart';
 import 'package:footy_business/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants.dart';
@@ -34,7 +36,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   tabs: [
                     Tab(
                       child: Text(
-                        'Schedule',
+                        Languages.of(context).historyScreenSchedule,
                         style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               color: whiteColor,
@@ -45,7 +47,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ),
                     Tab(
                       child: Text(
-                        'History',
+                        Languages.of(context).historyScreenHistory,
                         style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
                               color: whiteColor,

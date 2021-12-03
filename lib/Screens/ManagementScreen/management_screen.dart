@@ -8,6 +8,7 @@ import 'package:footy_business/Screens/HistoryScreen/components/on_event_screen.
 import 'package:footy_business/Screens/ManagementScreen/place_screen.dart';
 import 'package:footy_business/Screens/PlacesScreens/add_place_screen.dart';
 import 'package:footy_business/Screens/loading_screen.dart';
+import 'package:footy_business/Services/languages/languages.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants.dart';
@@ -310,7 +311,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                         ),
                         Center(
                           child: Text(
-                            'Today',
+                            Languages.of(context).managementScreenToday,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
@@ -345,7 +346,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                 children: [
                                   if (todayBookings.isEmpty)
                                     Text(
-                                      'No bookings today',
+                                      Languages.of(context).managementScreenNoBooksToday,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.montserrat(
                                         textStyle: TextStyle(
@@ -513,7 +514,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                         SizedBox(height: 30),
                         Center(
                           child: Text(
-                            'Locations',
+                            Languages.of(context).managementScreenLocations,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
                               textStyle: TextStyle(
@@ -550,7 +551,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'You have 0 locations for this company. Please add them or your company might be banned',
+                                                Languages.of(context).managementScreenNoLocations,
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 100,
                                                 textAlign: TextAlign.start,
@@ -677,7 +678,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                       ),
                                       SizedBox(height: 5),
                                       Text(
-                                        'Create location',
+                                        Languages.of(context).managementScreenCreateLocation,
                                         textScaleFactor: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(

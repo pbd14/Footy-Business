@@ -60,6 +60,17 @@ class LanguageRu extends Languages {
   String get homeScreenSaved => "Сохранено";
 
   @override
+  String get managementScreenToday => "Сегодня";
+  @override
+  String get managementScreenNoBooksToday => "Сегодня нет заказов";
+  @override
+  String get managementScreenLocations => "Локации";
+  @override
+  String get managementScreenNoLocations => "У вас 0 филиалов для этой компании. Добавьте их, иначе ваша компания может быть заблокирована.";
+  @override
+  String get managementScreenCreateLocation => "Создать локацию";
+
+  @override
   String get searchScreenName => "Название";
 
   @override
@@ -74,6 +85,18 @@ class LanguageRu extends Languages {
   String get historyScreenUpcoming => "Предстоящие";
   @override
   String get historyScreenUnrated => "Без оценки";
+  @override
+  String get historyScreenCustom => "Специальные";
+  @override
+  String get historyScreenVerificationNeeded => "Ожидание согласия владельца";
+  @override
+  String get historyScreenCreateCustomBook => "Создать индивидуальное бронирование";
+  @override
+  String get historyScreenSelectService => "Выберите услугу";
+  @override
+  String get historyScreenAcceptOffer => "Принять предложение";
+  @override
+  String get historyScreenRejectOffer => "Отклонить предложение";
 
   @override
   String get profileScreenFavs => "Избранное";
