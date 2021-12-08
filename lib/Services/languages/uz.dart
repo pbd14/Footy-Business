@@ -99,6 +99,10 @@ class LanguageUz extends Languages {
   String get historyScreenAcceptOffer => "Taklifni qabul qilish";
   @override
   String get historyScreenRejectOffer => "Taklifni rad qilish";
+  @override
+  String get historyScreenCancel => "Bekor qilish";
+  @override
+  String get historyScreenQuestionCancel=> "Haqiqatan ham bekor qilmoqchimisiz";
 
   @override
   String get profileScreenFavs => "Sevimlilar";

@@ -97,6 +97,10 @@ class LanguageEn extends Languages {
   String get historyScreenAcceptOffer => "Accept an offer";
   @override
   String get historyScreenRejectOffer => "Reject an offer";
+  @override
+  String get historyScreenCancel => "Cancel";
+  @override
+  String get historyScreenQuestionCancel=> "Are you sure you want to cancel the booking";
 
   @override
   String get profileScreenFavs => "Favourites";

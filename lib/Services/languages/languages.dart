@@ -58,6 +58,8 @@ abstract class Languages {
   String get historyScreenSelectService;
   String get historyScreenAcceptOffer;
   String get historyScreenRejectOffer;
+  String get historyScreenCancel;
+  String get historyScreenQuestionCancel;
 
 
   String get profileScreenFavs;

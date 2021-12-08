@@ -11,6 +11,7 @@ import 'package:footy_business/Screens/loading_screen.dart';
 import 'package:footy_business/Services/languages/en.dart';
 import 'package:footy_business/Services/languages/languages.dart';
 import 'package:footy_business/constants.dart';
+import 'package:footy_business/widgets/rounded_button.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -1970,158 +1971,302 @@ class _History1State extends State<History1>
                                           child: Center(
                                             child: Padding(
                                               padding: EdgeInsets.all(5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                              child: Column(
                                                 children: [
-                                                  Container(
-                                                    width: size.width * 0.5,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          DateFormat.yMMMd()
-                                                              .format(book
-                                                                  .data()[
-                                                                      'timestamp_date']
-                                                                  .toDate())
-                                                              .toString(),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              color: whiteColor,
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Text(
-                                                          book.data()['from'] +
-                                                              ' - ' +
-                                                              book.data()['to'],
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              color: whiteColor,
-                                                              fontSize: 20,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Container(
-                                                      width: size.width * 0.4,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            customPlacesSlivers[
-                                                                        book] !=
-                                                                    null
-                                                                ? customPlacesSlivers[
-                                                                        book]
-                                                                    .data()[
-                                                                        'services']
-                                                                    .where(
-                                                                        (service) {
-                                                                    if (service[
-                                                                            'id'] ==
-                                                                        book.data()[
-                                                                            'serviceId']) {
-                                                                      return true;
-                                                                    } else {
-                                                                      return false;
-                                                                    }
-                                                                  }).first['name']
-                                                                : 'Service',
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: GoogleFonts
-                                                                .montserrat(
-                                                              textStyle: TextStyle(
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        width: size.width * 0.5,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              DateFormat.yMMMd()
+                                                                  .format(book
+                                                                      .data()[
+                                                                          'timestamp_date']
+                                                                      .toDate())
+                                                                  .toString(),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: GoogleFonts
+                                                                  .montserrat(
+                                                                textStyle:
+                                                                    TextStyle(
                                                                   color:
                                                                       whiteColor,
-                                                                  fontSize: 15,
+                                                                  fontSize: 20,
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .w400),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                            customPlacesSlivers[
-                                                                        book] !=
-                                                                    null
-                                                                ? customPlacesSlivers[
-                                                                            book]
-                                                                        .data()[
-                                                                    'name']
-                                                                : 'Place',
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: GoogleFonts
-                                                                .montserrat(
-                                                              textStyle: TextStyle(
-                                                                  color:
-                                                                      whiteColor,
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                            Languages.of(
-                                                                    context)
-                                                                .historyScreenCustom,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: GoogleFonts
-                                                                .montserrat(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                color:
-                                                                    whiteColor,
-                                                                fontSize: 15,
+                                                                          .bold,
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                              book.data()[
+                                                                      'from'] +
+                                                                  ' - ' +
+                                                                  book.data()[
+                                                                      'to'],
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: GoogleFonts
+                                                                  .montserrat(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 20,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Container(
+                                                          width:
+                                                              size.width * 0.4,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                customPlacesSlivers[
+                                                                            book] !=
+                                                                        null
+                                                                    ? customPlacesSlivers[
+                                                                            book]
+                                                                        .data()[
+                                                                            'services']
+                                                                        .where(
+                                                                            (service) {
+                                                                        if (service['id'] ==
+                                                                            book.data()['serviceId']) {
+                                                                          return true;
+                                                                        } else {
+                                                                          return false;
+                                                                        }
+                                                                      }).first['name']
+                                                                    : 'Service',
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle: TextStyle(
+                                                                      color:
+                                                                          whiteColor,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Text(
+                                                                customPlacesSlivers[
+                                                                            book] !=
+                                                                        null
+                                                                    ? customPlacesSlivers[
+                                                                            book]
+                                                                        .data()['name']
+                                                                    : 'Place',
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle: TextStyle(
+                                                                      color:
+                                                                          whiteColor,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Text(
+                                                                Languages.of(
+                                                                        context)
+                                                                    .historyScreenCustom,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        whiteColor,
+                                                                    fontSize:
+                                                                        15,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  RoundedButton(
+                                                    pw: 100,
+                                                    ph: 45,
+                                                    text: Languages.of(context)
+                                                        .historyScreenCancel,
+                                                    press: () {
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            title: Text(Languages.of(
+                                                                        context)
+                                                                    .historyScreenCancel +
+                                                                '?'),
+                                                            content: Text(Languages.of(
+                                                                        context)
+                                                                    .historyScreenQuestionCancel +
+                                                                '?'),
+                                                            scrollable: true,
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    loading =
+                                                                        true;
+                                                                  });
+
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'bookings')
+                                                                      .doc(book
+                                                                          .id)
+                                                                      .delete()
+                                                                      .catchError(
+                                                                          (error) {
+                                                                    setState(
+                                                                        () {
+                                                                      loading =
+                                                                          false;
+                                                                    });
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(
+                                                                            false);
+                                                                    PushNotificationMessage
+                                                                        notification =
+                                                                        PushNotificationMessage(
+                                                                      title:
+                                                                          'Fail',
+                                                                      body:
+                                                                          'Failed to cancel booking',
+                                                                    );
+                                                                    showSimpleNotification(
+                                                                      Container(
+                                                                          child:
+                                                                              Text(notification.body)),
+                                                                      position:
+                                                                          NotificationPosition
+                                                                              .top,
+                                                                      background:
+                                                                          Colors
+                                                                              .red,
+                                                                    );
+                                                                  });
+
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop(
+                                                                          true);
+                                                                  PushNotificationMessage
+                                                                      notification =
+                                                                      PushNotificationMessage(
+                                                                    title:
+                                                                        'Canceled',
+                                                                    body:
+                                                                        'The booking was canceled',
+                                                                  );
+                                                                  showSimpleNotification(
+                                                                    Container(
+                                                                        child: Text(
+                                                                            notification.body)),
+                                                                    position:
+                                                                        NotificationPosition
+                                                                            .top,
+                                                                    background:
+                                                                        footyColor,
+                                                                  );
+                                                                  setState(() {
+                                                                    loading =
+                                                                        false;
+                                                                    customBookingsSlivers
+                                                                        .remove(
+                                                                            book);
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    const Text(
+                                                                  'Yes',
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          primaryColor),
+                                                                ),
+                                                              ),
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(
+                                                                            false),
+                                                                child:
+                                                                    const Text(
+                                                                  'No',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .red),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    color: Colors.red,
+                                                    textColor: whiteColor,
+                                                  ),
                                                 ],
                                               ),
                                             ),

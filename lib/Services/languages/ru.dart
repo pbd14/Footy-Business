@@ -97,6 +97,10 @@ class LanguageRu extends Languages {
   String get historyScreenAcceptOffer => "Принять предложение";
   @override
   String get historyScreenRejectOffer => "Отклонить предложение";
+  @override
+  String get historyScreenCancel => "Отменить";
+  @override
+  String get historyScreenQuestionCancel=> "Вы уверены, что хотите отменить бронирование";
 
   @override
   String get profileScreenFavs => "Избранное";
