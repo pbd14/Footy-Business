@@ -11,6 +11,22 @@ class SomethingWentWrongScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: darkPrimaryColor,
+        iconTheme: IconThemeData(
+          color: whiteColor,
+        ),
+        title: Text(
+          'Error',
+          textScaleFactor: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            textStyle: TextStyle(
+                color: whiteColor, fontSize: 20, fontWeight: FontWeight.w300),
+          ),
+        ),
+        centerTitle: true,
+      ),
       backgroundColor: whiteColor,
       body: Padding(
         padding: const EdgeInsets.all(10.0),

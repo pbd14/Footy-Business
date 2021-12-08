@@ -370,7 +370,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                 ? Center(
                                                     child: Text(
                                                       booking
-                                                              .data()['price']
+                                                              .data()['servicePrice']
                                                               .toString() +
                                                           ' UZS',
                                                       overflow:
@@ -405,6 +405,23 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                     ),
                                                   )
                                                 : Container(),
+                                            booking.data()['status'] ==
+                                                    'canceled'
+                                                ? Text(
+                                                    'Event was canceled',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                    textAlign: TextAlign.center,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                        color: darkPrimaryColor,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
                                           ],
                                         ),
                                       ),
@@ -426,6 +443,8 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                     booking.data()['status'] != 'in process' &&
                                     booking.data()['status'] != 'unpaid' &&
                                     booking.data()['status'] != 'finished'
+                                    &&
+                                    booking.data()['status'] != 'canceled'
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -573,6 +592,8 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                     booking.data()['status'] != 'unfinished' &&
                                     booking.data()['status'] != 'unpaid' &&
                                     booking.data()['status'] != 'finished'
+                                    &&
+                                    booking.data()['status'] != 'canceled'
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -1193,7 +1214,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                       ),
                                       Text(
                                         'Overall price: ' +
-                                            booking.data()['price'].toString() +
+                                            booking.data()['servicePrice'].toString() +
                                             " UZS",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(
@@ -1276,7 +1297,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                       Text(
                                         'Profit: ' +
                                             booking
-                                                .data()['servicePrice']
+                                                .data()['placeProfit']
                                                 .toString() +
                                             " UZS",
                                         overflow: TextOverflow.ellipsis,

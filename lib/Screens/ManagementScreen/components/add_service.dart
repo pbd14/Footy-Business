@@ -439,6 +439,13 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
     return loading
         ? LoadingScreen()
         : Scaffold(
+          appBar: AppBar(
+              backgroundColor: darkPrimaryColor,
+              iconTheme: IconThemeData(
+                color: whiteColor,
+              ),
+              centerTitle: true,
+            ),
             body: SingleChildScrollView(
               child: Form(
                 key: _formKey,

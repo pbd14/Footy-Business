@@ -598,9 +598,6 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
             key: _scaffoldKey,
             appBar: AppBar(
               backgroundColor: darkPrimaryColor,
-              iconTheme: IconThemeData(
-                color: whiteColor,
-              ),
               title: Text(
                 'Booking',
                 textScaleFactor: 1,
@@ -611,6 +608,9 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                       fontSize: 20,
                       fontWeight: FontWeight.w300),
                 ),
+              ),
+              iconTheme: IconThemeData(
+                color: whiteColor,
               ),
               centerTitle: true,
             ),
