@@ -29,20 +29,21 @@ class _History1State extends State<History1>
   bool get wantKeepAlive => true;
   bool loading = true;
   bool error = true;
-  List<QueryDocumentSnapshot> _bookings = [];
-  List<QueryDocumentSnapshot> _bookings2 = [];
-  Map<String, QueryDocumentSnapshot> _places = {};
-  Map<QueryDocumentSnapshot, QueryDocumentSnapshot> placesSlivers = {};
+  List<QueryDocumentSnapshot> upcomingBookings = [];
+  List<QueryDocumentSnapshot> verificationneededBookings = [];
+  List<QueryDocumentSnapshot> inprocessBookings = [];
+  List<QueryDocumentSnapshot> unpaidBookings = [];
+  List<QueryDocumentSnapshot> customBookings = [];
+
+  Map<String, QueryDocumentSnapshot> upcomingPlaces = {};
+  List<QueryDocumentSnapshot> inprocessSlivers = [];
+  List<QueryDocumentSnapshot> unpaidBookingsSlivers = [];
+  List<QueryDocumentSnapshot> customBookingsSlivers = [];
+  Map<QueryDocumentSnapshot, QueryDocumentSnapshot> inprocessPlacesSlivers = {};
   Map<QueryDocumentSnapshot, QueryDocumentSnapshot> unrplacesSlivers = {};
   Map<QueryDocumentSnapshot, DocumentSnapshot> unpaidPlacesSlivers = {};
   Map<QueryDocumentSnapshot, DocumentSnapshot> customPlacesSlivers = {};
-  List _bookings1 = [];
-  List slivers = [];
-  List<Widget> sliversList = [];
-  List unpaidBookings = [];
-  List unpaidBookingsSlivers = [];
-  List customBookings = [];
-  List customBookingsSlivers = [];
+
   String companyId = '';
   String placeId = '';
   Map selectedService = {};
@@ -53,7 +54,7 @@ class _History1State extends State<History1>
   QuerySnapshot places;
   QuerySnapshot companies;
 
-  StreamSubscription<QuerySnapshot> ordinaryBookSubscr;
+  StreamSubscription<QuerySnapshot> upcomingBookSubscr;
   StreamSubscription<QuerySnapshot> nonverBookSubscr;
   StreamSubscription<QuerySnapshot> inprocessBookSubscr;
   StreamSubscription<QuerySnapshot> unpaidBookSubscr;
@@ -61,71 +62,13 @@ class _History1State extends State<History1>
 
   @override
   void dispose() {
-    ordinaryBookSubscr.cancel();
+    upcomingBookSubscr.cancel();
     nonverBookSubscr.cancel();
     inprocessBookSubscr.cancel();
     unpaidBookSubscr.cancel();
     customBookSubscr.cancel();
     super.dispose();
   }
-
-  // Future<void> ordinaryBookPrep(List<QueryDocumentSnapshot> _bookings) async {
-  //   for (QueryDocumentSnapshot book in _bookings) {
-  //     for (QueryDocumentSnapshot place in places.docs) {
-  //       if (book.data()['placeId'] == place.id) {
-  //         setState(() {
-  //           _places.addAll({
-  //             book.id: place,
-  //           });
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
-
-  // Future<void> nonverBookPrep(List<QueryDocumentSnapshot> _bookings) async {
-  //   for (QueryDocumentSnapshot book in _bookings) {
-  //     // if (DateTime.now().isAfter(book.data()['deadline'])) {
-  //     //   bookings.docs.remove(book);
-  //     //   _bookings.remove(book);
-  //     //   FirebaseFirestore.instance
-  //     //       .collection('bookings')
-  //     //       .doc(book.id)
-  //     //       .delete();
-  //     // }
-
-  //     for (QueryDocumentSnapshot place in places.docs) {
-  //       if (book.data()['placeId'] == place.id) {
-  //         setState(() {
-  //           _places.addAll({
-  //             book.id: place,
-  //           });
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
-
-  // Future<void> inprocessBookPrep(List<QueryDocumentSnapshot> _bookings) async {
-  //   if (_bookings1.length != 0) {
-  //     for (QueryDocumentSnapshot book in _bookings1) {
-  //       for (QueryDocumentSnapshot place in places.docs) {
-  //         if (book.data()['placeId'] == place.id) {
-  //           setState(() {
-  //             slivers.add(book);
-  //             placesSlivers.addAll({book: place});
-  //           });
-  //         }
-  //       }
-  //       if (book.data()['seen_status'] == 'unseen') {
-  //         FirebaseFirestore.instance
-  //             .collection('bookings')
-  //             .doc(book.id)
-  //             .update({'seen_status': 'seen1'});
-  //       }
-  //     }
-  //   }
-  // }
 
   Future<void> loadData() async {
     companies = await FirebaseFirestore.instance
@@ -163,11 +106,11 @@ class _History1State extends State<History1>
         });
       }
     }
-    ordinaryBookSubscr = FirebaseFirestore.instance
+    upcomingBookSubscr = FirebaseFirestore.instance
         .collection('bookings')
         .orderBy(
           'timestamp_date',
-          descending: true,
+          descending: false,
         )
         .where(
           'status',
@@ -180,13 +123,13 @@ class _History1State extends State<History1>
         .snapshots()
         .listen((bookings) {
       setState(() {
-        _bookings = bookings.docs;
+        upcomingBookings = bookings.docs;
       });
       for (QueryDocumentSnapshot book in bookings.docs) {
         for (QueryDocumentSnapshot place in places.docs) {
           if (book.data()['placeId'] == place.id) {
             setState(() {
-              _places.addAll({
+              upcomingPlaces.addAll({
                 book.id: place,
               });
             });
@@ -199,7 +142,7 @@ class _History1State extends State<History1>
         .collection('bookings')
         .orderBy(
           'timestamp_date',
-          descending: true,
+          descending: false,
         )
         .where(
           'status',
@@ -213,13 +156,13 @@ class _History1State extends State<History1>
         .listen((bookings) {
       if (bookings != null) {
         setState(() {
-          _bookings2 = bookings.docs;
+          verificationneededBookings = bookings.docs;
         });
         for (QueryDocumentSnapshot book in bookings.docs) {
           if (DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(
               book.data()['deadline'].seconds * 1000))) {
             bookings.docs.remove(book);
-            _bookings.remove(book);
+            upcomingBookings.remove(book);
             FirebaseFirestore.instance
                 .collection('bookings')
                 .doc(book.id)
@@ -263,7 +206,7 @@ class _History1State extends State<History1>
           for (QueryDocumentSnapshot place in places.docs) {
             if (book.data()['placeId'] == place.id) {
               setState(() {
-                _places.addAll({
+                upcomingPlaces.addAll({
                   book.id: place,
                 });
               });
@@ -277,7 +220,7 @@ class _History1State extends State<History1>
         .collection('bookings')
         .orderBy(
           'timestamp_date',
-          descending: true,
+          descending: false,
         )
         .where(
           'status',
@@ -290,15 +233,15 @@ class _History1State extends State<History1>
         .snapshots()
         .listen((bookings) {
       setState(() {
-        _bookings1 = bookings.docs;
+        inprocessBookings = bookings.docs;
       });
-      if (_bookings1.length != 0) {
-        for (QueryDocumentSnapshot book in _bookings1) {
+      if (inprocessBookings.length != 0) {
+        for (QueryDocumentSnapshot book in inprocessBookings) {
           for (QueryDocumentSnapshot place in places.docs) {
             if (book.data()['placeId'] == place.id) {
               setState(() {
-                slivers.add(book);
-                placesSlivers.addAll({book: place});
+                inprocessSlivers.add(book);
+                inprocessPlacesSlivers.addAll({book: place});
               });
             }
           }
@@ -310,7 +253,7 @@ class _History1State extends State<History1>
         .collection('bookings')
         .orderBy(
           'timestamp_date',
-          descending: true,
+          descending: false,
         )
         .where(
           'status',
@@ -343,7 +286,7 @@ class _History1State extends State<History1>
         .collection('bookings')
         .orderBy(
           'timestamp_date',
-          descending: true,
+          descending: false,
         )
         .where(
           'status',
@@ -386,9 +329,9 @@ class _History1State extends State<History1>
   }
 
   List<Meeting> _getDataSource() {
-    var meetings = <Meeting>[];
-    if (_bookings != null) {
-      for (var book in _bookings2) {
+    List<Meeting> meetings = <Meeting>[];
+    if (upcomingBookings != null) {
+      for (QueryDocumentSnapshot book in verificationneededBookings) {
         final DateTime today = book.data()['timestamp_date'].toDate();
         final DateTime startTime = DateTime(
           today.year,
@@ -405,9 +348,9 @@ class _History1State extends State<History1>
           DateFormat.Hm().parse(book.data()['to']).minute,
         );
         meetings.add(Meeting(
-            _places[book.id] != null
-                ? _places[book.id].data()['name'] != null
-                    ? _places[book.id].data()['name']
+            upcomingPlaces[book.id] != null
+                ? upcomingPlaces[book.id].data()['name'] != null
+                    ? upcomingPlaces[book.id].data()['name']
                     : 'Place'
                 : 'Place',
             startTime,
@@ -417,7 +360,7 @@ class _History1State extends State<History1>
                 : Colors.red,
             false));
       }
-      for (var book in _bookings) {
+      for (QueryDocumentSnapshot book in upcomingBookings) {
         final DateTime today = book.data()['timestamp_date'].toDate();
         final DateTime startTime = DateTime(
           today.year,
@@ -434,9 +377,9 @@ class _History1State extends State<History1>
           DateFormat.Hm().parse(book.data()['to']).minute,
         );
         meetings.add(Meeting(
-            _places[book.id] != null
-                ? _places[book.id].data()['name'] != null
-                    ? _places[book.id].data()['name']
+            upcomingPlaces[book.id] != null
+                ? upcomingPlaces[book.id].data()['name'] != null
+                    ? upcomingPlaces[book.id].data()['name']
                     : 'Place'
                 : 'Place',
             startTime,
@@ -454,13 +397,12 @@ class _History1State extends State<History1>
     setState(() {
       loading = true;
     });
-    _bookings = [];
-    _places = {};
-    placesSlivers = {};
+    upcomingBookings = [];
+    upcomingPlaces = {};
+    inprocessPlacesSlivers = {};
     unrplacesSlivers = {};
-    _bookings1 = [];
-    slivers = [];
-    sliversList = [];
+    inprocessBookings = [];
+    inprocessSlivers = [];
     companyId = '';
     placeId = '';
     unpaidPlacesSlivers = {};
@@ -469,7 +411,7 @@ class _History1State extends State<History1>
     customPlacesSlivers = {};
     customBookings = [];
     customBookingsSlivers = [];
-    ordinaryBookSubscr.cancel();
+    upcomingBookSubscr.cancel();
     inprocessBookSubscr.cancel();
     nonverBookSubscr.cancel();
     unpaidBookSubscr.cancel();
@@ -569,13 +511,12 @@ class _History1State extends State<History1>
                                         ],
                                   onChanged: (value) {
                                     companyId = value;
-                                    _bookings = [];
-                                    _places = {};
-                                    placesSlivers = {};
+                                    upcomingBookings = [];
+                                    upcomingPlaces = {};
+                                    inprocessPlacesSlivers = {};
                                     unrplacesSlivers = {};
-                                    _bookings1 = [];
-                                    slivers = [];
-                                    sliversList = [];
+                                    inprocessBookings = [];
+                                    inprocessSlivers = [];
                                     unpaidPlacesSlivers = {};
                                     unpaidBookings = [];
                                     unpaidBookingsSlivers = [];
@@ -583,7 +524,7 @@ class _History1State extends State<History1>
                                     customBookings = [];
                                     customBookingsSlivers = [];
                                     customBookSubscr.cancel();
-                                    ordinaryBookSubscr.cancel();
+                                    upcomingBookSubscr.cancel();
                                     inprocessBookSubscr.cancel();
                                     nonverBookSubscr.cancel();
                                     unpaidBookSubscr.cancel();
@@ -631,12 +572,11 @@ class _History1State extends State<History1>
                                           )
                                         ],
                                   onChanged: (value) {
-                                    _places = {};
-                                    placesSlivers = {};
+                                    upcomingPlaces = {};
+                                    inprocessPlacesSlivers = {};
                                     unrplacesSlivers = {};
-                                    _bookings1 = [];
-                                    slivers = [];
-                                    sliversList = [];
+                                    inprocessBookings = [];
+                                    inprocessSlivers = [];
                                     unpaidPlacesSlivers = {};
                                     unpaidBookings = [];
                                     unpaidBookingsSlivers = [];
@@ -644,7 +584,7 @@ class _History1State extends State<History1>
                                     customBookings = [];
                                     customBookingsSlivers = [];
                                     customBookSubscr.cancel();
-                                    ordinaryBookSubscr.cancel();
+                                    upcomingBookSubscr.cancel();
                                     inprocessBookSubscr.cancel();
                                     nonverBookSubscr.cancel();
                                     unpaidBookSubscr.cancel();
@@ -734,7 +674,9 @@ class _History1State extends State<History1>
 
                               // Verification needed
                               for (QueryDocumentSnapshot book
-                                  in _bookings2.toSet().toList())
+                                  in verificationneededBookings
+                                      .toSet()
+                                      .toList())
                                 Container(
                                   // padding: EdgeInsets.all(10),
                                   child: CupertinoButton(
@@ -751,13 +693,12 @@ class _History1State extends State<History1>
                                           ),
                                         ),
                                       );
-                                      _bookings = [];
-                                      _places = {};
-                                      placesSlivers = {};
+                                      upcomingBookings = [];
+                                      upcomingPlaces = {};
+                                      inprocessPlacesSlivers = {};
                                       unrplacesSlivers = {};
-                                      _bookings1 = [];
-                                      slivers = [];
-                                      sliversList = [];
+                                      inprocessBookings = [];
+                                      inprocessSlivers = [];
                                       unpaidPlacesSlivers = {};
                                       unpaidBookings = [];
                                       unpaidBookingsSlivers = [];
@@ -846,9 +787,10 @@ class _History1State extends State<History1>
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            _places[book.id] !=
+                                                            upcomingPlaces[book
+                                                                        .id] !=
                                                                     null
-                                                                ? _places[
+                                                                ? upcomingPlaces[
                                                                         book.id]
                                                                     .data()[
                                                                         'services']
@@ -883,13 +825,14 @@ class _History1State extends State<History1>
                                                             height: 10,
                                                           ),
                                                           Text(
-                                                            _places[book.id] !=
+                                                            upcomingPlaces[book
+                                                                        .id] !=
                                                                     null
-                                                                ? _places[book.id].data()[
+                                                                ? upcomingPlaces[book.id].data()[
                                                                             'name'] !=
                                                                         null
-                                                                    ? _places[book
-                                                                            .id]
+                                                                    ? upcomingPlaces[
+                                                                            book.id]
                                                                         .data()['name']
                                                                     : 'Place'
                                                                 : 'Place',
@@ -977,7 +920,7 @@ class _History1State extends State<History1>
                                                                       .seconds *
                                                                   1000),
                                                             )) {
-                                                              _bookings
+                                                              upcomingBookings
                                                                   .remove(book);
                                                               FirebaseFirestore
                                                                   .instance
@@ -1207,7 +1150,7 @@ class _History1State extends State<History1>
                                                                             'deadline']
                                                                         .seconds *
                                                                     1000))) {
-                                                              _bookings
+                                                              upcomingBookings
                                                                   .remove(book);
                                                               FirebaseFirestore
                                                                   .instance
@@ -1378,7 +1321,7 @@ class _History1State extends State<History1>
                                 ),
 
                               for (QueryDocumentSnapshot book
-                                  in _bookings.toSet().toList())
+                                  in upcomingBookings.toSet().toList())
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 7),
                                   // padding: EdgeInsets.all(10),
@@ -1396,13 +1339,12 @@ class _History1State extends State<History1>
                                           ),
                                         ),
                                       );
-                                      _bookings = [];
-                                      _places = {};
-                                      placesSlivers = {};
+                                      upcomingBookings = [];
+                                      upcomingPlaces = {};
+                                      inprocessPlacesSlivers = {};
                                       unrplacesSlivers = {};
-                                      _bookings1 = [];
-                                      slivers = [];
-                                      sliversList = [];
+                                      inprocessBookings = [];
+                                      inprocessSlivers = [];
                                       unpaidPlacesSlivers = {};
                                       unpaidBookings = [];
                                       unpaidBookingsSlivers = [];
@@ -1486,8 +1428,11 @@ class _History1State extends State<History1>
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        _places[book.id] != null
-                                                            ? _places[book.id]
+                                                        upcomingPlaces[
+                                                                    book.id] !=
+                                                                null
+                                                            ? upcomingPlaces[
+                                                                    book.id]
                                                                 .data()[
                                                                     'services']
                                                                 .where(
@@ -1520,15 +1465,16 @@ class _History1State extends State<History1>
                                                         height: 10,
                                                       ),
                                                       Text(
-                                                        _places[book.id] != null
-                                                            ? _places[book.id]
+                                                        upcomingPlaces[
+                                                                    book.id] !=
+                                                                null
+                                                            ? upcomingPlaces[book.id]
                                                                             .data()[
                                                                         'name'] !=
                                                                     null
-                                                                ? _places[book
-                                                                            .id]
-                                                                        .data()[
-                                                                    'name']
+                                                                ? upcomingPlaces[
+                                                                        book.id]
+                                                                    .data()['name']
                                                                 : 'Place'
                                                             : 'Place',
                                                         maxLines: 2,
@@ -1759,13 +1705,12 @@ class _History1State extends State<History1>
                                                 bookingId: book.id,
                                               ),
                                             ));
-                                        _bookings = [];
-                                        _places = {};
-                                        placesSlivers = {};
+                                        upcomingBookings = [];
+                                        upcomingPlaces = {};
+                                        inprocessPlacesSlivers = {};
                                         unrplacesSlivers = {};
-                                        _bookings1 = [];
-                                        slivers = [];
-                                        sliversList = [];
+                                        inprocessBookings = [];
+                                        inprocessSlivers = [];
                                         unpaidPlacesSlivers = {};
                                         unpaidBookings = [];
                                         unpaidBookingsSlivers = [];
@@ -2001,7 +1946,6 @@ class _History1State extends State<History1>
                                         //     unrplacesSlivers = {};
                                         //     _bookings1 = [];
                                         //     slivers = [];
-                                        //     sliversList = [];
                                         //     unpaidPlacesSlivers = {};
                                         //     unpaidBookings = [];
                                         //     unpaidBookingsSlivers = [];
@@ -2195,7 +2139,7 @@ class _History1State extends State<History1>
 
                         // Ongoing
 
-                        slivers.length != 0
+                        inprocessSlivers.length != 0
                             ? SliverList(
                                 delegate: SliverChildListDelegate([
                                   SizedBox(
@@ -2217,7 +2161,8 @@ class _History1State extends State<History1>
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  for (var book in slivers.toSet().toList())
+                                  for (QueryDocumentSnapshot book
+                                      in inprocessSlivers.toSet().toList())
                                     TextButton(
                                       onPressed: () {
                                         setState(() {
@@ -2231,13 +2176,12 @@ class _History1State extends State<History1>
                                             ),
                                           ),
                                         );
-                                        _bookings = [];
-                                        _places = {};
-                                        placesSlivers = {};
+                                        upcomingBookings = [];
+                                        upcomingPlaces = {};
+                                        inprocessPlacesSlivers = {};
                                         unrplacesSlivers = {};
-                                        _bookings1 = [];
-                                        slivers = [];
-                                        sliversList = [];
+                                        inprocessBookings = [];
+                                        inprocessSlivers = [];
                                         unpaidPlacesSlivers = {};
                                         unpaidBookings = [];
                                         unpaidBookingsSlivers = [];
@@ -2324,10 +2268,10 @@ class _History1State extends State<History1>
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            placesSlivers[
+                                                            inprocessPlacesSlivers[
                                                                         book] !=
                                                                     null
-                                                                ? placesSlivers[
+                                                                ? inprocessPlacesSlivers[
                                                                         book]
                                                                     .data()[
                                                                         'services']
@@ -2362,10 +2306,10 @@ class _History1State extends State<History1>
                                                             height: 10,
                                                           ),
                                                           Text(
-                                                            placesSlivers[
+                                                            inprocessPlacesSlivers[
                                                                         book] !=
                                                                     null
-                                                                ? placesSlivers[
+                                                                ? inprocessPlacesSlivers[
                                                                             book]
                                                                         .data()[
                                                                     'name']
