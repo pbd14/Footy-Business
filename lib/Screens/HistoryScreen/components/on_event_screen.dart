@@ -370,7 +370,8 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                 ? Center(
                                                     child: Text(
                                                       booking
-                                                              .data()['servicePrice']
+                                                              .data()[
+                                                                  'servicePrice']
                                                               .toString() +
                                                           ' UZS',
                                                       overflow:
@@ -442,8 +443,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                         'verification_needed' &&
                                     booking.data()['status'] != 'in process' &&
                                     booking.data()['status'] != 'unpaid' &&
-                                    booking.data()['status'] != 'finished'
-                                    &&
+                                    booking.data()['status'] != 'finished' &&
                                     booking.data()['status'] != 'canceled'
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -591,8 +591,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                     booking.data()['status'] != 'verification_needed' &&
                                     booking.data()['status'] != 'unfinished' &&
                                     booking.data()['status'] != 'unpaid' &&
-                                    booking.data()['status'] != 'finished'
-                                    &&
+                                    booking.data()['status'] != 'finished' &&
                                     booking.data()['status'] != 'canceled'
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -833,6 +832,38 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                                 'reported_bookings')
                                                             .doc(booking.id)
                                                             .delete();
+
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .doc(booking.data()[
+                                                                'userId'])
+                                                            .update({
+                                                          'status': 'default',
+                                                        }).catchError((error) {
+                                                          print('MISTAKE HERE');
+                                                          print(error);
+                                                          Navigator.of(context)
+                                                              .pop(false);
+                                                          PushNotificationMessage
+                                                              notification =
+                                                              PushNotificationMessage(
+                                                            title: 'Fail',
+                                                            body: 'Failed',
+                                                          );
+                                                          showSimpleNotification(
+                                                            Container(
+                                                                child: Text(
+                                                                    notification
+                                                                        .body)),
+                                                            position:
+                                                                NotificationPosition
+                                                                    .top,
+                                                            background:
+                                                                Colors.red,
+                                                          );
+                                                        });
+
                                                         FirebaseFirestore
                                                             .instance
                                                             .collection(
@@ -1009,12 +1040,78 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                               FirebaseFirestore
                                                                   .instance
                                                                   .collection(
+                                                                      'users')
+                                                                  .doc(booking
+                                                                          .data()[
+                                                                      'userId'])
+                                                                  .update({
+                                                                'status':
+                                                                    'blocked'
+                                                              }).catchError(
+                                                                      (error) {
+                                                                print(
+                                                                    'MISTAKE HERE');
+                                                                print(error);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                                PushNotificationMessage
+                                                                    notification =
+                                                                    PushNotificationMessage(
+                                                                  title: 'Fail',
+                                                                  body:
+                                                                      'Failed',
+                                                                );
+                                                                showSimpleNotification(
+                                                                  Container(
+                                                                      child: Text(
+                                                                          notification
+                                                                              .body)),
+                                                                  position:
+                                                                      NotificationPosition
+                                                                          .top,
+                                                                  background:
+                                                                      Colors
+                                                                          .red,
+                                                                );
+                                                              });
+
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
                                                                       'bookings')
                                                                   .doc(booking
                                                                       .id)
                                                                   .update({
                                                                 'isReported':
                                                                     true
+                                                              }).catchError(
+                                                                      (error) {
+                                                                print(
+                                                                    'MISTAKE HERE');
+                                                                print(error);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                                PushNotificationMessage
+                                                                    notification =
+                                                                    PushNotificationMessage(
+                                                                  title: 'Fail',
+                                                                  body:
+                                                                      'Failed',
+                                                                );
+                                                                showSimpleNotification(
+                                                                  Container(
+                                                                      child: Text(
+                                                                          notification
+                                                                              .body)),
+                                                                  position:
+                                                                      NotificationPosition
+                                                                          .top,
+                                                                  background:
+                                                                      Colors
+                                                                          .red,
+                                                                );
                                                               });
 
                                                               PushNotificationMessage
@@ -1214,7 +1311,9 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                       ),
                                       Text(
                                         'Overall price: ' +
-                                            booking.data()['servicePrice'].toString() +
+                                            booking
+                                                .data()['servicePrice']
+                                                .toString() +
                                             " UZS",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(

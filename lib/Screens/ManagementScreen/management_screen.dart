@@ -65,15 +65,6 @@ class _ManagementScreenState extends State<ManagementScreen> {
     List<QueryDocumentSnapshot> middleTodayBooks = [];
     Map middlePlacesForBooks = {};
 
-    print('DATEH');
-    print(
-      DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      ),
-    );
-
     for (QueryDocumentSnapshot place in places.docs) {
       // ignore: unused_local_variable
       QuerySnapshot middleBooks = await FirebaseFirestore.instance

@@ -307,6 +307,21 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                                       loading = false;
                                     });
                                   }
+                                  if (notif['type'] == 'booking_canceled') {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    Navigator.push(
+                                      context,
+                                      SlideRightRoute(
+                                          page: OnEventScreen(
+                                        bookingId: notif['bookingId'],
+                                      )),
+                                    );
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                  }
                                   if (notif['type'] == 'new_booking') {
                                     setState(() {
                                       loading = true;
