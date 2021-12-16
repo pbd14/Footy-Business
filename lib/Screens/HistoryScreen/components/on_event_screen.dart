@@ -775,7 +775,7 @@ class _OnEventScreenState extends State<OnEventScreen> {
                                                                 {
                                                                   'seen': false,
                                                                   'type':
-                                                                      'booking_canceled',
+                                                                      'notifications_company_deactivated',
                                                                   'title':
                                                                       'Deactivated',
                                                                   'text':

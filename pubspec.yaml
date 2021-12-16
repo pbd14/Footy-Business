@@ -46,7 +46,7 @@ dependencies:
   firebase_dynamic_links: ^2.0.9
   encrypt: ^5.0.0
   date_format: ^2.0.2
-  firebase_remote_config: ^0.11.0+2
+  firebase_remote_config: ^1.0.2
   native_updater: ^0.1.0
   package_info: ^2.0.2
   location: ^4.1.1

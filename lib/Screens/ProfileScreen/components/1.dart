@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:footy_business/Screens/HistoryScreen/components/on_event_screen.dart';
+import 'package:footy_business/Services/languages/locale_constant.dart';
 import 'package:footy_business/widgets/slide_right_route_animation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants.dart';
 import '../../loading_screen.dart';
@@ -22,6 +26,10 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
   List<bool> isSeenList = [];
 
   DocumentSnapshot user;
+  RemoteConfig remoteConfig = RemoteConfig.instance;
+  SharedPreferences _prefs;
+  bool remoteConfigUpdated;
+  String langCode = 'en';
 
   String getDate(int millisecondsSinceEpoch) {
     String date = '';
@@ -95,6 +103,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser.uid)
         .get();
+    _prefs = await SharedPreferences.getInstance();
+    remoteConfigUpdated = await remoteConfig.fetchAndActivate();
 
     if (user.exists) {
       if (user.data()['notifications_business'] != null) {
@@ -139,13 +149,14 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     for (Map notif in notifs) {
       isSeenList.add(notif['seen']);
     }
-
     if (this.mounted) {
       setState(() {
         loading = false;
+        langCode = _prefs.getString(prefSelectedLanguageCode) ?? "en";
       });
     } else {
       loading = false;
+      langCode = _prefs.getString(prefSelectedLanguageCode) ?? "en";
     }
   }
 
@@ -213,199 +224,839 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                             FirebaseFirestore.instance
                                 .collection('users')
                                 .doc(FirebaseAuth.instance.currentUser.uid)
-                                .update(
-                                    {'notifications_business': updatedNotifsFunction()});
+                                .update({
+                              'notifications_business': updatedNotifsFunction()
+                            });
                           }
                         },
                         children: [
                           for (Map notif in notifs)
-                            ExpansionPanel(
-                              backgroundColor:
-                                  notif['type'] == 'booking_canceled' ||
-                                          notif['type'] == 'offer_rejected'
-                                      ? Colors.red
-                                      : whiteColor,
-                              canTapOnHeader: true,
-                              isExpanded: isSeenList[notifs.indexOf(notif)],
-                              headerBuilder: (context, isOpen) {
-                                return !isOpen
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Center(
-                                            child: Container(
-                                              child: Text(
-                                                notif['title'],
+
+                            // New offer
+                            notif['type'] == 'notifications_booking_offer'
+                                ? ExpansionPanel(
+                                    backgroundColor: whiteColor,
+                                    canTapOnHeader: true,
+                                    isExpanded:
+                                        isSeenList[notifs.indexOf(notif)],
+                                    headerBuilder: (context, isOpen) {
+                                      return !isOpen
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Center(
+                                                  child: Container(
+                                                    child: Text(
+                                                      jsonDecode(remoteConfig
+                                                              .getValue(
+                                                                  notif['type'])
+                                                              .asString())[
+                                                          langCode]['title'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color: darkColor,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Center(
+                                                  child: Container(
+                                                    height: 20,
+                                                    width: 20,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: primaryColor),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Center(
+                                              child: Container(
+                                                margin: EdgeInsets.all(10),
+                                                child: Text(
+                                                  jsonDecode(
+                                                          remoteConfig
+                                                              .getValue(
+                                                                  notif['type'])
+                                                              .asString())[
+                                                      langCode]['title'],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                      color: darkColor,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                    },
+                                    body: CupertinoButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        Navigator.push(
+                                          context,
+                                          SlideRightRoute(
+                                              page: OnEventScreen(
+                                            bookingId: notif['bookingId'],
+                                          )),
+                                        );
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      },
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                jsonDecode(remoteConfig
+                                                        .getValue(notif['type'])
+                                                        .asString())[langCode]
+                                                    ['text'],
+                                                maxLines: 20,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: GoogleFonts.montserrat(
                                                   textStyle: TextStyle(
-                                                    color: notif['type'] ==
-                                                                'booking_canceled' ||
-                                                            notif['type'] ==
-                                                                'offer_rejected'
-                                                        ? whiteColor
-                                                        : darkColor,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
+                                                      color: darkColor,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                'Company: ' +
+                                                    notif['companyName'],
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                      color: darkColor,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                getDate(notif['date']
+                                                    .millisecondsSinceEpoch),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  textStyle: TextStyle(
+                                                      color: darkColor,
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                // Booking canceled
+                                : notif['type'] ==
+                                        'notifications_booking_canceled'
+                                    ? ExpansionPanel(
+                                        backgroundColor: Colors.red,
+                                        canTapOnHeader: true,
+                                        isExpanded:
+                                            isSeenList[notifs.indexOf(notif)],
+                                        headerBuilder: (context, isOpen) {
+                                          return !isOpen
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Center(
+                                                      child: Container(
+                                                        child: Text(
+                                                          jsonDecode(remoteConfig
+                                                                  .getValue(notif[
+                                                                      'type'])
+                                                                  .asString())[
+                                                              langCode]['title'],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color: whiteColor,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Center(
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 20,
+                                                        decoration: BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color:
+                                                                primaryColor),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Center(
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(10),
+                                                    child: Text(
+                                                      jsonDecode(remoteConfig
+                                                              .getValue(
+                                                                  notif['type'])
+                                                              .asString())[
+                                                          langCode]['title'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        textStyle: TextStyle(
+                                                          color: whiteColor,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                        },
+                                        body: CupertinoButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () {
+                                            setState(() {
+                                              loading = true;
+                                            });
+                                            Navigator.push(
+                                              context,
+                                              SlideRightRoute(
+                                                  page: OnEventScreen(
+                                                bookingId: notif['bookingId'],
+                                              )),
+                                            );
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    jsonDecode(
+                                                            remoteConfig
+                                                                .getValue(notif[
+                                                                    'type'])
+                                                                .asString())[
+                                                        langCode]['text'],
+                                                    maxLines: 20,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          color: whiteColor,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    'Company: ' +
+                                                        notif['companyName'],
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          color: whiteColor,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    getDate(notif['date']
+                                                        .millisecondsSinceEpoch),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          color: whiteColor,
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+
+                                    // Deadline passed
+                                    : notif['type'] ==
+                                            'notifications_deadline_passed'
+                                        ? ExpansionPanel(
+                                            backgroundColor: Colors.red,
+                                            canTapOnHeader: true,
+                                            isExpanded: isSeenList[
+                                                notifs.indexOf(notif)],
+                                            headerBuilder: (context, isOpen) {
+                                              return !isOpen
+                                                  ? Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Center(
+                                                          child: Container(
+                                                            child: Text(
+                                                              jsonDecode(remoteConfig
+                                                                      .getValue(
+                                                                          notif[
+                                                                              'type'])
+                                                                      .asString())[
+                                                                  langCode]['title'],
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: GoogleFonts
+                                                                  .montserrat(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Center(
+                                                          child: Container(
+                                                            height: 20,
+                                                            width: 20,
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color:
+                                                                    primaryColor),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Center(
+                                                      child: Container(
+                                                        margin:
+                                                            EdgeInsets.all(10),
+                                                        child: Text(
+                                                          jsonDecode(remoteConfig
+                                                                  .getValue(notif[
+                                                                      'type'])
+                                                                  .asString())[
+                                                              langCode]['title'],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color: whiteColor,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                            },
+                                            body: CupertinoButton(
+                                              padding: EdgeInsets.zero,
+                                              onPressed: () {},
+                                              child: Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        jsonDecode(remoteConfig
+                                                                .getValue(notif[
+                                                                    'type'])
+                                                                .asString())[
+                                                            langCode]['text'],
+                                                        maxLines: 20,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          textStyle: TextStyle(
+                                                              color: whiteColor,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Text(
+                                                        'Company: ' +
+                                                            notif[
+                                                                'companyName'],
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          textStyle: TextStyle(
+                                                              color: whiteColor,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Text(
+                                                        getDate(notif['date']
+                                                            .millisecondsSinceEpoch),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          textStyle: TextStyle(
+                                                              color: whiteColor,
+                                                              fontSize: 17,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Center(
-                                            child: Container(
-                                              height: 20,
-                                              width: 20,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: primaryColor),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Center(
-                                        child: Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Text(
-                                            notif['title'],
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                color: notif['type'] ==
-                                                            'booking_canceled' ||
-                                                        notif['type'] ==
-                                                            'offer_rejected'
-                                                    ? whiteColor
-                                                    : darkColor,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                              },
-                              body: CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  if (notif['type'] == 'offered') {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    Navigator.push(
-                                      context,
-                                      SlideRightRoute(
-                                          page: OnEventScreen(
-                                        bookingId: notif['bookingId'],
-                                      )),
-                                    );
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                  }
-                                  if (notif['type'] == 'booking_canceled') {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    Navigator.push(
-                                      context,
-                                      SlideRightRoute(
-                                          page: OnEventScreen(
-                                        bookingId: notif['bookingId'],
-                                      )),
-                                    );
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                  }
-                                  if (notif['type'] == 'new_booking') {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    Navigator.push(
-                                      context,
-                                      SlideRightRoute(
-                                          page: OnEventScreen(
-                                        bookingId: notif['bookingId'],
-                                      )),
-                                    );
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          notif['text'],
-                                          maxLines: 20,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                                color: notif['type'] ==
-                                                            'booking_canceled' ||
-                                                        notif['type'] ==
-                                                            'offer_rejected'
-                                                    ? whiteColor
-                                                    : darkColor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          'Company: ' + notif['companyName'],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                                color: notif['type'] ==
-                                                            'booking_canceled' ||
-                                                        notif['type'] ==
-                                                            'offer_rejected'
-                                                    ? whiteColor
-                                                    : darkColor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          getDate(notif['date']
-                                              .millisecondsSinceEpoch),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                                color: notif['type'] ==
-                                                            'booking_canceled' ||
-                                                        notif['type'] ==
-                                                            'offer_rejected'
-                                                    ? whiteColor
-                                                    : darkColor,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                                          )
+
+                                        // Company deactivated
+                                        : notif['type'] ==
+                                                'notifications_company_deactivated'
+                                            ? ExpansionPanel(
+                                                backgroundColor: Colors.red,
+                                                canTapOnHeader: true,
+                                                isExpanded: isSeenList[
+                                                    notifs.indexOf(notif)],
+                                                headerBuilder:
+                                                    (context, isOpen) {
+                                                  return !isOpen
+                                                      ? Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Center(
+                                                              child: Container(
+                                                                child: Text(
+                                                                  jsonDecode(remoteConfig
+                                                                      .getValue(
+                                                                          notif[
+                                                                              'type'])
+                                                                      .asString())[langCode]['title'],
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style: GoogleFonts
+                                                                      .montserrat(
+                                                                    textStyle:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          whiteColor,
+                                                                      fontSize:
+                                                                          20,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Center(
+                                                              child: Container(
+                                                                height: 20,
+                                                                width: 20,
+                                                                decoration: BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color:
+                                                                        primaryColor),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Center(
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            child: Text(
+                                                              jsonDecode(remoteConfig
+                                                                      .getValue(
+                                                                          notif[
+                                                                              'type'])
+                                                                      .asString())[
+                                                                  langCode]['title'],
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: GoogleFonts
+                                                                  .montserrat(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                },
+                                                body: CupertinoButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {},
+                                                  child: Container(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            jsonDecode(remoteConfig
+                                                                    .getValue(notif[
+                                                                        'type'])
+                                                                    .asString())[
+                                                                langCode]['text'],
+                                                            maxLines: 20,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                              textStyle: TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text(
+                                                            'Company: ' +
+                                                                notif[
+                                                                    'companyName'],
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                              textStyle: TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Text(
+                                                            getDate(notif[
+                                                                    'date']
+                                                                .millisecondsSinceEpoch),
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                              textStyle: TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize: 17,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            // Custom
+                                            : notif['type'] == 'custom'
+                                                ? ExpansionPanel(
+                                                    backgroundColor: whiteColor,
+                                                    canTapOnHeader: true,
+                                                    isExpanded: isSeenList[
+                                                        notifs.indexOf(notif)],
+                                                    headerBuilder:
+                                                        (context, isOpen) {
+                                                      return !isOpen
+                                                          ? Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Center(
+                                                                  child:
+                                                                      Container(
+                                                                    child: Text(
+                                                                      notif[
+                                                                          'title'],
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style: GoogleFonts
+                                                                          .montserrat(
+                                                                        textStyle:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              darkColor,
+                                                                          fontSize:
+                                                                              20,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Center(
+                                                                  child:
+                                                                      Container(
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    decoration: BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        color:
+                                                                            primaryColor),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : Center(
+                                                              child: Container(
+                                                                margin:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            10),
+                                                                child: Text(
+                                                                  notif[
+                                                                      'title'],
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style: GoogleFonts
+                                                                      .montserrat(
+                                                                    textStyle:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          darkColor,
+                                                                      fontSize:
+                                                                          20,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                    },
+                                                    body: CupertinoButton(
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed: () {},
+                                                      child: Container(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                notif['text'],
+                                                                maxLines: 20,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle: TextStyle(
+                                                                      color:
+                                                                          darkColor,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Text(
+                                                                'Company: ' +
+                                                                    notif[
+                                                                        'companyName'],
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle: TextStyle(
+                                                                      color:
+                                                                          darkColor,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Text(
+                                                                getDate(notif[
+                                                                        'date']
+                                                                    .millisecondsSinceEpoch),
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  textStyle: TextStyle(
+                                                                      color:
+                                                                          darkColor,
+                                                                      fontSize:
+                                                                          17,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : ExpansionPanel(
+                                                    headerBuilder:
+                                                        (context, isOpen) =>
+                                                            Container(),
+                                                    body: Container(),
+                                                  ),
                         ],
                       ),
                     ],

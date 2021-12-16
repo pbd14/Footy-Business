@@ -175,11 +175,9 @@ class _History1State extends State<History1>
               'notifications_business': FieldValue.arrayUnion([
                 {
                   'seen': false,
-                  'type': 'booking_canceled',
-                  'title': 'Deadline passed',
-                  'text': 'Booking was canceled because deadline has passed (' +
-                      chosenPlace.data()['name'] +
-                      ')',
+                  'type': 'notifications_deadline_passed',
+                  // 'title': 'Deadline passed',
+                  'place': chosenPlace.data()['name'],
                   'companyName': chosenCompany.data()['name'],
                   'date': DateTime.now(),
                 }
@@ -192,11 +190,9 @@ class _History1State extends State<History1>
               'notifications': FieldValue.arrayUnion([
                 {
                   'seen': false,
-                  'type': 'booking_canceled',
-                  'title': 'Deadline passed',
-                  'text': 'Booking was canceled because deadline has passed (' +
-                      chosenPlace.data()['name'] +
-                      ')',
+                  'type': 'notifications_deadline_passed',
+                  // 'title': 'Deadline passed',
+                  'place': chosenPlace.data()['name'],
                   'companyName': chosenCompany.data()['name'],
                   'date': DateTime.now(),
                 }
@@ -945,13 +941,11 @@ class _History1State extends State<History1>
                                                                     'seen':
                                                                         false,
                                                                     'type':
-                                                                        'booking_canceled',
-                                                                    'title':
-                                                                        'Deadline passed',
-                                                                    'text': 'Booking was canceled because deadline has passed (' +
-                                                                        chosenPlace
-                                                                            .data()['name'] +
-                                                                        ')',
+                                                                        'notifications_deadline_passed',
+                                                                    // 'title': 'Deadline passed',
+                                                                    'place': chosenPlace
+                                                                            .data()[
+                                                                        'name'],
                                                                     'companyName':
                                                                         chosenCompany
                                                                             .data()['name'],
@@ -976,13 +970,11 @@ class _History1State extends State<History1>
                                                                     'seen':
                                                                         false,
                                                                     'type':
-                                                                        'booking_canceled',
-                                                                    'title':
-                                                                        'Deadline passed',
-                                                                    'text': 'Booking was canceled because deadline has passed (' +
-                                                                        chosenPlace
-                                                                            .data()['name'] +
-                                                                        ')',
+                                                                        'notifications_deadline_passed',
+                                                                    // 'title': 'Deadline passed',
+                                                                    'place': chosenPlace
+                                                                            .data()[
+                                                                        'name'],
                                                                     'companyName':
                                                                         chosenCompany
                                                                             .data()['name'],
@@ -1065,10 +1057,11 @@ class _History1State extends State<History1>
                                                                                 FieldValue.arrayUnion([
                                                                               {
                                                                                 'seen': false,
-                                                                                'type': 'offer_accepted',
+                                                                                'type': 'notifications_offer_accepted',
                                                                                 'bookingId': book.id,
-                                                                                'title': 'Accepted',
-                                                                                'text': 'Offer was accepted. Booking is made at ' + chosenPlace.data()['name'],
+                                                                                // 'title': 'Accepted',
+                                                                                // 'text': 'Offer was accepted. Booking is made at',
+                                                                                'place' : chosenPlace.data()['name'],
                                                                                 'companyName': chosenCompany.data()['name'],
                                                                                 'date': DateTime.now(),
                                                                               }
@@ -1232,9 +1225,10 @@ class _History1State extends State<History1>
                                                                                 FieldValue.arrayUnion([
                                                                               {
                                                                                 'seen': false,
-                                                                                'type': 'offer_rejected',
-                                                                                'title': 'Rejected',
-                                                                                'text': 'Offer was rejecte. Booking was canceled at ' + chosenPlace.data()['name'],
+                                                                                'type': 'notifications_offer_rejected',
+                                                                                // 'title': 'Rejected',
+                                                                                // 'text': 'Offer was rejected. Booking was canceled at',
+                                                                                'place': chosenPlace.data()['name'],
                                                                                 'companyName': chosenCompany.data()['name'],
                                                                                 'date': DateTime.now(),
                                                                               }
